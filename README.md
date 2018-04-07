@@ -1,29 +1,15 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+This repository is software of the 2018 Industry Project for Team Jaram.
 
-### What is this repository for? ###
+### Members ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Anmol Walia
+* Jackson Stoney-Dobell
+* Marita Fitzgerald
+* Richard Morton
+* Alex Nguyen
 
-### How do I get set up? ###
+### Supervisor ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+Matthew Felicetti
