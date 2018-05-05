@@ -1,5 +1,6 @@
 package com.example.jaram.projectapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText nameField;
     private EditText pWordField;
     private Button loginBtn;
+    private Button goToSignUpBtn;
 
     private String name;
     private String pWord;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //buttons
         loginBtn = findViewById(R.id.loginBtn);
+        goToSignUpBtn = findViewById(R.id.goToSignUpBtn);
 
         //text fields
         nameField = findViewById(R.id.nameField);
@@ -50,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     localLogin();
                 }
                 break;
+            case R.id.goToSignUpBtn:
+            {
+                //Go to signup activity
+                Intent intent = new Intent(this, SignUp.class);
+                startActivity(intent);
+            }
         }
 
     }

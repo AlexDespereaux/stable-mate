@@ -6,7 +6,7 @@
     <string name="welcome_to_annomate">Welcome to Annomate</string>
     <string name="create_account">Create Account</string>
     <string name="your_name">Your Name</string>
-    <string name="sign_up">Sign Up</string>
     <string name="birthday">Birthday</string>
     <string name="email_address">Email address</string>
+    <string name="sign_up">Sign Up</string>
 </resources>
