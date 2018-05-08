@@ -8,9 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.jaram.projectapp.Utils.NetworkUtils;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
-    //variables
+    //variables (I leave as global until ready for release, and then convert to local variable)
     private EditText nameField;
     private EditText pWordField;
     private Button loginBtn;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //register listeners
         loginBtn.setOnClickListener(this);
+        goToSignUpBtn.setOnClickListener(this);
     }
 
     @Override
@@ -54,13 +57,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.goToSignUpBtn:
-            {
                 //Go to signup activity
                 Intent intent = new Intent(this, SignUp.class);
                 startActivity(intent);
-            }
+                break;
         }
-
     }
 
     private void login()
