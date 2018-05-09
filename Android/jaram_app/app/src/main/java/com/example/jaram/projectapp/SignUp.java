@@ -1,27 +1,31 @@
 package com.example.jaram.projectapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.jaram.projectapp.Utils.NetworkUtils;
 
 public class SignUp extends AppCompatActivity implements View.OnClickListener
 {
+    //I leave as local variables until development is basically finished.
+    //Simply as its easier to debug
     private EditText nameField;
     private EditText pWordField;
     private EditText emailField;
-    private EditText bDayField;
-    private Button signUp;
+    private Button signUpBtn;
+    private Switch saveLoginSwitch;
 
     private String name;
     private String pWord;
     private String email;
-    private String bDay;
+    private boolean saveLogin = false;
 
     //connection
     boolean isConnected = false;
@@ -33,16 +37,18 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener
         setContentView(R.layout.activity_sign_up);
 
         //buttons
-        signUp = findViewById(R.id.signUpBtn);
+        signUpBtn = findViewById(R.id.signUpBtn);
 
         //text fields
         nameField = findViewById(R.id.nameField);
         pWordField = findViewById(R.id.pWordField);
         emailField = findViewById(R.id.emailField);
-        bDayField = findViewById(R.id.bDayField);
+
+        //switch booleans
+        saveLoginSwitch = findViewById(R.id.saveLoginSwitch);
 
         //register listeners
-        signUp.setOnClickListener(this);
+        signUpBtn.setOnClickListener(this);
     }
 
     @Override
@@ -51,11 +57,10 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener
         switch (v.getId())
         {
             case R.id.signUpBtn:
-                if(NetworkUtils.isNetworkConnected(this))
+                if (NetworkUtils.isNetworkConnected(this))
                 {
                     signUp();
-                }
-                else
+                } else
                 {
                     Toast.makeText(this, "Check internet connection", Toast.LENGTH_SHORT).show();
                 }
@@ -69,20 +74,29 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener
         name = nameField.getText().toString().trim();
         pWord = pWordField.getText().toString().trim();
         email = emailField.getText().toString().trim();
-        bDay = bDayField.getText().toString().trim();
-
         boolean accountCreated = false;
+
         //check input TODO: Add network check
-        if (name.equals("") || pWord.equals("") || email.equals("") || bDay.equals(""))
+        if (name.equals("") || pWord.equals("") || email.equals(""))
         {
             Toast.makeText(this, "Please complete all fields", Toast.LENGTH_SHORT).show();
-        }
-        else
+        } else
         {
             //TODO Submit to server set accountCreated to true upon success
-            if (accountCreated == true)
+            if (accountCreated)
             {
                 Toast.makeText(this, "Account Creation Sucessful", Toast.LENGTH_SHORT).show();
+
+                //check status of switch
+                saveLogin = saveLoginSwitch.isChecked();
+
+                if(saveLogin)
+                {
+                    //save login to shared preferances
+                    //ensuring user will be able to use app without wifi
+                    saveLoginPref(name, pWord, email);
+                }
+
                 //Return back to sign in to login
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
@@ -91,5 +105,19 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener
                 Toast.makeText(this, "Account Creation Failed", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void saveLoginPref(String name, String pWord, String email)
+    {
+        //TODO excahnge for secure storage
+        //save details to shared preferances
+        SharedPreferences jaramSharedP = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor jaramEditor = jaramSharedP.edit();
+        jaramEditor.putString("userNameLogin", name);
+        jaramEditor.putString("userPwordLogin", pWord);
+        jaramEditor.putString("userEmailLogin", email);
+        jaramEditor.apply();
+
+        Toast.makeText(this, "Login Saved", Toast.LENGTH_LONG).show();
     }
 }

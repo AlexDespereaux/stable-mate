@@ -42,6 +42,7 @@
             android:ems="10"
             android:hint="@string/your_name"
             android:inputType="textPersonName"
+            android:textColor="@android:color/black"
             android:textSize="14sp" />
 
         <EditText
@@ -62,13 +63,14 @@
             android:inputType="textEmailAddress"
             android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/bDayField"
+
+        <Switch
+            android:id="@+id/saveLoginSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/birthday"
-            android:inputType="date"
+            android:paddingLeft="5dp"
+            android:text="Save Login Details"
+            android:textColor="@android:color/darker_gray"
             android:textSize="14sp" />
 
         <Button
