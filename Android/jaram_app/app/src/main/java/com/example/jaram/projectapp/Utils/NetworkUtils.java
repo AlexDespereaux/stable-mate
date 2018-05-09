@@ -1,10 +1,10 @@
-package com.example.jaram.projectapp;
+package com.example.jaram.projectapp.Utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-class NetworkUtils
+public class NetworkUtils
 {
     private static int TYPE_WIFI = 1;
     private static int TYPE_MOBILE = 2;

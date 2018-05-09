@@ -17,6 +17,7 @@
         android:text="@string/create_account"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +41,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/your_name"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/pWordField"
@@ -48,7 +51,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/emailField"
@@ -56,15 +60,18 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/email_address"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/bDayField"
+
+        <Switch
+            android:id="@+id/saveLoginSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/birthday"
-            android:inputType="date" />
+            android:paddingLeft="5dp"
+            android:text="Save Login Details"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/signUpBtn"
@@ -72,6 +79,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/sign_up"
+            android:drawableTop="@drawable/ic_create_white_48dp"
             android:textSize="18sp" />
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
