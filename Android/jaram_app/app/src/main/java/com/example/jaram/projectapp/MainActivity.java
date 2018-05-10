@@ -24,6 +24,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String name;
     private String pWord;
+    private boolean validInput = false;
+    private String prefName;
+    private String prefPWord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,19 +53,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId())
         {
             case R.id.loginBtn:
-                //get data from login fields
-                name = nameField.getText().toString().trim();
-                pWord = pWordField.getText().toString().trim();
-
+                //set variables & validate input
+                validInput = getUserInput();
                 //check internet status
                 if (NetworkUtils.isNetworkConnected(this))
                 {
-                    login();
+                    login(validInput);
                 } else
                 {
-                    Toast.makeText(this, "No internet, saving files locally", Toast.LENGTH_SHORT).show();
                     //allow use of app and saving files to database until user logs in again
-                    localLogin(v);
+                    localLogin(v, validInput);
                 }
                 break;
             case R.id.goToSignUpBtn:
@@ -73,30 +73,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void login()
+    private void login(boolean validInput)
     {
-        //TODO: login to server
-        if (true)
+        if(validInput)
         {
-            //go to home menu
-            Intent intent = new Intent(this, Home.class);
-            startActivity(intent);
-        } else
-        {
-            Toast.makeText(this, "Login Failed please try again", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private void localLogin(View view)
-    {
-        //get stored variables
-        String prefName = getPrefName(view);
-        String prefPWord = getPrefPword(view);
-
-        if ((prefName != null) && (prefPWord != null))
-        {
-            if ((name.equals(prefName)) && (pWord.equals(prefPWord)))
+            //TODO: login to server
+            if (true)
             {
                 //go to home menu
                 Intent intent = new Intent(this, Home.class);
@@ -106,18 +88,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "Login Failed please try again", Toast.LENGTH_SHORT).show();
             }
         }
+        else
+        {
+            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
-    //TODO implement login security
-    private String getPrefName(View v)
+    private void localLogin(View v, boolean validInput)
     {
-        SharedPreferences jaramSharedP = getPreferences(MODE_PRIVATE);
-        return jaramSharedP.getString("userNameLogin", name);
+        //get stored variables
+        getInputPrefs(v);
+        if(validInput)
+        {
+            if ((prefName != null) && (prefPWord != null))
+            {
+                if ((name.equals(prefName)) && (pWord.equals(prefPWord)))
+                {
+                    Toast.makeText(this, "No internet, saving files locally", Toast.LENGTH_SHORT).show();
+                    //go to home menu
+                    Intent intent = new Intent(this, Home.class);
+                    startActivity(intent);
+                } else
+                {
+                    Toast.makeText(this, "Login Failed please try again", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        else
+        {
+            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private String getPrefPword(View v)
+
+    private void getInputPrefs(View v)
     {
-        SharedPreferences jaramSharedP = getPreferences(MODE_PRIVATE);
-        return jaramSharedP.getString("userNameLogin", name);
+        SharedPreferences jaramSharedP = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        prefName = jaramSharedP.getString("userNameLogin", null);
+        prefPWord = jaramSharedP.getString("userPwordLogin", null);
+    }
+
+    private boolean getUserInput()
+    {
+        boolean validInput = false;
+        //TODO add input validation
+        //get data from login fields
+        if(true)
+        {
+            name = nameField.getText().toString().trim();
+            pWord = pWordField.getText().toString().trim();
+            validInput = true;
+        }
+        return validInput;
     }
 }

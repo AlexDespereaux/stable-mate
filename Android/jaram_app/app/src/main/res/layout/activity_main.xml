@@ -47,12 +47,13 @@
             android:textSize="14sp" />
 
         <EditText
-            android:id="@+id/pwordField"
+            android:id="@+id/pWordField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:fontFamily="sans-serif"
             android:hint="@string/password"
-            android:inputType="textPassword"
+            android:inputType="textPersonName"
             android:textSize="14sp" />
 
         <TableLayout
