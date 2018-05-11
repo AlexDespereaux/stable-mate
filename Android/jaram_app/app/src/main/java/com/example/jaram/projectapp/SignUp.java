@@ -1,5 +1,6 @@
 package com.example.jaram.projectapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -81,12 +82,12 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener
         {
             Toast.makeText(this, "Please complete all fields", Toast.LENGTH_SHORT).show();
         } else
-        {
             //TODO Submit to server set accountCreated to true upon success
+            accountCreated = true;
+        {
             if (accountCreated)
             {
                 Toast.makeText(this, "Account Creation Sucessful", Toast.LENGTH_SHORT).show();
-
                 //check status of switch
                 saveLogin = saveLoginSwitch.isChecked();
 
@@ -109,15 +110,15 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener
 
     private void saveLoginPref(String name, String pWord, String email)
     {
-        //TODO excahnge for secure storage
+        //TODO exchange for secure storage
         //save details to shared preferances
         SharedPreferences jaramSharedP = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor jaramEditor = jaramSharedP.edit();
-        jaramEditor.putString("userNameLogin", name);
-        jaramEditor.putString("userPwordLogin", pWord);
-        jaramEditor.putString("userEmailLogin", email);
-        jaramEditor.apply();
+        SharedPreferences.Editor editor = jaramSharedP.edit();
+        editor.putString("userNameLogin", name);
+        editor.putString("userPwordLogin", pWord);
+        editor.putString("userEmailLogin", email);
+        editor.apply();
 
-        Toast.makeText(this, "Login Saved", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Login Saved" + name + pWord + email, Toast.LENGTH_LONG).show();
     }
 }

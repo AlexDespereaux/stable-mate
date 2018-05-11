@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 public class Calibrate extends AppCompatActivity
 {
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
