@@ -119,6 +119,11 @@
     <string name="eraser">Eraser</string>
     <string name="text">Text</string>
     <string name="pencil">pencil</string>
+    <string name="image">image</string>
+    <string name="image_title">Image Title</string>
+    <string name="subject">Subject</string>
+    <string name="notes">Notes</string>
+    <string name="upload_to_cloud">Upload to Cloud</string>
 
 
 </resources>
