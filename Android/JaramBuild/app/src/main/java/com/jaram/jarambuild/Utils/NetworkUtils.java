@@ -1,10 +1,8 @@
-package com.jaram.jarambuild.NetworkUtils;
+package com.jaram.jarambuild.Utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
-import com.jaram.jarambuild.NetworkUtils.NetworkUtils;
 
 public class NetworkUtils
 {
