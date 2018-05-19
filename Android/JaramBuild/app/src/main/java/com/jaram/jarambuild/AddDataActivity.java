@@ -190,7 +190,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         //TODO make quality settings user controlled in settings
         Bitmap bm = BitmapFactory.decodeFile(imagePath);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 15, baos);
+        bm.compress(Bitmap.CompressFormat.JPEG, 75, baos);
         byte[] byteArrayImage = baos.toByteArray();
         Log.d(LOG_TAG, "Image converted to Base64");
         return Base64.encodeToString(byteArrayImage, Base64.NO_WRAP);
@@ -199,6 +199,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     public void getUTCTime(View view)
     {
         //TODO: make date UTC
+        //long time = getTime();
         utcTime = "123456";
     }
 
