@@ -40,6 +40,4 @@ dependencies {
     def uploadServiceVersion = "3.4.2"
     implementation "net.gotev:uploadservice:$uploadServiceVersion"
     implementation "net.gotev:uploadservice-okhttp:$uploadServiceVersion"
-    implementation files('libs/okhttp-3.10.0.jar')
-    implementation files('libs/okio-1.14.1.jar')
 }
