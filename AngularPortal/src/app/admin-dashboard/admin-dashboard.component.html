@@ -1,3 +1,18 @@
-<p>
-  admin-dashboard works!
-</p>
+<br><br>
+
+<div class="flex-container">
+  <div class="row">
+    <div class="col-auto" *ngFor="let folder of folders ">
+      <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="..." alt="Card image cap">
+        <div class="card-body">
+          <p class="card-text">Some Text</p>
+        </div>
+      </div>
+      <label class="btn btn-primary">{{folder}}</label>
+
+    </div>
+
+  </div>
+</div>
+
