@@ -8,16 +8,24 @@ import { Component, OnInit } from '@angular/core';
 export class AdminDashboardComponent implements OnInit {
 
   folders = [];
+  
+  imagesUrl = [
+    'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(38).jpg',
+    'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(19).jpg',
+    'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(42).jpg',
+    'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(8).jpg',
+  ];
+
   constructor() { }
 
   ngOnInit() {
     this.folders = [
-      '12483975',
-      '49576478',
-      '37402374',
-      '32489324',
-      '03294732',
-      '42384234'
+      '1248375',
+      '4957478',
+      '3742374',
+      '3289324',
+      '0294732',
+      '2384234'
     ]
   }
 
