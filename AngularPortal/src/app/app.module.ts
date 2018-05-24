@@ -11,6 +11,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { RegisterComponent } from './register/register.component';
 import { AdminComponent } from './admin/admin.component';
+import { NewUserComponent } from './new-user/new-user.component';
 
 const appRoutes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
@@ -29,7 +30,8 @@ const appRoutes: Routes = [
     PageNotFoundComponent,
     AdminDashboardComponent,
     RegisterComponent,
-    AdminComponent
+    AdminComponent,
+    NewUserComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
