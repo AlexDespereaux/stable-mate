@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 //image utils
-import com.jaram.jarambuild.Utils.BitmapScaler;
+
 //upload utils
 import net.gotev.uploadservice.BinaryUploadRequest;
 import net.gotev.uploadservice.UploadNotificationConfig;
@@ -45,6 +45,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private JSONObject uploadObj;
     private String utcTime;
     private String pathName;
+    private String jsonPathName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -75,7 +76,11 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId())
         {
             case R.id.saveBtn:
-                uploadToCloud(v);
+                // Binary upload
+                //uploadToCloudBinary(v);
+
+                //JSON upload
+                uploadToCloudJson(v);
                 break;
         }
     }
@@ -90,17 +95,27 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         } else
         {
             //TODO: scale image for display -> https://github.com/codepath/android_guides/wiki/Working-with-the-ImageView
-            Bitmap scaledImg = BitmapScaler.scaleToFitWidth(BitmapFactory.decodeFile(editedImgUri), 400);
-            imageView.setImageBitmap(scaledImg);
+            //Bitmap scaledImg = JBitmapScaler.scaleToFitWidth(BitmapFactory.decodeFile(editedImgUri), 400);
+            //imageView.setImageBitmap(scaledImg);
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bitmap = BitmapFactory.decodeFile(editedImgUri,bmOptions);
+            imageView.setImageBitmap(bitmap);
         }
     }
 
 
-    private void uploadToCloud(View v)
+    private void uploadToCloudBinary(View v)
     {
         getUTCTime(v);
         createJsonObj(getApplicationContext());
         uploadBinary(getApplicationContext());
+    }
+
+    private void uploadToCloudJson(View v)
+    {
+        getUTCTime(v);
+        createJsonObj(getApplicationContext());
+        uploadJson(getApplicationContext());
     }
 
     private void createJsonObj(Context context)
@@ -136,6 +151,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         if (uploadObj != null)
         {
             Log.d(LOG_TAG, "Created JSON Object");
+            writeJsonToBinaryFile(context, uploadObj);
             writeJsonToFile(context, uploadObj);
         } else
         {
@@ -143,7 +159,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void writeJsonToFile(Context context, JSONObject uploadObj)
+    private void writeJsonToBinaryFile(Context context, JSONObject uploadObj)
     {
         //write binary file
         try
@@ -163,6 +179,32 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             fos.close();
             Log.d(LOG_TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
             pathName = newFile.getAbsolutePath();
+        } catch (Exception e)
+        {
+            Log.d(LOG_TAG, "Unable to save file", e);
+        }
+    }
+
+    private void writeJsonToFile(Context context, JSONObject uploadObj)
+    {
+        //write binary file
+        try
+        {
+            //note I have had to include a replace backslash as during conversion to JSON escape characters \ are added in every instance there is a /
+            //in the base64 image string(ugh) corrupting the image. Apparently this can be also avoided by putting the base64 in a JSON array inside the object. I'll try that next!
+            //OR we can use multipart upload and I will only replace in the base64 files which don't have a \ in the alphabet choices choices
+            String objString = uploadObj.toString().replace("\\", "");
+
+            File path = context.getFilesDir();
+            //File newFile = new File(path + utcTime + ".dat");  //final code
+            File newFile = new File(path + "testfile" + ".json");  //for testing only
+            FileOutputStream fos = new FileOutputStream(newFile);
+            fos.write(objString.getBytes());
+            //fos.write(uploadObj.toString().getBytes());  //to use if base64 image no ling requires replace
+            fos.flush();
+            fos.close();
+            Log.d(LOG_TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
+            jsonPathName = newFile.getAbsolutePath();
         } catch (Exception e)
         {
             Log.d(LOG_TAG, "Unable to save file", e);
@@ -211,6 +253,27 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
                     new BinaryUploadRequest(context, "http://192.168.1.108:3000/upload/binary")
                             .setFileToUpload(pathName)
                             .addHeader("file-name", new File(pathName).getName())
+                            .setNotificationConfig(new UploadNotificationConfig())
+                            .setMaxRetries(2)
+                            .startUpload();
+            Log.d(LOG_TAG, "Binary File uploaded");
+        } catch (Exception exc)
+        {
+            Log.e("AndroidUploadService", exc.getMessage(), exc);
+        }
+
+        //TODO: check sucessful upload & delete system image files & Obj upon confirm
+        //TODO: save binary files to database and load from database in loop IF wifi access available. Otherwise wait for broadcast RX msg
+    }
+
+    public void uploadJson(final Context context)
+    {
+        try
+        {
+            String uploadId =
+                    new BinaryUploadRequest(context, "http://192.168.1.108:3000/upload/binary")
+                            .setFileToUpload(pathName)
+                            .addHeader("file-name", new File(jsonPathName).getName())
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .startUpload();

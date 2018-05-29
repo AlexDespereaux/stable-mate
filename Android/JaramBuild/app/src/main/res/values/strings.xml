@@ -48,6 +48,7 @@
     <string name="subject">Subject</string>
     <string name="notes">Notes</string>
     <string name="upload_to_cloud">Upload to Cloud</string>
+    <string name="symbol">Symbol</string>
 
 
 </resources>
