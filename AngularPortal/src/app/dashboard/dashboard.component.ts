@@ -11,6 +11,9 @@ export class DashboardComponent implements OnInit {
   }
 
   imagesUrl = [];
+  studentId: number;
+  classes: number[];
+
   ngOnInit() {
     this.imagesUrl = [
       'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(38).jpg',
@@ -18,6 +21,8 @@ export class DashboardComponent implements OnInit {
       'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(42).jpg',
       'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(8).jpg',
     ];
+    this.studentId = 74930243;
+    this.classes = [1,2,3,4];
   }
 
 }

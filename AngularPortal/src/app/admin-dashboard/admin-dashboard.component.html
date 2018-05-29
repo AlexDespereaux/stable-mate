@@ -4,12 +4,12 @@
   <div class="row">
     <div class="col-auto" *ngFor="let folder of folders ">
       <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="..." alt="Card image cap">
+        <img class="card-img-top" src="{{folder.image}}" alt="Card image cap">
         <div class="card-body">
-          <p class="card-text">Some Text</p>
+          <p class="card-text">what student Info ??</p>
         </div>
       </div>
-      <label class="btn btn-primary">{{folder}}</label>
+      <label class="btn btn-primary">Student Id: {{folder.id}}</label>
 
     </div>
 
