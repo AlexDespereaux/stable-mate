@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/jaramGray"
@@ -13,7 +14,7 @@
         android:layout_height="@dimen/editor_size"
         android:layout_margin="4dp"
         android:layout_marginBottom="8dp"
-        android:src="@drawable/ic_brush"
+        app:srcCompat="@drawable/ic_brush"
         app:layout_constraintEnd_toStartOf="@+id/imgText"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
@@ -57,7 +58,7 @@
         android:layout_height="@dimen/editor_size"
         android:layout_margin="4dp"
         android:layout_marginTop="8dp"
-        android:src="@drawable/ic_text"
+        app:srcCompat="@drawable/ic_text"
         app:layout_constraintEnd_toStartOf="@+id/btnEraser"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imgPencil"
@@ -71,7 +72,7 @@
         android:layout_margin="4dp"
         android:layout_marginTop="8dp"
         android:padding="4dp"
-        android:src="@drawable/ic_eraser"
+        app:srcCompat="@drawable/ic_eraser"
         app:layout_constraintEnd_toStartOf="@+id/imgSticker"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imgText"
@@ -82,44 +83,21 @@
         android:layout_width="@dimen/editor_size"
         android:layout_height="@dimen/editor_size"
         android:layout_margin="4dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/ic_sticker"
-        app:layout_constraintEnd_toStartOf="@+id/imgEmoji"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnEraser"
-        android:contentDescription="@string/sticker" />
-
-    <ImageView
-        android:id="@+id/imgEmoji"
-        android:layout_width="@dimen/editor_size"
-        android:layout_height="@dimen/editor_size"
-        android:layout_margin="4dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/ic_insert_emoticon"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/sticker"
+        app:srcCompat="@drawable/ic_sticker"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imgSticker"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
-        android:contentDescription="@string/emoji" />
+        app:layout_constraintStart_toEndOf="@+id/btnEraser"
+        tools:layout_editor_absoluteY="0dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="@string/sticker"
+        android:text="@string/symbol"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="@+id/imgSticker"
         app:layout_constraintStart_toStartOf="@+id/imgSticker"
         app:layout_constraintTop_toBottomOf="@+id/imgSticker" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="@string/emoji"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="@+id/imgEmoji"
-        app:layout_constraintStart_toStartOf="@+id/imgEmoji"
-        app:layout_constraintTop_toBottomOf="@+id/imgEmoji" />
 
 </android.support.constraint.ConstraintLayout>

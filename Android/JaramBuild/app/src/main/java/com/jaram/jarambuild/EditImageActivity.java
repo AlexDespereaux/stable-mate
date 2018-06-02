@@ -131,9 +131,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mPhotoEditorView = findViewById(R.id.photoEditorView);
         mTxtCurrentTool = findViewById(R.id.txtCurrentTool);
 
-        imgEmo = findViewById(R.id.imgEmoji);
-        imgEmo.setOnClickListener(this);
-
         imgSticker = findViewById(R.id.imgSticker);
         imgSticker.setOnClickListener(this);
 
@@ -243,10 +240,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
             case R.id.imgSticker:
                 mStickerBSFragment.show(getSupportFragmentManager(), mStickerBSFragment.getTag());
-                break;
-
-            case R.id.imgEmoji:
-                mEmojiBSFragment.show(getSupportFragmentManager(), mEmojiBSFragment.getTag());
                 break;
 
             case R.id.imgCamera:
