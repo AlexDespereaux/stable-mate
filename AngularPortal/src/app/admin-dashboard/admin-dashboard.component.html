@@ -1,18 +1,18 @@
-<br><br>
+<br>
+<br>
 
 <div class="flex-container">
   <div class="row">
-    <div class="col-auto" *ngFor="let folder of folders">
+    <div class="col-auto" *ngFor="let folder of folders ">
       <div class="card" style="width: 18rem;">
         <img class="card-img-top" src="{{folder.image}}" alt="Card image cap">
         <div class="card-body">
-          <p class="card-text">what student Info ??</p>
-          <div class="card-body">
-            <p class="card-text"><label>Student Email:</label>{{folder.id}}@students.latrobe.edu.au</p>
-          </div>
-        </div>
-        <label class="btn btn-primary">Student Id: {{folder.id}}</label>
+          <p class="card-text">
+          </p>
+        </div>        
       </div>
+      <label class="btn btn-primary" (click)="redirect()">Student id: {{folder.id}}</label>
+      
     </div>
   </div>
 </div>

@@ -1,0 +1,12 @@
+<br>
+<br>
+<label class="btn btn-dark">class: {{class}}</label>
+<div class="flex-container">
+  <div class="row">
+    <div *ngFor="let image of images; let i = index" class="card" style="width: 18rem;">
+      <img class="card-img-top" src="{{image}}" alt="Card image cap">
+      <!-- <div class="card-body"></div> -->
+      <label class="btn btn-primary">Image {{i+1}}</label>
+    </div>
+  </div>
+</div>

@@ -1,18 +1,16 @@
-<br><br>
+<br>
+<br>
 
 <div class="flex-container">
   <div class="row">
-    <div class="col-auto" *ngFor="let image of imagesUrl; let i = index ">
-      <div class="card" style="width: 18rem;">
+    <div class="col-auto" *ngFor="let student of students; let j = index">
+      <div *ngFor="let image of student.images; let i = index" class="card" style="width: 18rem;">
         <img class="card-img-top" src="{{image}}" alt="Card image cap">
         <div class="card-body">
-          <p class="card-text">Class {{i + 1}} </p>
+          <p class="card-text"> {{student.class}}  {{i+1}}</p>
         </div>
+        <label class="btn btn-primary" (click)="redirect(j,i)">Student id: {{student.id}}</label>        
       </div>
-      <label class="btn btn-primary">Student Id: {{studentId}}</label>
-
-
+    </div>
   </div>
-</div>
-
 </div>

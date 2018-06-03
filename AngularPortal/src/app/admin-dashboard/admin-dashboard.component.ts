@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -8,45 +9,30 @@ import { Component, OnInit } from '@angular/core';
 export class AdminDashboardComponent implements OnInit {
 
   folders = [];
-
-  imagesUrl = [
-    'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(38).jpg',
-    'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(19).jpg',
-    'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(42).jpg',
-    'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(8).jpg',
-  ];
-
-  constructor() { }
+  imagesUrl = [ ];
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.folders = [
-
-      {
-        id: '12483975',
-        image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(38).jpg'
-      },
-      {
-        id: '49576478',
-        image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(19).jpg'
-      },
-      {
-        id: '37402374',
-        image:       'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(42).jpg'
-      },
-      {
-        id: '32489324',
-        image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(42).jpg'
-      },
-      {
-        id: '03294732',
-        image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(8).jpg',
-      },
-      {
-        id: '42384234',
-        image:       'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(38).jpg'
-      }
-
-    ]
+    {
+      id: '12483975',
+      image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(38).jpg'
+    },
+    {
+      id: '45142115',
+      image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(19).jpg'
+    },
+    {
+      id: '51487669',
+      image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(42).jpg',
+    },
+    {
+      id: '15436789',
+      image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(8).jpg'
+    }];
   }
 
+  redirect() {
+    this.router.navigate(['./dashboard']);
+  }
 }

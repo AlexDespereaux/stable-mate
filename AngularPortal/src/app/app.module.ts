@@ -11,10 +11,11 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { RegisterComponent } from './register/register.component';
 import { AdminComponent } from './admin/admin.component';
-import { NewUserComponent } from './new-user/new-user.component';
+import { DisplayClassComponent } from './display-class/display-class.component';
 
 const appRoutes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'displayClass', component: DisplayClassComponent},
   { path: 'admin-dashboard', component: AdminDashboardComponent},
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginPageComponent },
@@ -31,7 +32,7 @@ const appRoutes: Routes = [
     AdminDashboardComponent,
     RegisterComponent,
     AdminComponent,
-    NewUserComponent
+    DisplayClassComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
