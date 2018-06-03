@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ImageService} from "../image.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -11,11 +12,13 @@ export class DashboardComponent implements OnInit {
   classes: number[];
 
 
-  constructor() {
+  constructor(private  imageService: ImageService) {
   }
 
 
   ngOnInit() {
+
+    this.imageService.getImages();
     this.imagesUrl = [
       'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(38).jpg',
       'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(19).jpg',

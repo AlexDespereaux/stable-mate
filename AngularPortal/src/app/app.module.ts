@@ -12,6 +12,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { RegisterComponent } from './register/register.component';
 import { AdminComponent } from './admin/admin.component';
 import { NewUserComponent } from './new-user/new-user.component';
+import {ImageService} from "./image.service";
 
 const appRoutes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
@@ -37,7 +38,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     BrowserModule
   ],
-  providers: [],
+  providers: [ImageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
