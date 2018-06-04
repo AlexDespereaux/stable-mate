@@ -2,3 +2,10 @@
 dist/
 node_modules/
 nodejs-v1/
+*.iml
+.gradle/
+local.properties
+.DS_Store
+/build
+/captures
+.externalNativeBuild
