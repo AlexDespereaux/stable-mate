@@ -1,18 +1,18 @@
-<br><br>
+<br>
+<br>
 
 <div class="flex-container">
   <div class="row">
     <div class="col-auto" *ngFor="let folder of folders ">
       <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="..." alt="Card image cap">
+        <img class="card-img-top" src="{{folder.image}}" alt="Card image cap">
         <div class="card-body">
-          <p class="card-text">Some Text</p>
-        </div>
+          <p class="card-text">
+          </p>
+        </div>        
       </div>
-      <label class="btn btn-primary">{{folder}}</label>
-
+      <label class="btn btn-primary" (click)="redirect()">Student id: {{folder.id}}</label>
+      
     </div>
-
   </div>
 </div>
-
