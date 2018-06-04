@@ -16,19 +16,19 @@ export class AdminDashboardComponent implements OnInit {
     this.folders = [
     {
       id: '12483975',
-      image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(38).jpg'
+      image: '../../assets/images/img1.JPG'
     },
     {
       id: '45142115',
-      image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(19).jpg'
+      image: '../../assets/images/img2.JPG'
     },
     {
       id: '51487669',
-      image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(42).jpg',
+      image: '../../assets/images/img3.JPG',
     },
     {
       id: '15436789',
-      image: 'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(8).jpg'
+      image: '../../assets/images/img4.JPG'
     }];
   }
 

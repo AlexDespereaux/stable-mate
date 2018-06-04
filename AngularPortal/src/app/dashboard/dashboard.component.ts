@@ -17,10 +17,10 @@ export class DashboardComponent implements OnInit {
       id: '12458764',
       class: 'class',
       images: [
-        'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(38).jpg',
-        'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(19).jpg',
-        'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(42).jpg',
-        'https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(8).jpg'
+        '../../assets/images/img1.JPG',
+        '../../assets/images/img2.JPG',
+        '../../assets/images/img3.JPG',
+        '../../assets/images/img4.JPG'
       ]
     }];
     console.log(this.students[0].class);

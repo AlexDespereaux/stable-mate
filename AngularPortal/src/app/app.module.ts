@@ -12,7 +12,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { RegisterComponent } from './register/register.component';
 import { AdminComponent } from './admin/admin.component';
 import { DisplayClassComponent } from './display-class/display-class.component';
-
+import { StarRatingModule } from 'angular-star-rating';
 const appRoutes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'displayClass', component: DisplayClassComponent},
@@ -36,7 +36,8 @@ const appRoutes: Routes = [
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
-    BrowserModule
+    BrowserModule,
+    StarRatingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
