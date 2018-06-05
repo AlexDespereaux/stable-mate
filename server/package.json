@@ -1,6 +1,6 @@
 {
   "name": "stablemate_plus_api",
-  "version": "1.0.0",
+  "version": "1.0.9",
   "description": "StableMate Plus API",
   "author": "Richard Morton <18967393@students.latrobe.edu.au>",
   "main": "server.js",
