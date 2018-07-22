@@ -109,24 +109,4 @@ public class FileUtils
         int megaByte = (int) (kiloByte / 1024d);
         return megaByte + "MB";
     }
-
-    public static File createImageFile() throws IOException {
-        // Create an image file name
-        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "SMate_" + timeStamp + "_";
-        File storageDir = FileUtils.createFolders();
-        if (storageDir != null)
-        {
-            File image = File.createTempFile(
-                    imageFileName,  /* prefix */
-                    ".bmp",         /* suffix */
-                    storageDir      /* directory */
-            );
-
-            // Save a file: path for use with ACTION_VIEW intents
-            String mCurrentPhotoPath = image.getAbsolutePath();
-            return image;
-        }
-        return null;
-    }
 }

@@ -1,5 +1,6 @@
 package com.jaram.jarambuild;
 
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import android.Manifest;
@@ -23,8 +24,11 @@ import com.jaram.jarambuild.imageUtils.StickerBSFragment;
 import com.jaram.jarambuild.imageUtils.TextEditorDialogFragment;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
@@ -41,15 +45,19 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         StickerBSFragment.StickerListener
 {
 
-    private static final String TAG = EditImageActivity.class.getSimpleName();
+
     public static final String EXTRA_IMAGE_PATHS = "extra_image_paths";
+    // request codes
     private static final int CAMERA_REQUEST = 52;
     private static final int PICK_REQUEST = 53;
+    //photo editor variables
     private PhotoEditor mPhotoEditor;
     private PhotoEditorView mPhotoEditorView;
     private PropertiesBSFragment mPropertiesBSFragment;
     private StickerBSFragment mStickerBSFragment;
     private TextView mTxtCurrentTool;
+    //log
+    private static final String TAG = "EditActivity";
 
     public static void launch(Context context, ArrayList<String> imagesPath)
     {
@@ -84,10 +92,16 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         mPhotoEditor.setOnPhotoEditorListener(this);
 
-        //Get bitmap from camera
-        Bitmap photo = (Bitmap) getIntent().getExtras().get("takenPhoto");
-        mPhotoEditorView.getSource().setImageBitmap(photo);
+        //Get bitmap uri from intent
+        String imageFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("rawPhotoPath");
+        Log.d(TAG, "imageFilePath: " + imageFilePath);
+        Uri uri = Uri.parse(imageFilePath);
+        Log.d(TAG, "imageFilePath uri: " + uri);
+        //set bitmap to editor view
+
+        mPhotoEditorView.getSource().setImageBitmap(BitmapFactory.decodeFile(imageFilePath));
         //TODO: Add raw photo to database!
+
     }
 
     private void initViews()
