@@ -1,0 +1,19 @@
+{
+  "imageList":[
+    {
+      "id": 1,
+      "classId": 1,
+      "url": "needed to include"
+    },
+    {
+      "id": 2,
+      "classId": 2,
+      "url": "needed to include"
+    },
+    {
+      "id": 3,
+      "classId": 3,
+      "url": "needed to include"
+    }
+  ]
+}
