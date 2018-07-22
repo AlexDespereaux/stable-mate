@@ -1,4 +1,4 @@
-package com.jaram.jarambuild;
+package com.jaram.jarambuild.imageUtils;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +10,8 @@ import android.widget.SeekBar;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import com.jaram.jarambuild.R;
 
 ////Original Code Source by Burhanuddin Rashid on 1/17/2018 as part of the https://github.com/burhanrashid52/PhotoEditor
 ////Used under the http://www.apache.org/licenses/LICENSE-2.0

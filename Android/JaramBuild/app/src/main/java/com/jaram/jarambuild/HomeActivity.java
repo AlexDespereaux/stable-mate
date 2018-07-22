@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.jaram.jarambuild.utils.FileUtils;
+
+import java.io.File;
 import java.io.IOException;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener
@@ -48,23 +52,30 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId())
         {
             case R.id.cameraBtn:
+                //Open Camera
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                if (cameraIntent.resolveActivity(getPackageManager()) != null)
+                {
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                }
                 break;
-            case R.id.goToSignUpBtn:
-                //Go to calibrate activity TODO: create calibrate activity
-                //Intent intentSign = new Intent(this, Calibrate.class);
-                //startActivity(intentSign);
+            case R.id.calibrateBtn:
+                //Open Camera
+                Intent cameraCalibrateIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                if (cameraCalibrateIntent.resolveActivity(getPackageManager()) != null)
+                {
+                    startActivityForResult(cameraCalibrateIntent, CAMERA_REQUEST);
+                }
                 break;
             case R.id.galleryBtn:
-                //Go to gallery activity TODO: create gallery activity
-                //Intent intent = new Intent(this, Gallery.class);
-                //startActivity(intent);
+                //Go to gallery activity
+                Intent galleryIntent = new Intent(this, GalleryActivity.class);
+                startActivity(galleryIntent);
                 break;
             case R.id.settingsBtn:
-                //Go to settings activity TODO: create settings activity
-                //Intent intent = new Intent(this, Settings.class);
-                //startActivity(intent);
+                //Go to settings activity
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 break;
         }
     }
@@ -77,6 +88,29 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             switch (requestCode)
             {
                 case CAMERA_REQUEST:
+/*
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    // Ensure that there's a camera activity to handle the intent
+                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                        // Create the File where the photo should go
+                        File photoFile = null;
+                        try {
+                            photoFile = FileUtils.createImageFile();
+                        } catch (IOException ex) {
+                            // Error occurred while creating the File
+                        }
+                        // Continue only if the File was successfully created
+                        if (photoFile != null) {
+                            Uri photoURI = FileProvider.getUriForFile(this,
+                                    "com.example.android.fileprovider",
+                                    photoFile);
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                            //startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                        }
+                    }
+                }
+
+*/
                     Bitmap photo = (Bitmap) data.getExtras().get("data");
                     Intent intent = new Intent(HomeActivity.this, EditImageActivity.class);
                     intent.putExtra("takenPhoto", photo);

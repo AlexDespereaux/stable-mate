@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.jaram.jarambuild.Utils.NetworkUtils;
+import com.jaram.jarambuild.utils.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
