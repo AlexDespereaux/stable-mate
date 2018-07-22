@@ -1,5 +1,6 @@
 package com.jaram.jarambuild;
 
+import android.app.ActionBar;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
@@ -95,13 +96,16 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         //Get bitmap uri from intent
         String imageFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("rawPhotoPath");
         Log.d(TAG, "imageFilePath: " + imageFilePath);
-        Uri uri = Uri.parse(imageFilePath);
-        Log.d(TAG, "imageFilePath uri: " + uri);
         //set bitmap to editor view
-
         mPhotoEditorView.getSource().setImageBitmap(BitmapFactory.decodeFile(imageFilePath));
         //TODO: Add raw photo to database!
-
+        //hide action bar
+        android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
+        if (myActionBar != null)
+        {
+            myActionBar.hide();
+            Log.d(TAG, "ActionBar Hidden");
+        }
     }
 
     private void initViews()
