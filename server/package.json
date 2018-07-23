@@ -10,7 +10,8 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "aws-sdk": "^2.279.1"
   },
   "repository": {
     "type": "git",
