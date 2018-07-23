@@ -4,10 +4,16 @@
   "description": "StableMate Plus API",
   "author": "Richard Morton <18967393@students.latrobe.edu.au>",
   "main": "server.js",
+  "licence": "UNLICENCED",
+  "private": true,
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.16.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:teamjaram/stablemate-plus.git"
   }
 }
