@@ -1,35 +1,52 @@
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
+const AWS = require('aws-sdk');
 const router = express.Router();
 
-var UPLOAD_PATH = "./uploads/";
-
-function printRequestHeaders(req) {
+let printRequestHeaders = function(req) {
     console.log("\nReceived headers");
     console.log("----------------");
 
-    for (var key in req.headers) {
+    for (let key in req.headers) {
         console.log(key + ": " + req.headers[key]);
     }
 
     console.log("");
-}
+};
 
-var binaryUploadHandler = function(req, res) {
+let binaryUploadHandler = function(req, res) {
     console.log("\n\nBinary Upload Request from: " + req.ip);
     printRequestHeaders(req);
 
-    var filename = req.headers["file-name"];
+  let s3 = new AWS.S3({apiVersion: '2006-03-01'});
+    let filename = req.headers["file-name"];
     console.log("Started binary upload of: " + filename);
-    var filepath = path.resolve(UPLOAD_PATH, filename);
-    // var out = fs.createWriteStream(filepath, { flags: 'w', encoding: 'binary', fd: null, mode: '644' });
-    console.log(req.body.toString())
+    req.pipe(uploadFromStream(s3));
     req.on('end', function() {
-        console.log("Finished binary upload of: " + filename + "\n  in: " + filepath);
         res.sendStatus(200);
     });
 };
+
+function uploadFromStream(s3) {
+  let pass = new stream.PassThrough();
+
+  let params = {
+    Body: pass,
+    Bucket: "annomate",
+    Key: "exampleobject",
+    Metadata: {
+      "metadata1": "value1",
+      "metadata2": "value2"
+    }
+  };
+  s3.putObject(params, function(err, data) {
+    if (err)
+      console.log(err, err.stack); // an error occurred
+    else
+      console.log(data);
+  });
+
+  return pass;
+}
 
 router.get('/', function(req, res){
   res.send('hello world');
