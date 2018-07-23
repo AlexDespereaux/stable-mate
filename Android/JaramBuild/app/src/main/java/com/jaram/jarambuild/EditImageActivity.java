@@ -1,6 +1,7 @@
 package com.jaram.jarambuild;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.ActionBar;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import android.Manifest;
@@ -9,22 +10,26 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jaram.jarambuild.imageUtils.PropertiesBSFragment;
+import com.jaram.jarambuild.imageUtils.StickerBSFragment;
+import com.jaram.jarambuild.imageUtils.TextEditorDialogFragment;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
@@ -38,84 +43,73 @@ import ja.burhanrashid52.photoeditor.ViewType;
 public class EditImageActivity extends BaseActivity implements OnPhotoEditorListener,
         View.OnClickListener,
         PropertiesBSFragment.Properties,
-        EmojiBSFragment.EmojiListener,
-        StickerBSFragment.StickerListener {
+        StickerBSFragment.StickerListener
+{
 
-    private static final String TAG = EditImageActivity.class.getSimpleName();
+
     public static final String EXTRA_IMAGE_PATHS = "extra_image_paths";
+    // request codes
     private static final int CAMERA_REQUEST = 52;
     private static final int PICK_REQUEST = 53;
+    //photo editor variables
     private PhotoEditor mPhotoEditor;
     private PhotoEditorView mPhotoEditorView;
     private PropertiesBSFragment mPropertiesBSFragment;
-    private EmojiBSFragment mEmojiBSFragment;
     private StickerBSFragment mStickerBSFragment;
     private TextView mTxtCurrentTool;
-    //private Typeface mWonderFont;
+    //log
+    private static final String TAG = "EditActivity";
 
-
-    /**
-     * launch editor with multiple image
-     *
-     * @param context
-     * @param imagesPath
-     */
-    public static void launch(Context context, ArrayList<String> imagesPath) {
+    public static void launch(Context context, ArrayList<String> imagesPath)
+    {
         Intent starter = new Intent(context, EditImageActivity.class);
         starter.putExtra(EXTRA_IMAGE_PATHS, imagesPath);
         context.startActivity(starter);
     }
 
-    /**
-     * launch editor with single image
-     *
-     * @param context
-     * @param imagePath
-     */
-    public static void launch(Context context, String imagePath) {
+    public static void launch(Context context, String imagePath)
+    {
         ArrayList<String> imagePaths = new ArrayList<>();
         imagePaths.add(imagePath);
         launch(context, imagePaths);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         makeFullScreen();
         setContentView(R.layout.activity_edit_image);
-
         initViews();
 
-        //mWonderFont = Typeface.createFromAsset(getAssets(), "beyond_wonderland.ttf");
-
         mPropertiesBSFragment = new PropertiesBSFragment();
-        mEmojiBSFragment = new EmojiBSFragment();
         mStickerBSFragment = new StickerBSFragment();
         mStickerBSFragment.setStickerListener(this);
-        mEmojiBSFragment.setEmojiListener(this);
         mPropertiesBSFragment.setPropertiesChangeListener(this);
-
-        //Typeface mTextRobotoTf = ResourcesCompat.getFont(this, R.font.roboto_medium);
-        //Typeface mEmojiTypeFace = Typeface.createFromAsset(getAssets(), "emojione-android.ttf");
 
         mPhotoEditor = new PhotoEditor.Builder(this, mPhotoEditorView)
                 .setPinchTextScalable(true) // set flag to make text scalable when pinch
-                //.setDefaultTextTypeface(mTextRobotoTf)
-                //.setDefaultEmojiTypeface(mEmojiTypeFace)
                 .build(); // build photo editor sdk
 
         mPhotoEditor.setOnPhotoEditorListener(this);
 
-        //Set Image Dynamically Option
-        //mPhotoEditorView.getSource().setImageResource(R.drawable.got);
-
-        //Get bitmap from camera
-        Bitmap photo = (Bitmap) getIntent().getExtras().get("takenPhoto");
-        mPhotoEditorView.getSource().setImageBitmap(photo);
+        //Get bitmap uri from intent
+        String imageFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("rawPhotoPath");
+        Log.d(TAG, "imageFilePath: " + imageFilePath);
+        //set bitmap to editor view
+        mPhotoEditorView.getSource().setImageBitmap(BitmapFactory.decodeFile(imageFilePath));
         //TODO: Add raw photo to database!
+        //hide action bar
+        android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
+        if (myActionBar != null)
+        {
+            myActionBar.hide();
+            Log.d(TAG, "ActionBar Hidden");
+        }
     }
 
-    private void initViews() {
+    private void initViews()
+    {
         ImageView imgPencil;
         ImageView imgEraser;
         ImageView imgUndo;
@@ -124,7 +118,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         ImageView imgCamera;
         ImageView imgGallery;
         ImageView imgSticker;
-        ImageView imgEmo;
         ImageView imgSave;
         ImageView imgClose;
 
@@ -163,12 +156,15 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     }
 
     @Override
-    public void onEditTextChangeListener(final View rootView, String text, int colorCode) {
+    public void onEditTextChangeListener(final View rootView, String text, int colorCode)
+    {
         TextEditorDialogFragment textEditorDialogFragment =
                 TextEditorDialogFragment.show(this, text, colorCode);
-        textEditorDialogFragment.setOnTextEditorListener(new TextEditorDialogFragment.TextEditor() {
+        textEditorDialogFragment.setOnTextEditorListener(new TextEditorDialogFragment.TextEditor()
+        {
             @Override
-            public void onDone(String inputText, int colorCode) {
+            public void onDone(String inputText, int colorCode)
+            {
                 mPhotoEditor.editText(rootView, inputText, colorCode);
                 mTxtCurrentTool.setText(R.string.label_text);
             }
@@ -176,28 +172,34 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     }
 
     @Override
-    public void onAddViewListener(ViewType viewType, int numberOfAddedViews) {
+    public void onAddViewListener(ViewType viewType, int numberOfAddedViews)
+    {
         Log.d(TAG, "onAddViewListener() called with: viewType = [" + viewType + "], numberOfAddedViews = [" + numberOfAddedViews + "]");
     }
 
     @Override
-    public void onRemoveViewListener(int numberOfAddedViews) {
+    public void onRemoveViewListener(int numberOfAddedViews)
+    {
         Log.d(TAG, "onRemoveViewListener() called with: numberOfAddedViews = [" + numberOfAddedViews + "]");
     }
 
     @Override
-    public void onStartViewChangeListener(ViewType viewType) {
+    public void onStartViewChangeListener(ViewType viewType)
+    {
         Log.d(TAG, "onStartViewChangeListener() called with: viewType = [" + viewType + "]");
     }
 
     @Override
-    public void onStopViewChangeListener(ViewType viewType) {
+    public void onStopViewChangeListener(ViewType viewType)
+    {
         Log.d(TAG, "onStopViewChangeListener() called with: viewType = [" + viewType + "]");
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
             case R.id.imgPencil:
                 mPhotoEditor.setBrushDrawingMode(true);
                 mTxtCurrentTool.setText(R.string.label_brush);
@@ -209,9 +211,11 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                 break;
             case R.id.imgText:
                 TextEditorDialogFragment textEditorDialogFragment = TextEditorDialogFragment.show(this);
-                textEditorDialogFragment.setOnTextEditorListener(new TextEditorDialogFragment.TextEditor() {
+                textEditorDialogFragment.setOnTextEditorListener(new TextEditorDialogFragment.TextEditor()
+                {
                     @Override
-                    public void onDone(String inputText, int colorCode) {
+                    public void onDone(String inputText, int colorCode)
+                    {
                         mPhotoEditor.addText(inputText, colorCode);
                         mTxtCurrentTool.setText(R.string.label_text);
                     }
@@ -231,9 +235,11 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                 break;
 
             case R.id.imgClose:
-                if (!mPhotoEditor.isCacheEmpty()) {
+                if (!mPhotoEditor.isCacheEmpty())
+                {
                     showSaveDialog();
-                } else {
+                } else
+                {
                     finish();
                 }
                 break;
@@ -257,17 +263,22 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     }
 
     @SuppressLint("MissingPermission")
-    private void saveImage() {
-        if (requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+    private void saveImage()
+    {
+        if (requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+        {
             showLoading("Saving...");
             File file = new File(Environment.getExternalStorageDirectory()
                     + File.separator + ""
                     + System.currentTimeMillis() + ".png");
-            try {
+            try
+            {
                 file.createNewFile();
-                mPhotoEditor.saveImage(file.getAbsolutePath(), new PhotoEditor.OnSaveListener() {
+                mPhotoEditor.saveImage(file.getAbsolutePath(), new PhotoEditor.OnSaveListener()
+                {
                     @Override
-                    public void onSuccess(@NonNull String imagePath) {
+                    public void onSuccess(@NonNull String imagePath)
+                    {
                         hideLoading();
                         showSnackbar("Image Saved Successfully");
                         // working mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
@@ -281,33 +292,40 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                     }
 
                     @Override
-                    public void onFailure(@NonNull Exception exception) {
+                    public void onFailure(@NonNull Exception exception)
+                    {
                         hideLoading();
                         showSnackbar("Failed to save Image");
                     }
                 });
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 e.printStackTrace();
             }
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (resultCode == RESULT_OK)
+        {
+            switch (requestCode)
+            {
                 case CAMERA_REQUEST:
                     mPhotoEditor.clearAllViews();
                     Bitmap photo = (Bitmap) data.getExtras().get("data");
                     mPhotoEditorView.getSource().setImageBitmap(photo);
                     break;
                 case PICK_REQUEST:
-                    try {
+                    try
+                    {
                         mPhotoEditor.clearAllViews();
                         Uri uri = data.getData();
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                         mPhotoEditorView.getSource().setImageBitmap(bitmap);
-                    } catch (IOException e) {
+                    } catch (IOException e)
+                    {
                         e.printStackTrace();
                     }
                     break;
@@ -316,62 +334,68 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     }
 
     @Override
-    public void onColorChanged(int colorCode) {
+    public void onColorChanged(int colorCode)
+    {
         mPhotoEditor.setBrushColor(colorCode);
         mTxtCurrentTool.setText(R.string.label_brush);
     }
 
     @Override
-    public void onOpacityChanged(int opacity) {
+    public void onOpacityChanged(int opacity)
+    {
         mPhotoEditor.setOpacity(opacity);
         mTxtCurrentTool.setText(R.string.label_brush);
     }
 
     @Override
-    public void onBrushSizeChanged(int brushSize) {
+    public void onBrushSizeChanged(int brushSize)
+    {
         mPhotoEditor.setBrushSize(brushSize);
         mTxtCurrentTool.setText(R.string.label_brush);
     }
 
     @Override
-    public void onEmojiClick(String emojiUnicode) {
-        mPhotoEditor.addEmoji(emojiUnicode);
-        mTxtCurrentTool.setText(R.string.label_emoji);
-
-    }
-
-    @Override
-    public void onStickerClick(Bitmap bitmap) {
+    public void onStickerClick(Bitmap bitmap)
+    {
         mPhotoEditor.addImage(bitmap);
         mTxtCurrentTool.setText(R.string.label_sticker);
     }
 
     @Override
-    public void isPermissionGranted(boolean isGranted, String permission) {
-        if (isGranted) {
+    public void isPermissionGranted(boolean isGranted, String permission)
+    {
+        if (isGranted)
+        {
             saveImage();
         }
     }
 
-    private void showSaveDialog() {
+    private void showSaveDialog()
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you want to exit without saving image ?");
-        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 saveImage();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 dialog.dismiss();
             }
         });
 
-        builder.setNeutralButton("Discard", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton("Discard", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 finish();
             }
         });
