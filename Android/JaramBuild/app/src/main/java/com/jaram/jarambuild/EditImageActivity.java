@@ -1,6 +1,5 @@
 package com.jaram.jarambuild;
 
-import android.app.ActionBar;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
@@ -25,9 +24,7 @@ import com.jaram.jarambuild.imageUtils.StickerBSFragment;
 import com.jaram.jarambuild.imageUtils.TextEditorDialogFragment;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -57,6 +54,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private PropertiesBSFragment mPropertiesBSFragment;
     private StickerBSFragment mStickerBSFragment;
     private TextView mTxtCurrentTool;
+    private String imageFilePath;
     //log
     private static final String TAG = "EditActivity";
 
@@ -94,17 +92,31 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mPhotoEditor.setOnPhotoEditorListener(this);
 
         //Get bitmap uri from intent
-        String imageFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("rawPhotoPath");
+        imageFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("rawPhotoPath");
         Log.d(TAG, "imageFilePath: " + imageFilePath);
         //set bitmap to editor view
         mPhotoEditorView.getSource().setImageBitmap(BitmapFactory.decodeFile(imageFilePath));
         //TODO: Add raw photo to database!
+
         //hide action bar
         android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
         if (myActionBar != null)
         {
             myActionBar.hide();
             Log.d(TAG, "ActionBar Hidden");
+        }
+
+        //show Calibration check dialog
+        //TODO: Settings check for calibration reminder
+        if (true)
+        {
+            //show calibration reminder
+            showCaliRemindDialog();
+        }
+        else
+        {
+            //show scale bar colour dialog
+            createSBColourDialog();
         }
     }
 
@@ -400,6 +412,106 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             }
         });
         builder.create().show();
+    }
 
+    // this dialog lets the user choose the colour of the scale bar
+    private void createSBColourDialog()
+    {
+        AlertDialog.Builder sBColourDialog = new AlertDialog.Builder(this);
+
+        sBColourDialog.setTitle("Set Scale Bar Colour")
+                .setItems(R.array.sbcolour, new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int pos)
+                    {
+                        selectSBColour(pos);
+                    }
+                });
+        sBColourDialog.show();
+    }
+
+    private void selectSBColour(int pos)
+    {
+        Bitmap bm;
+        //choose bitmap colour (using position in sbcolour string array)
+        switch (pos)
+        {
+            case 0: //grey
+                bm = BitmapFactory.decodeResource(getResources(), R.drawable.scalegrey);
+                insertSBandText(bm);
+                Log.d(TAG, "Grey Scale Bar colour selected");
+                break;
+            case 1:
+                bm = BitmapFactory.decodeResource(getResources(), R.drawable.scaleblack);
+                insertSBandText(bm);
+                Log.d(TAG, "Black Scale Bar colour selected");
+                break;
+            case 2:
+                bm = BitmapFactory.decodeResource(getResources(), R.drawable.scalewhite);
+                insertSBandText(bm);
+                Log.d(TAG, "White Scale Bar colour selected");
+                break;
+        }
+    }
+
+    private void insertSBandText(Bitmap bm)
+    {
+        //scale to desired width etc  TODO: use calibration data here
+        int h = 30; // height in pixels
+        int w = 150; // width in pixels
+        Bitmap scaled = Bitmap.createScaledBitmap(bm, w, h, true); // Make sure w and h are in the correct order
+        //insert bitmap
+        mPhotoEditor.addImage(scaled);
+        Log.d(TAG, "Grey Scale Bar inserted");
+
+    }
+
+    private void showCaliRemindDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Have you calibrated the App?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                Log.d(TAG, "User confirms app calibrated");
+                //show scale dialog
+                createSBColourDialog();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                Log.d(TAG, "User confirms app not calibrated");
+                //HomeActivity.openCameraIntent("calibrateActivity");
+                //(HomeActivity)getActivity()).openCameraIntent("calibrate");
+                //TODO: openCalibrate activity
+            }
+        });
+
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                Log.d(TAG, "User cancels image edit");
+                //TODO implement file deletion (see fileUtils class)
+                //deleting captured image by filepath
+                /*
+                if (deleteFile(imageFilePath))
+                {
+                    Log.d(TAG, "File deleted");
+                } else
+                {
+                    Log.d(TAG, "File not deleted");
+                }*/
+
+                finish();
+            }
+        });
+        builder.create().show();
     }
 }
