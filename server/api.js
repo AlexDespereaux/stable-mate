@@ -18,6 +18,8 @@ let printRequestHeaders = function(req) {
 };
 
 let uploadHandler = function(req, res) {
+  //TODO: mask for token, incorrect upload types
+
   console.log("\n\nBinary Upload Request from: " + req.ip);
   printRequestHeaders(req);
 
