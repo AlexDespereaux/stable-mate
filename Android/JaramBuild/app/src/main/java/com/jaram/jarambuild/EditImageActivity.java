@@ -16,16 +16,24 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jaram.jarambuild.imageUtils.PropertiesBSFragment;
 import com.jaram.jarambuild.imageUtils.StickerBSFragment;
 import com.jaram.jarambuild.imageUtils.TextEditorDialogFragment;
+import com.jaram.jarambuild.utils.AddStickerEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
@@ -42,8 +50,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         PropertiesBSFragment.Properties,
         StickerBSFragment.StickerListener
 {
-
-
     public static final String EXTRA_IMAGE_PATHS = "extra_image_paths";
     // request codes
     private static final int CAMERA_REQUEST = 52;
@@ -57,6 +63,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private String imageFilePath;
     //log
     private static final String TAG = "EditActivity";
+    //list of stickerList index's used in imageviews
+    private ArrayList<String> sliList;
 
     public static void launch(Context context, ArrayList<String> imagesPath)
     {
@@ -96,7 +104,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         Log.d(TAG, "imageFilePath: " + imageFilePath);
         //set bitmap to editor view
         mPhotoEditorView.getSource().setImageBitmap(BitmapFactory.decodeFile(imageFilePath));
-        //TODO: Add raw photo to database!
 
         //hide action bar
         android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
@@ -106,18 +113,36 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             Log.d(TAG, "ActionBar Hidden");
         }
 
+        //instantiate sliList
+        sliList = new ArrayList<String>();
+
         //show Calibration check dialog
         //TODO: Settings check for calibration reminder
         if (true)
         {
             //show calibration reminder
             showCaliRemindDialog();
-        }
-        else
+        } else
         {
             //show scale bar colour dialog
             createSBColourDialog();
         }
+    }
+
+
+    // This method will be called when a AddStickerEvent is posted (in the UI thread for Toast)
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAddStickerEvent(AddStickerEvent event)
+    {
+        Log.d(TAG, "Sticker Index from EventBus AddStickerEvent " + event.message);
+        sliList.add(event.message);
+
+        //For Debugging
+        /*Iterator itr=sliList.iterator();
+        while(itr.hasNext())
+        {
+            Log.d(TAG, "iterated array list " + itr.next());
+        }*/
     }
 
     private void initViews()
@@ -168,6 +193,20 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     }
 
     @Override
+    public void onStart()
+    {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop()
+    {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Override
     public void onEditTextChangeListener(final View rootView, String text, int colorCode)
     {
         TextEditorDialogFragment textEditorDialogFragment =
@@ -187,12 +226,29 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     public void onAddViewListener(ViewType viewType, int numberOfAddedViews)
     {
         Log.d(TAG, "onAddViewListener() called with: viewType = [" + viewType + "], numberOfAddedViews = [" + numberOfAddedViews + "]");
+        //stickers are added to array list in addImage() method and as such do not need to be added here
+        //this listener is called BEFORE image is added and therefore cannot be used to trigger
+        //image index addition to arraylist.
+        //the notSticker place holder must be added into the array list so that in the instance the last view
+        //added was not an image, it will be removed from the arraylist in the onRemoveListener, otherwise ONLY
+        // image views would be removed from arraylist. Which would be unfortunate hehe..
+        if(!viewType.equals(ViewType.IMAGE))
+        {
+            sliList.add("notSticker");
+            Log.d(TAG, "Non image view descriptor added to arraylist");
+        }
     }
 
     @Override
     public void onRemoveViewListener(int numberOfAddedViews)
     {
         Log.d(TAG, "onRemoveViewListener() called with: numberOfAddedViews = [" + numberOfAddedViews + "]");
+        //removes last added view string in arraylist
+        if(sliList.size() > 0)
+        {
+            sliList.remove(sliList.size()-1);
+            Log.d(TAG, "View removed from arraylist");
+        }
     }
 
     @Override
@@ -295,9 +351,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         showSnackbar("Image Saved Successfully");
                         // working mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
                         mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
-                        //TODO add imagePath to database
                         //TODO send image path to addData via intent
-                        //
                         Intent intent = new Intent(EditImageActivity.this, AddDataActivity.class);
                         intent.putExtra("editedImageUri", imagePath);
                         startActivity(intent);
@@ -456,14 +510,22 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
     private void insertSBandText(Bitmap bm)
     {
+        //size of image in view
+        double vHeight = mPhotoEditorView.getHeight();
+        double vWidth = mPhotoEditorView.getWidth();
+        Log.d(TAG, "viewHeight:" + vHeight + " " + "viewWidth:" + vWidth);
+        //size of actual image
+        double mvHeight = mPhotoEditorView.getMeasuredHeight();
+        double mvWidth = mPhotoEditorView.getMeasuredWidth();
+        Log.d(TAG, "mviewHeight:" + mvHeight + " " + "mviewWidth:" + mvWidth);
+
         //scale to desired width etc  TODO: use calibration data here
         int h = 30; // height in pixels
         int w = 150; // width in pixels
         Bitmap scaled = Bitmap.createScaledBitmap(bm, w, h, true); // Make sure w and h are in the correct order
         //insert bitmap
-        mPhotoEditor.addImage(scaled);
-        Log.d(TAG, "Grey Scale Bar inserted");
-
+        mPhotoEditor.addSBImage(scaled);
+        Log.d(TAG, "Scale Bar inserted");
     }
 
     private void showCaliRemindDialog()
@@ -487,8 +549,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             {
                 Log.d(TAG, "User confirms app not calibrated");
                 //HomeActivity.openCameraIntent("calibrateActivity");
-                //(HomeActivity)getActivity()).openCameraIntent("calibrate");
-                //TODO: openCalibrate activity
+                //TODO: openCalibrate activity until then return to Home with finish();
+                finish();
             }
         });
 

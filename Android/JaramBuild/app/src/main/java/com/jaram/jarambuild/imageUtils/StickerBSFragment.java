@@ -18,6 +18,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.jaram.jarambuild.R;
+import com.jaram.jarambuild.utils.AddStickerEvent;
+import com.jaram.jarambuild.utils.StickerConstants;
+
+import org.greenrobot.eventbus.EventBus;
 
 ////Original Code Source by Burhanuddin Rashid on 1/17/2018 as part of the https://github.com/burhanrashid52/PhotoEditor
 ////Used under the http://www.apache.org/licenses/LICENSE-2.0
@@ -62,7 +66,6 @@ public class StickerBSFragment extends BottomSheetDialogFragment
         }
     };
 
-
     @SuppressLint("RestrictedApi")
     @Override
     public void setupDialog(Dialog dialog, int style)
@@ -95,8 +98,10 @@ public class StickerBSFragment extends BottomSheetDialogFragment
 
     public class StickerAdapter extends RecyclerView.Adapter<StickerAdapter.ViewHolder>
     {
-
-        int[] stickerList = new int[]{R.drawable.aa, R.drawable.bb};
+        //get list of sticker resource id's
+        int[] stickerList = StickerConstants.getStickerList();
+/*      SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor edt = pref.edit();*/
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -109,6 +114,7 @@ public class StickerBSFragment extends BottomSheetDialogFragment
         public void onBindViewHolder(ViewHolder holder, int position)
         {
             holder.imgSticker.setImageResource(stickerList[position]);
+
         }
 
         @Override
@@ -141,6 +147,10 @@ public class StickerBSFragment extends BottomSheetDialogFragment
                             mStickerListener.onStickerClick(
                                     BitmapFactory.decodeResource(getResources(),
                                             stickerList[getLayoutPosition()]));
+
+                            //send index to eventbus subscriber
+                            String stickerIndex = Integer.toString(getLayoutPosition());
+                            EventBus.getDefault().post(new AddStickerEvent(stickerIndex));
                         }
                         dismiss();
                     }
@@ -167,4 +177,6 @@ public class StickerBSFragment extends BottomSheetDialogFragment
     {
         return new String(Character.toChars(unicode));
     }
+
+    //
 }

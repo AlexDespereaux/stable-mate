@@ -57,6 +57,26 @@ class MultiTouchListener implements OnTouchListener {
         }
     }
 
+    //added so that scale bar cannot be scaled nor deleted
+    MultiTouchListener(@Nullable RelativeLayout parentView,
+                       ImageView photoEditImageView,
+                       OnPhotoEditorListener onPhotoEditorListener) {
+        mScaleGestureDetector = new ScaleGestureDetector(new ScaleGestureListener());
+        mGestureListener = new GestureDetector(new GestureListener());
+        this.parentView = parentView;
+        this.photoEditImageView = photoEditImageView;
+        this.mOnPhotoEditorListener = onPhotoEditorListener;
+        if (deleteView != null) {
+            outRect = new Rect(deleteView.getLeft(), deleteView.getTop(),
+                    deleteView.getRight(), deleteView.getBottom());
+        } else {
+            outRect = new Rect(0, 0, 0, 0);
+        }
+    }
+    //end add
+
+
+
     private static float adjustAngle(float degrees) {
         if (degrees > 180.0f) {
             degrees -= 360.0f;
