@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +31,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 //shared prefs
+import com.jaram.jarambuild.adapters.LegendListAdapter;
+import com.jaram.jarambuild.models.EditModel;
 import com.jaram.jarambuild.utils.TinyDB;
 
 public class AddDataActivity extends AppCompatActivity implements View.OnClickListener
@@ -62,11 +66,23 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     //Array list of sticklerlist indexs of drawables used.
     private ArrayList<String> sliList;
 
+    //Recycler View
+    private RecyclerView legendRecyclerView;
+    private LegendListAdapter legendListAdapter;
+    public ArrayList<EditModel> editModelArrayList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_data);
+
+        //Recycler View
+        legendRecyclerView = (RecyclerView) findViewById(R.id.legendRecycler);
+        editModelArrayList = populateList();
+        legendListAdapter = new LegendListAdapter(this, editModelArrayList);
+        legendRecyclerView.setAdapter(legendListAdapter);
+        legendRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
 
         //buttons
         Button saveBtn = findViewById(R.id.saveBtn);
@@ -115,7 +131,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             //Bitmap scaledImg = JBitmapScaler.scaleToFitWidth(BitmapFactory.decodeFile(editedImgUri), 400);
             //imageView.setImageBitmap(scaledImg);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bitmap = BitmapFactory.decodeFile(editedImgUri,bmOptions);
+            Bitmap bitmap = BitmapFactory.decodeFile(editedImgUri, bmOptions);
             imageView.setImageBitmap(bitmap);
         }
     }
@@ -320,11 +336,23 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         sliList.addAll(hs);
 
         //For Debugging
-        Iterator itr=sliList.iterator();
-        while(itr.hasNext())
+        Iterator itr = sliList.iterator();
+        while (itr.hasNext())
         {
             Log.d(TAG, "iterated array list " + itr.next());
         }
+    }
+
+    private ArrayList<EditModel> populateList()
+    {
+        ArrayList<EditModel> list = new ArrayList<>();
+        for (int i = 0; i < 8; i++)
+        {
+            EditModel editModel = new EditModel();
+            editModel.setEditTextValue(String.valueOf(i));
+            list.add(editModel);
+        }
+        return list;
     }
 }
 

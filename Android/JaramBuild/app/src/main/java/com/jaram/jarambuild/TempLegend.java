@@ -2,48 +2,44 @@ package com.jaram.jarambuild;
 
 public class TempLegend
 {
-    String drawablePath;
-    int viewPosition;
+    //legend description
+    private String description;
+    //index of sticker in stickerList array
+    private String stickerListPosition;
 
-    public TempLegend(String drawablePath, int viewPosition)
+    public TempLegend(String description, String stickerListPosition)
     {
-        this.drawablePath = drawablePath;
-        this.viewPosition = viewPosition;
+        this.description = description;
+        this.stickerListPosition = stickerListPosition;
     }
 
-    public TempLegend(String drawablePath)
+    public String getDescription()
     {
-        this.drawablePath = drawablePath;
-        this.viewPosition = 0;
+        return description;
     }
 
-    public String getDrawablePath()
+    public String getStickerListPosition()
     {
-        return drawablePath;
+        return stickerListPosition;
     }
 
-    public int getViewPosition()
+    public void setDescription(String description)
     {
-        return viewPosition;
+        this.description = description;
     }
 
-    public void setDrawablePath(String drawablePath)
+    public void setStickerListPosition(String stickerListPosition)
     {
-        this.drawablePath = drawablePath;
-    }
-
-    public void setViewPosition(int viewPosition)
-    {
-        this.viewPosition = viewPosition;
+        this.stickerListPosition = stickerListPosition;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return new StringBuilder()
                 .append("{TempLegend:")
-                .append(" DrawablePath=").append(drawablePath)
-                .append(", position=").append(viewPosition)
+                .append(" Description=").append(description)
+                .append(", StickerListPosition=").append(stickerListPosition)
                 .append("}").toString();
     }
-
 }
