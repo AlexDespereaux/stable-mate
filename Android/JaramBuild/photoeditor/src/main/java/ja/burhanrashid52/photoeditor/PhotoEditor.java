@@ -113,7 +113,7 @@ public class PhotoEditor implements BrushViewChangeListener
 
     public void addSBImage(Bitmap desiredImage)
     {
-        final View imageRootView = getLayout(ViewType.IMAGE);
+        final View imageRootView = getLayout(ViewType.IMAGESB);
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
@@ -377,6 +377,9 @@ public class PhotoEditor implements BrushViewChangeListener
                 break;
             case IMAGE:
                 rootView = mLayoutInflater.inflate(R.layout.view_photo_editor_image, null);
+                break;
+            case IMAGESB:
+                rootView = mLayoutInflater.inflate(R.layout.view_photo_editor_image_sb, null);
                 break;
             case EMOJI:
                 rootView = mLayoutInflater.inflate(R.layout.view_photo_editor_text, null);
