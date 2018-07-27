@@ -13,6 +13,7 @@ import { RegisterComponent } from './register/register.component';
 import { AdminComponent } from './admin/admin.component';
 import { DisplayClassComponent } from './display-class/display-class.component';
 import { StarRatingModule } from 'angular-star-rating';
+import { NewUserComponent } from './new-user/new-user.component';
 const appRoutes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'displayClass', component: DisplayClassComponent},
@@ -32,7 +33,8 @@ const appRoutes: Routes = [
     AdminDashboardComponent,
     RegisterComponent,
     AdminComponent,
-    DisplayClassComponent
+    DisplayClassComponent,
+    NewUserComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
