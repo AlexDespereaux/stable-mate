@@ -8,22 +8,11 @@
     <string name="your_name">Your Name</string>
     <string name="email_address">Email address</string>
     <string name="sign_up">Sign Up</string>
-
-    <!-- Strings related to login -->
-
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-
-    <!-- Example settings for Data & Sync -->
-
     <string name="label_brush">Brush</string>
     <string name="label_emoji">Emoji</string>
     <string name="label_sticker">Sticker</string>
     <string name="label_eraser">Eraser</string>
     <string name="label_text">Text</string>
-
-    <!-- Example settings for Notifications -->
     <string name="camera">Camera</string>
     <string name="calibrate">Calibrate</string>
     <string name="settings">settings</string>
@@ -122,6 +111,13 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <!-- Scale Bar colour Dialog -->
+    <string-array name="sbcolour">
+        <item>Grey</item>
+        <item>Black</item>
+        <item>White</item>
+    </string-array>
 
 
 </resources>

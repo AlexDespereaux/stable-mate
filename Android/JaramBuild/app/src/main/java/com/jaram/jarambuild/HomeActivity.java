@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -33,6 +34,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     //camera
     public static final int REQUEST_PERMISSION = 200;
     public static final int REQUEST_IMAGE = 100;
+    public static final int REQUEST_CALIBRATE = 300;
     private String imageFilePath = "";
 
     //log
@@ -72,11 +74,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         {
             case R.id.cameraBtn:
                 //Open Camera
-                openCameraIntent();
+                openCameraIntent("editActivity");
                 break;
             case R.id.calibrateBtn:
                 //Open Camera
-                openCameraIntent();
+                openCameraIntent("calibrateActivity");
                 break;
             case R.id.galleryBtn:
                 //Go to gallery activity
@@ -91,7 +93,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void openCameraIntent()
+    void openCameraIntent(String destination)
     {
         Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -111,9 +113,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             // Continue only if the File was successfully created
             if (photoFile != null)
             {
-                Uri photoUri = FileProvider.getUriForFile(this, getPackageName() +".provider", photoFile);
+                Uri photoUri = FileProvider.getUriForFile(this, getPackageName() + ".provider", photoFile);
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(pictureIntent, REQUEST_IMAGE);
+                if (destination == "editActivity")
+                {
+                    startActivityForResult(pictureIntent, REQUEST_IMAGE);
+                } else
+                {
+                    startActivityForResult(pictureIntent, REQUEST_CALIBRATE);
+                }
                 Log.d(TAG, "startAct Uri: " + photoUri);
             }
         }
@@ -131,6 +139,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     if (resultCode == RESULT_OK)
                     {
                         Intent intent = new Intent(HomeActivity.this, EditImageActivity.class);
+                        //add raw file path URI string to intent
+                        intent.putExtra("rawPhotoPath", imageFilePath);
+                        Log.d(TAG, "rawPhotoPath: " + imageFilePath);
+                        //open edit Image Activity
+                        startActivity(intent);
+                    } else if (resultCode == RESULT_CANCELED)
+                    {
+                        Toast.makeText(this, "You cancelled the operation", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "result cancelled");
+                    }
+                    break;
+                case REQUEST_CALIBRATE:
+                    if (resultCode == RESULT_OK)
+                    {
+                        Intent intent = new Intent(HomeActivity.this, CalibrateActivity.class);
                         //add raw file path URI string to intent
                         intent.putExtra("rawPhotoPath", imageFilePath);
                         Log.d(TAG, "rawPhotoPath: " + imageFilePath);
@@ -160,7 +183,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private File createImageFile() throws IOException{
+    private File createImageFile() throws IOException
+    {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "IMG_" + timeStamp + "_";

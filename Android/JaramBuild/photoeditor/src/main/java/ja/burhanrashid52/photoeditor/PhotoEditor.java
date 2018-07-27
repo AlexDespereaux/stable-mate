@@ -38,7 +38,8 @@ import java.util.List;
  * @version 0.1.1
  * @since 18/01/2017
  */
-public class PhotoEditor implements BrushViewChangeListener {
+public class PhotoEditor implements BrushViewChangeListener
+{
 
     private static final String TAG = "PhotoEditor";
     private final LayoutInflater mLayoutInflater;
@@ -55,7 +56,8 @@ public class PhotoEditor implements BrushViewChangeListener {
     private Typeface mDefaultEmojiTypeface;
 
 
-    private PhotoEditor(Builder builder) {
+    private PhotoEditor(Builder builder)
+    {
         this.context = builder.context;
         this.parentView = builder.parentView;
         this.imageView = builder.imageView;
@@ -76,18 +78,20 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage) {
+    public void addImage(Bitmap desiredImage)
+    {
         final View imageRootView = getLayout(ViewType.IMAGE);
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
 
         imageView.setImageBitmap(desiredImage);
-
         MultiTouchListener multiTouchListener = getMultiTouchListener();
-        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
+        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl()
+        {
             @Override
-            public void onClick() {
+            public void onClick()
+            {
                 boolean isBackgroundVisible = frmBorder.getTag() != null && (boolean) frmBorder.getTag();
                 frmBorder.setBackgroundResource(isBackgroundVisible ? 0 : R.drawable.rounded_border_tv);
                 imgClose.setVisibility(isBackgroundVisible ? View.GONE : View.VISIBLE);
@@ -95,7 +99,41 @@ public class PhotoEditor implements BrushViewChangeListener {
             }
 
             @Override
-            public void onLongClick() {
+            public void onLongClick()
+            {
+
+            }
+        });
+
+        imageRootView.setOnTouchListener(multiTouchListener);
+
+        addViewToParent(imageRootView, ViewType.IMAGE);
+
+    }
+
+    public void addSBImage(Bitmap desiredImage)
+    {
+        final View imageRootView = getLayout(ViewType.IMAGE);
+        final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
+        final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
+        final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
+
+        imageView.setImageBitmap(desiredImage);
+        MultiTouchListener multiTouchListener = getMultiTouchListenerNSND();
+        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl()
+        {
+            @Override
+            public void onClick()
+            {
+                boolean isBackgroundVisible = frmBorder.getTag() != null && (boolean) frmBorder.getTag();
+                frmBorder.setBackgroundResource(isBackgroundVisible ? 0 : R.drawable.rounded_border_tv);
+                imgClose.setVisibility(isBackgroundVisible ? View.GONE : View.VISIBLE);
+                frmBorder.setTag(!isBackgroundVisible);
+            }
+
+            @Override
+            public void onLongClick()
+            {
 
             }
         });
@@ -114,7 +152,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @param colorCodeTextView text color to be displayed
      */
     @SuppressLint("ClickableViewAccessibility")
-    public void addText(String text, final int colorCodeTextView) {
+    public void addText(String text, final int colorCodeTextView)
+    {
         addText(null, text, colorCodeTextView);
     }
 
@@ -127,7 +166,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @param colorCodeTextView text color to be displayed
      */
     @SuppressLint("ClickableViewAccessibility")
-    public void addText(@Nullable Typeface textTypeface, String text, final int colorCodeTextView) {
+    public void addText(@Nullable Typeface textTypeface, String text, final int colorCodeTextView)
+    {
         brushDrawingView.setBrushDrawingMode(false);
         final View textRootView = getLayout(ViewType.TEXT);
         final TextView textInputTv = textRootView.findViewById(R.id.tvPhotoEditorText);
@@ -136,13 +176,17 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         textInputTv.setText(text);
         textInputTv.setTextColor(colorCodeTextView);
-        if (textTypeface != null) {
+        if (textTypeface != null)
+        {
             textInputTv.setTypeface(textTypeface);
         }
+
         MultiTouchListener multiTouchListener = getMultiTouchListener();
-        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
+        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl()
+        {
             @Override
-            public void onClick() {
+            public void onClick()
+            {
                 boolean isBackgroundVisible = frmBorder.getTag() != null && (boolean) frmBorder.getTag();
                 frmBorder.setBackgroundResource(isBackgroundVisible ? 0 : R.drawable.rounded_border_tv);
                 imgClose.setVisibility(isBackgroundVisible ? View.GONE : View.VISIBLE);
@@ -150,10 +194,12 @@ public class PhotoEditor implements BrushViewChangeListener {
             }
 
             @Override
-            public void onLongClick() {
+            public void onLongClick()
+            {
                 String textInput = textInputTv.getText().toString();
                 int currentTextColor = textInputTv.getCurrentTextColor();
-                if (mOnPhotoEditorListener != null) {
+                if (mOnPhotoEditorListener != null)
+                {
                     mOnPhotoEditorListener.onEditTextChangeListener(textRootView, textInput, currentTextColor);
                 }
             }
@@ -171,7 +217,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @param inputText text to update {@link TextView}
      * @param colorCode color to update on {@link TextView}
      */
-    public void editText(View view, String inputText, int colorCode) {
+    public void editText(View view, String inputText, int colorCode)
+    {
         editText(view, null, inputText, colorCode);
     }
 
@@ -183,11 +230,14 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @param inputText    text to update {@link TextView}
      * @param colorCode    color to update on {@link TextView}
      */
-    public void editText(View view, Typeface textTypeface, String inputText, int colorCode) {
+    public void editText(View view, Typeface textTypeface, String inputText, int colorCode)
+    {
         TextView inputTextView = view.findViewById(R.id.tvPhotoEditorText);
-        if (inputTextView != null && addedViews.contains(view) && !TextUtils.isEmpty(inputText)) {
+        if (inputTextView != null && addedViews.contains(view) && !TextUtils.isEmpty(inputText))
+        {
             inputTextView.setText(inputText);
-            if (textTypeface != null) {
+            if (textTypeface != null)
+            {
                 inputTextView.setTypeface(textTypeface);
             }
             inputTextView.setTextColor(colorCode);
@@ -203,7 +253,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param emojiName unicode in form of string to display emoji
      */
-    public void addEmoji(String emojiName) {
+    public void addEmoji(String emojiName)
+    {
         addEmoji(null, emojiName);
     }
 
@@ -214,22 +265,26 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @param emojiTypeface typeface for custom font to show emoji unicode in specific font
      * @param emojiName     unicode in form of string to display emoji
      */
-    public void addEmoji(Typeface emojiTypeface, String emojiName) {
+    public void addEmoji(Typeface emojiTypeface, String emojiName)
+    {
         brushDrawingView.setBrushDrawingMode(false);
         final View emojiRootView = getLayout(ViewType.EMOJI);
         final TextView emojiTextView = emojiRootView.findViewById(R.id.tvPhotoEditorText);
         final FrameLayout frmBorder = emojiRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = emojiRootView.findViewById(R.id.imgPhotoEditorClose);
 
-        if (emojiTypeface != null) {
+        if (emojiTypeface != null)
+        {
             emojiTextView.setTypeface(emojiTypeface);
         }
         emojiTextView.setTextSize(56);
         emojiTextView.setText(emojiName);
         MultiTouchListener multiTouchListener = getMultiTouchListener();
-        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
+        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl()
+        {
             @Override
-            public void onClick() {
+            public void onClick()
+            {
                 boolean isBackgroundVisible = frmBorder.getTag() != null && (boolean) frmBorder.getTag();
                 frmBorder.setBackgroundResource(isBackgroundVisible ? 0 : R.drawable.rounded_border_tv);
                 imgClose.setVisibility(isBackgroundVisible ? View.GONE : View.VISIBLE);
@@ -237,7 +292,8 @@ public class PhotoEditor implements BrushViewChangeListener {
             }
 
             @Override
-            public void onLongClick() {
+            public void onLongClick()
+            {
             }
         });
         emojiRootView.setOnTouchListener(multiTouchListener);
@@ -250,7 +306,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param rootView rootview of image,text and emoji
      */
-    private void addViewToParent(View rootView, ViewType viewType) {
+    private void addViewToParent(View rootView, ViewType viewType)
+    {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
@@ -266,7 +323,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @return scalable multitouch listener
      */
     @NonNull
-    private MultiTouchListener getMultiTouchListener() {
+    private MultiTouchListener getMultiTouchListener()
+    {
         MultiTouchListener multiTouchListener = new MultiTouchListener(
                 deleteView,
                 parentView,
@@ -279,21 +337,40 @@ public class PhotoEditor implements BrushViewChangeListener {
         return multiTouchListener;
     }
 
+    //Non scalable/deletable listener for scale bar tres importante! hehe
+    @NonNull
+    private MultiTouchListener getMultiTouchListenerNSND()
+    {
+        MultiTouchListener multiTouchListenerNSND = new MultiTouchListener(
+                parentView,
+                this.imageView,
+                mOnPhotoEditorListener);
+
+        //multiTouchListener.setOnMultiTouchListener(this);
+
+        return multiTouchListenerNSND;
+    }
+
+
     /**
      * Get root view by its type i.e image,text and emoji
      *
      * @param viewType image,text or emoji
      * @return rootview
      */
-    private View getLayout(ViewType viewType) {
+    private View getLayout(ViewType viewType)
+    {
         View rootView = null;
-        switch (viewType) {
+        switch (viewType)
+        {
             case TEXT:
                 rootView = mLayoutInflater.inflate(R.layout.view_photo_editor_text, null);
                 TextView txtText = rootView.findViewById(R.id.tvPhotoEditorText);
-                if (txtText != null && mDefaultTextTypeface != null) {
+                if (txtText != null && mDefaultTextTypeface != null)
+                {
                     txtText.setGravity(Gravity.CENTER);
-                    if (mDefaultEmojiTypeface != null) {
+                    if (mDefaultEmojiTypeface != null)
+                    {
                         txtText.setTypeface(mDefaultTextTypeface);
                     }
                 }
@@ -304,8 +381,10 @@ public class PhotoEditor implements BrushViewChangeListener {
             case EMOJI:
                 rootView = mLayoutInflater.inflate(R.layout.view_photo_editor_text, null);
                 TextView txtTextEmoji = rootView.findViewById(R.id.tvPhotoEditorText);
-                if (txtTextEmoji != null) {
-                    if (mDefaultEmojiTypeface != null) {
+                if (txtTextEmoji != null)
+                {
+                    if (mDefaultEmojiTypeface != null)
+                    {
                         txtTextEmoji.setTypeface(mDefaultEmojiTypeface);
                     }
                     txtTextEmoji.setGravity(Gravity.CENTER);
@@ -314,13 +393,17 @@ public class PhotoEditor implements BrushViewChangeListener {
                 break;
         }
 
-        if (rootView != null) {
+        if (rootView != null)
+        {
             final ImageView imgClose = rootView.findViewById(R.id.imgPhotoEditorClose);
             final View finalRootView = rootView;
-            if (imgClose != null) {
-                imgClose.setOnClickListener(new View.OnClickListener() {
+            if (imgClose != null)
+            {
+                imgClose.setOnClickListener(new View.OnClickListener()
+                {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View v)
+                    {
                         viewUndo(finalRootView);
                     }
                 });
@@ -334,7 +417,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param brushDrawingMode true if mode is enabled
      */
-    public void setBrushDrawingMode(boolean brushDrawingMode) {
+    public void setBrushDrawingMode(boolean brushDrawingMode)
+    {
         if (brushDrawingView != null)
             brushDrawingView.setBrushDrawingMode(brushDrawingMode);
     }
@@ -342,7 +426,8 @@ public class PhotoEditor implements BrushViewChangeListener {
     /**
      * @return true is brush mode is enabled
      */
-    public Boolean getBrushDrawableMode() {
+    public Boolean getBrushDrawableMode()
+    {
         return brushDrawingView != null && brushDrawingView.getBrushDrawingMode();
     }
 
@@ -351,7 +436,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param size size of brush
      */
-    public void setBrushSize(float size) {
+    public void setBrushSize(float size)
+    {
         if (brushDrawingView != null)
             brushDrawingView.setBrushSize(size);
     }
@@ -361,8 +447,10 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param opacity opacity is in form of percentage
      */
-    public void setOpacity(@IntRange(from = 0, to = 100) int opacity) {
-        if (brushDrawingView != null) {
+    public void setOpacity(@IntRange(from = 0, to = 100) int opacity)
+    {
+        if (brushDrawingView != null)
+        {
             opacity = (int) ((opacity / 100.0) * 255.0);
             brushDrawingView.setOpacity(opacity);
         }
@@ -373,7 +461,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param color color value for paint
      */
-    public void setBrushColor(@ColorInt int color) {
+    public void setBrushColor(@ColorInt int color)
+    {
         if (brushDrawingView != null)
             brushDrawingView.setBrushColor(color);
     }
@@ -385,12 +474,14 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param brushEraserSize size of eraser
      */
-    public void setBrushEraserSize(float brushEraserSize) {
+    public void setBrushEraserSize(float brushEraserSize)
+    {
         if (brushDrawingView != null)
             brushDrawingView.setBrushEraserSize(brushEraserSize);
     }
 
-    void setBrushEraserColor(@ColorInt int color) {
+    void setBrushEraserColor(@ColorInt int color)
+    {
         if (brushDrawingView != null)
             brushDrawingView.setBrushEraserColor(color);
     }
@@ -399,7 +490,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @return provide the size of eraser
      * @see PhotoEditor#setBrushEraserSize(float)
      */
-    public float getEraserSize() {
+    public float getEraserSize()
+    {
         return brushDrawingView != null ? brushDrawingView.getEraserSize() : 0;
     }
 
@@ -407,7 +499,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @return provide the size of eraser
      * @see PhotoEditor#setBrushSize(float)
      */
-    public float getBrushSize() {
+    public float getBrushSize()
+    {
         if (brushDrawingView != null)
             return brushDrawingView.getBrushSize();
         return 0;
@@ -417,7 +510,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @return provide the size of eraser
      * @see PhotoEditor#setBrushColor(int)
      */
-    public int getBrushColor() {
+    public int getBrushColor()
+    {
         if (brushDrawingView != null)
             return brushDrawingView.getBrushColor();
         return 0;
@@ -431,26 +525,33 @@ public class PhotoEditor implements BrushViewChangeListener {
      * <b>Note</b> : This eraser will work on paint views only
      * <p>
      */
-    public void brushEraser() {
+    public void brushEraser()
+    {
         if (brushDrawingView != null)
             brushDrawingView.brushEraser();
     }
 
-    private void viewUndo() {
-        if (addedViews.size() > 0) {
+    private void viewUndo()
+    {
+        if (addedViews.size() > 0)
+        {
             parentView.removeView(addedViews.remove(addedViews.size() - 1));
             if (mOnPhotoEditorListener != null)
                 mOnPhotoEditorListener.onRemoveViewListener(addedViews.size());
         }
     }
 
-    private void viewUndo(View removedView) {
-        if (addedViews.size() > 0) {
-            if (addedViews.contains(removedView)) {
+    private void viewUndo(View removedView)
+    {
+        if (addedViews.size() > 1)  //starting at index 1 so the scale bar is not deleted
+        {
+            if (addedViews.contains(removedView))
+            {
                 parentView.removeView(removedView);
                 addedViews.remove(removedView);
                 redoViews.add(removedView);
                 if (mOnPhotoEditorListener != null)
+                    //mOnPhotoEditorListener.onRemoveViewListener(addedViews.size());
                     mOnPhotoEditorListener.onRemoveViewListener(addedViews.size());
             }
         }
@@ -461,17 +562,22 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @return true if there nothing more to undo
      */
-    public boolean undo() {
-        if (addedViews.size() > 0) {
+    public boolean undo()
+    {
+        if (addedViews.size() > 1) //starting at index 1 so the scale bar is not deleted
+        {
             View removeView = addedViews.get(addedViews.size() - 1);
-            if (removeView instanceof BrushDrawingView) {
+            if (removeView instanceof BrushDrawingView)
+            {
                 return brushDrawingView != null && brushDrawingView.undo();
-            } else {
+            } else
+            {
                 addedViews.remove(addedViews.size() - 1);
                 parentView.removeView(removeView);
                 redoViews.add(removeView);
             }
-            if (mOnPhotoEditorListener != null) {
+            if (mOnPhotoEditorListener != null)
+            {
                 mOnPhotoEditorListener.onRemoveViewListener(addedViews.size());
             }
         }
@@ -483,12 +589,16 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @return true if there nothing more to redo
      */
-    public boolean redo() {
-        if (redoViews.size() > 0) {
+    public boolean redo()
+    {
+        if (redoViews.size() > 0)
+        {
             View redoView = redoViews.get(redoViews.size() - 1);
-            if (redoView instanceof BrushDrawingView) {
+            if (redoView instanceof BrushDrawingView)
+            {
                 return brushDrawingView != null && brushDrawingView.redo();
-            } else {
+            } else
+            {
                 redoViews.remove(redoViews.size() - 1);
                 parentView.addView(redoView);
                 addedViews.add(redoView);
@@ -497,7 +607,8 @@ public class PhotoEditor implements BrushViewChangeListener {
         return redoViews.size() != 0;
     }
 
-    private void clearBrushAllViews() {
+    private void clearBrushAllViews()
+    {
         if (brushDrawingView != null)
             brushDrawingView.clearAll();
     }
@@ -506,11 +617,14 @@ public class PhotoEditor implements BrushViewChangeListener {
      * Removes all the edited operations performed {@link PhotoEditorView}
      * This will also clear the undo and redo stack
      */
-    public void clearAllViews() {
-        for (int i = 0; i < addedViews.size(); i++) {
+    public void clearAllViews()
+    {
+        for (int i = 0; i < addedViews.size(); i++)
+        {
             parentView.removeView(addedViews.get(i));
         }
-        if (addedViews.contains(brushDrawingView)) {
+        if (addedViews.contains(brushDrawingView))
+        {
             parentView.addView(brushDrawingView);
         }
         addedViews.clear();
@@ -522,15 +636,19 @@ public class PhotoEditor implements BrushViewChangeListener {
      * Remove all helper boxes from text
      */
     @UiThread
-    private void clearTextHelperBox() {
-        for (int i = 0; i < parentView.getChildCount(); i++) {
+    private void clearTextHelperBox()
+    {
+        for (int i = 0; i < parentView.getChildCount(); i++)
+        {
             View childAt = parentView.getChildAt(i);
             FrameLayout frmBorder = childAt.findViewById(R.id.frmBorder);
-            if (frmBorder != null) {
+            if (frmBorder != null)
+            {
                 frmBorder.setBackgroundResource(0);
             }
             ImageView imgClose = childAt.findViewById(R.id.imgPhotoEditorClose);
-            if (imgClose != null) {
+            if (imgClose != null)
+            {
                 imgClose.setVisibility(View.GONE);
             }
         }
@@ -541,7 +659,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param customEffect {@link CustomEffect.Builder#setParameter(String, Object)}
      */
-    public void setFilterEffect(CustomEffect customEffect) {
+    public void setFilterEffect(CustomEffect customEffect)
+    {
         parentView.setFilterEffect(customEffect);
     }
 
@@ -550,14 +669,16 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param filterType type of filter want to apply {@link PhotoEditor}
      */
-    public void setFilterEffect(PhotoFilter filterType) {
+    public void setFilterEffect(PhotoFilter filterType)
+    {
         parentView.setFilterEffect(filterType);
     }
 
     /**
      * A callback to save the edited image asynchronously
      */
-    public interface OnSaveListener {
+    public interface OnSaveListener
+    {
 
         /**
          * Call when edited image is saved successfully on given path
@@ -584,12 +705,15 @@ public class PhotoEditor implements BrushViewChangeListener {
     @SuppressLint("StaticFieldLeak")
     @RequiresPermission(allOf = {Manifest.permission.WRITE_EXTERNAL_STORAGE})
     @Deprecated
-    public void saveImage(@NonNull final String imagePath, @NonNull final OnSaveListener onSaveListener) {
+    public void saveImage(@NonNull final String imagePath, @NonNull final OnSaveListener onSaveListener)
+    {
         Log.d(TAG, "Image Path: " + imagePath);
-        new AsyncTask<String, String, Exception>() {
+        new AsyncTask<String, String, Exception>()
+        {
 
             @Override
-            protected void onPreExecute() {
+            protected void onPreExecute()
+            {
                 super.onPreExecute();
                 clearTextHelperBox();
                 parentView.setDrawingCacheEnabled(false);
@@ -597,12 +721,15 @@ public class PhotoEditor implements BrushViewChangeListener {
 
             @SuppressLint("MissingPermission")
             @Override
-            protected Exception doInBackground(String... strings) {
+            protected Exception doInBackground(String... strings)
+            {
                 // Create a media file name
                 File file = new File(imagePath);
-                try {
+                try
+                {
                     FileOutputStream out = new FileOutputStream(file, false);
-                    if (parentView != null) {
+                    if (parentView != null)
+                    {
                         parentView.setDrawingCacheEnabled(true);
                         Bitmap drawingCache = BitmapUtil.removeTransparency(parentView.getDrawingCache());
                         drawingCache.compress(Bitmap.CompressFormat.PNG, 100, out);
@@ -611,7 +738,8 @@ public class PhotoEditor implements BrushViewChangeListener {
                     out.close();
                     Log.d(TAG, "Filed Saved Successfully");
                     return null;
-                } catch (Exception e) {
+                } catch (Exception e)
+                {
                     e.printStackTrace();
                     Log.d(TAG, "Failed to save File");
                     return e;
@@ -619,12 +747,15 @@ public class PhotoEditor implements BrushViewChangeListener {
             }
 
             @Override
-            protected void onPostExecute(Exception e) {
+            protected void onPostExecute(Exception e)
+            {
                 super.onPostExecute(e);
-                if (e == null) {
+                if (e == null)
+                {
                     clearAllViews();
                     onSaveListener.onSuccess(imagePath);
-                } else {
+                } else
+                {
                     onSaveListener.onFailure(e);
                 }
             }
@@ -642,15 +773,20 @@ public class PhotoEditor implements BrushViewChangeListener {
      */
     @SuppressLint("StaticFieldLeak")
     @RequiresPermission(allOf = {Manifest.permission.WRITE_EXTERNAL_STORAGE})
-    public void saveAsFile(@NonNull final String imagePath, @NonNull final OnSaveListener onSaveListener) {
+    public void saveAsFile(@NonNull final String imagePath, @NonNull final OnSaveListener onSaveListener)
+    {
         Log.d(TAG, "Image Path: " + imagePath);
-        parentView.saveFilter(new OnSaveBitmap() {
+        parentView.saveFilter(new OnSaveBitmap()
+        {
             @Override
-            public void onBitmapReady(Bitmap saveBitmap) {
-                new AsyncTask<String, String, Exception>() {
+            public void onBitmapReady(Bitmap saveBitmap)
+            {
+                new AsyncTask<String, String, Exception>()
+                {
 
                     @Override
-                    protected void onPreExecute() {
+                    protected void onPreExecute()
+                    {
                         super.onPreExecute();
                         clearTextHelperBox();
                         parentView.setDrawingCacheEnabled(false);
@@ -658,12 +794,15 @@ public class PhotoEditor implements BrushViewChangeListener {
 
                     @SuppressLint("MissingPermission")
                     @Override
-                    protected Exception doInBackground(String... strings) {
+                    protected Exception doInBackground(String... strings)
+                    {
                         // Create a media file name
                         File file = new File(imagePath);
-                        try {
+                        try
+                        {
                             FileOutputStream out = new FileOutputStream(file, false);
-                            if (parentView != null) {
+                            if (parentView != null)
+                            {
                                 parentView.setDrawingCacheEnabled(true);
                                 Bitmap drawingCache = BitmapUtil.removeTransparency(parentView.getDrawingCache());
                                 drawingCache.compress(Bitmap.CompressFormat.PNG, 100, out);
@@ -672,7 +811,8 @@ public class PhotoEditor implements BrushViewChangeListener {
                             out.close();
                             Log.d(TAG, "Filed Saved Successfully");
                             return null;
-                        } catch (Exception e) {
+                        } catch (Exception e)
+                        {
                             e.printStackTrace();
                             Log.d(TAG, "Failed to save File");
                             return e;
@@ -680,12 +820,15 @@ public class PhotoEditor implements BrushViewChangeListener {
                     }
 
                     @Override
-                    protected void onPostExecute(Exception e) {
+                    protected void onPostExecute(Exception e)
+                    {
                         super.onPostExecute(e);
-                        if (e == null) {
+                        if (e == null)
+                        {
                             clearAllViews();
                             onSaveListener.onSuccess(imagePath);
-                        } else {
+                        } else
+                        {
                             onSaveListener.onFailure(e);
                         }
                     }
@@ -694,7 +837,8 @@ public class PhotoEditor implements BrushViewChangeListener {
             }
 
             @Override
-            public void onFailure(Exception e) {
+            public void onFailure(Exception e)
+            {
 
             }
         });
@@ -707,35 +851,46 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @see OnSaveBitmap
      */
     @SuppressLint("StaticFieldLeak")
-    public void saveAsBitmap(@NonNull final OnSaveBitmap onSaveBitmap) {
-        parentView.saveFilter(new OnSaveBitmap() {
+    public void saveAsBitmap(@NonNull final OnSaveBitmap onSaveBitmap)
+    {
+        parentView.saveFilter(new OnSaveBitmap()
+        {
             @Override
-            public void onBitmapReady(Bitmap saveBitmap) {
-                new AsyncTask<String, String, Bitmap>() {
+            public void onBitmapReady(Bitmap saveBitmap)
+            {
+                new AsyncTask<String, String, Bitmap>()
+                {
                     @Override
-                    protected void onPreExecute() {
+                    protected void onPreExecute()
+                    {
                         super.onPreExecute();
                         clearTextHelperBox();
                         parentView.setDrawingCacheEnabled(false);
                     }
 
                     @Override
-                    protected Bitmap doInBackground(String... strings) {
-                        if (parentView != null) {
+                    protected Bitmap doInBackground(String... strings)
+                    {
+                        if (parentView != null)
+                        {
                             parentView.setDrawingCacheEnabled(true);
                             return BitmapUtil.removeTransparency(parentView.getDrawingCache());
-                        } else {
+                        } else
+                        {
                             return null;
                         }
                     }
 
                     @Override
-                    protected void onPostExecute(Bitmap bitmap) {
+                    protected void onPostExecute(Bitmap bitmap)
+                    {
                         super.onPostExecute(bitmap);
-                        if (bitmap != null) {
+                        if (bitmap != null)
+                        {
                             clearAllViews();
                             onSaveBitmap.onBitmapReady(bitmap);
-                        } else {
+                        } else
+                        {
                             onSaveBitmap.onFailure(new Exception("Failed to load the bitmap"));
                         }
                     }
@@ -744,18 +899,22 @@ public class PhotoEditor implements BrushViewChangeListener {
             }
 
             @Override
-            public void onFailure(Exception e) {
+            public void onFailure(Exception e)
+            {
 
             }
         });
     }
 
-    private static String convertEmoji(String emoji) {
+    private static String convertEmoji(String emoji)
+    {
         String returnedEmoji;
-        try {
+        try
+        {
             int convertEmojiToInt = Integer.parseInt(emoji.substring(2), 16);
             returnedEmoji = new String(Character.toChars(convertEmojiToInt));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e)
+        {
             returnedEmoji = "";
         }
         return returnedEmoji;
@@ -766,7 +925,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param onPhotoEditorListener {@link OnPhotoEditorListener}
      */
-    public void setOnPhotoEditorListener(@NonNull OnPhotoEditorListener onPhotoEditorListener) {
+    public void setOnPhotoEditorListener(@NonNull OnPhotoEditorListener onPhotoEditorListener)
+    {
         this.mOnPhotoEditorListener = onPhotoEditorListener;
     }
 
@@ -775,46 +935,58 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @return true if nothing is there to change
      */
-    public boolean isCacheEmpty() {
+    public boolean isCacheEmpty()
+    {
         return addedViews.size() == 0 && redoViews.size() == 0;
     }
 
 
     @Override
-    public void onViewAdd(BrushDrawingView brushDrawingView) {
-        if (redoViews.size() > 0) {
+    public void onViewAdd(BrushDrawingView brushDrawingView)
+    {
+        if (redoViews.size() > 0)
+        {
             redoViews.remove(redoViews.size() - 1);
         }
         addedViews.add(brushDrawingView);
-        if (mOnPhotoEditorListener != null) {
+        if (mOnPhotoEditorListener != null)
+        {
             mOnPhotoEditorListener.onAddViewListener(ViewType.BRUSH_DRAWING, addedViews.size());
         }
     }
 
     @Override
-    public void onViewRemoved(BrushDrawingView brushDrawingView) {
-        if (addedViews.size() > 0) {
+    public void onViewRemoved(BrushDrawingView brushDrawingView)
+    {
+        if (addedViews.size() > 0)
+        {
             View removeView = addedViews.remove(addedViews.size() - 1);
-            if (!(removeView instanceof BrushDrawingView)) {
+            if (!(removeView instanceof BrushDrawingView))
+            {
                 parentView.removeView(removeView);
             }
             redoViews.add(removeView);
         }
-        if (mOnPhotoEditorListener != null) {
+        if (mOnPhotoEditorListener != null)
+        {
             mOnPhotoEditorListener.onRemoveViewListener(addedViews.size());
         }
     }
 
     @Override
-    public void onStartDrawing() {
-        if (mOnPhotoEditorListener != null) {
+    public void onStartDrawing()
+    {
+        if (mOnPhotoEditorListener != null)
+        {
             mOnPhotoEditorListener.onStartViewChangeListener(ViewType.BRUSH_DRAWING);
         }
     }
 
     @Override
-    public void onStopDrawing() {
-        if (mOnPhotoEditorListener != null) {
+    public void onStopDrawing()
+    {
+        if (mOnPhotoEditorListener != null)
+        {
             mOnPhotoEditorListener.onStopViewChangeListener(ViewType.BRUSH_DRAWING);
         }
     }
@@ -823,7 +995,8 @@ public class PhotoEditor implements BrushViewChangeListener {
     /**
      * Builder pattern to define {@link PhotoEditor} Instance
      */
-    public static class Builder {
+    public static class Builder
+    {
 
         private Context context;
         private PhotoEditorView parentView;
@@ -842,14 +1015,16 @@ public class PhotoEditor implements BrushViewChangeListener {
          * @param context         context
          * @param photoEditorView {@link PhotoEditorView}
          */
-        public Builder(Context context, PhotoEditorView photoEditorView) {
+        public Builder(Context context, PhotoEditorView photoEditorView)
+        {
             this.context = context;
             parentView = photoEditorView;
             imageView = photoEditorView.getSource();
             brushDrawingView = photoEditorView.getBrushDrawingView();
         }
 
-        Builder setDeleteView(View deleteView) {
+        Builder setDeleteView(View deleteView)
+        {
             this.deleteView = deleteView;
             return this;
         }
@@ -860,7 +1035,8 @@ public class PhotoEditor implements BrushViewChangeListener {
          * @param textTypeface typeface for custom font
          * @return {@link Builder} instant to build {@link PhotoEditor}
          */
-        public Builder setDefaultTextTypeface(Typeface textTypeface) {
+        public Builder setDefaultTextTypeface(Typeface textTypeface)
+        {
             this.textTypeface = textTypeface;
             return this;
         }
@@ -871,7 +1047,8 @@ public class PhotoEditor implements BrushViewChangeListener {
          * @param emojiTypeface typeface for custom font
          * @return {@link Builder} instant to build {@link PhotoEditor}
          */
-        public Builder setDefaultEmojiTypeface(Typeface emojiTypeface) {
+        public Builder setDefaultEmojiTypeface(Typeface emojiTypeface)
+        {
             this.emojiTypeface = emojiTypeface;
             return this;
         }
@@ -882,7 +1059,8 @@ public class PhotoEditor implements BrushViewChangeListener {
          * @param isTextPinchZoomable flag to make pinch to zoom
          * @return {@link Builder} instant to build {@link PhotoEditor}
          */
-        public Builder setPinchTextScalable(boolean isTextPinchZoomable) {
+        public Builder setPinchTextScalable(boolean isTextPinchZoomable)
+        {
             this.isTextPinchZoomable = isTextPinchZoomable;
             return this;
         }
@@ -890,7 +1068,8 @@ public class PhotoEditor implements BrushViewChangeListener {
         /**
          * @return build PhotoEditor instance
          */
-        public PhotoEditor build() {
+        public PhotoEditor build()
+        {
             return new PhotoEditor(this);
         }
     }
@@ -901,10 +1080,12 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @param context context
      * @return list of emoji unicode
      */
-    public static ArrayList<String> getEmojis(Context context) {
+    public static ArrayList<String> getEmojis(Context context)
+    {
         ArrayList<String> convertedEmojiList = new ArrayList<>();
         String[] emojiList = context.getResources().getStringArray(R.array.photo_editor_emoji);
-        for (String emojiUnicode : emojiList) {
+        for (String emojiUnicode : emojiList)
+        {
             convertedEmojiList.add(convertEmoji(emojiUnicode));
         }
         return convertedEmojiList;
