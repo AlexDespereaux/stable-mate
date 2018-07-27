@@ -25,6 +25,7 @@ import com.jaram.jarambuild.imageUtils.PropertiesBSFragment;
 import com.jaram.jarambuild.imageUtils.StickerBSFragment;
 import com.jaram.jarambuild.imageUtils.TextEditorDialogFragment;
 import com.jaram.jarambuild.utils.AddStickerEvent;
+import com.jaram.jarambuild.utils.TinyDB;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -65,6 +66,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private static final String TAG = "EditActivity";
     //list of stickerList index's used in imageviews
     private ArrayList<String> sliList;
+    //shared preferances
+    TinyDB tinydb;
 
     public static void launch(Context context, ArrayList<String> imagesPath)
     {
@@ -127,6 +130,9 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             //show scale bar colour dialog
             createSBColourDialog();
         }
+
+        //shared preferences helper
+        tinydb = new TinyDB(this);
     }
 
 
@@ -333,6 +339,11 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     @SuppressLint("MissingPermission")
     private void saveImage()
     {
+        //add sticker Index List to shared pref - not using intent (extras) as I want to ensure list is available should users
+        //use back key.
+        tinydb.putListString("stickerIndexAL", sliList );
+        Log.d(TAG, "sliList added to SP");
+
         if (requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
         {
             showLoading("Saving...");
