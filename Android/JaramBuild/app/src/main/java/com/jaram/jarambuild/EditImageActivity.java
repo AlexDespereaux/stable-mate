@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.jaram.jarambuild.imageUtils.PropertiesBSFragment;
 import com.jaram.jarambuild.imageUtils.StickerBSFragment;
 import com.jaram.jarambuild.imageUtils.TextEditorDialogFragment;
 import com.jaram.jarambuild.utils.AddStickerEvent;
+import com.jaram.jarambuild.utils.TinyDB;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -32,8 +34,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Objects;
 
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
@@ -61,10 +66,13 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private StickerBSFragment mStickerBSFragment;
     private TextView mTxtCurrentTool;
     private String imageFilePath;
+    private String editedImageFilePath = "";
     //log
     private static final String TAG = "EditActivity";
     //list of stickerList index's used in imageviews
     private ArrayList<String> sliList;
+    //shared preferances
+    TinyDB tinydb;
 
     public static void launch(Context context, ArrayList<String> imagesPath)
     {
@@ -127,6 +135,9 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             //show scale bar colour dialog
             createSBColourDialog();
         }
+
+        //shared preferences helper
+        tinydb = new TinyDB(this);
     }
 
 
@@ -136,27 +147,17 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     {
         Log.d(TAG, "Sticker Index from EventBus AddStickerEvent " + event.message);
         sliList.add(event.message);
-
-        //For Debugging
-        /*Iterator itr=sliList.iterator();
-        while(itr.hasNext())
-        {
-            Log.d(TAG, "iterated array list " + itr.next());
-        }*/
     }
 
     private void initViews()
     {
-        ImageView imgPencil;
-        ImageView imgEraser;
-        ImageView imgUndo;
-        ImageView imgRedo;
-        ImageView imgText;
-        ImageView imgCamera;
-        ImageView imgGallery;
-        ImageView imgSticker;
-        ImageView imgSave;
-        ImageView imgClose;
+        Button imgPencil;
+        Button imgEraser;
+        Button imgUndo;
+        Button imgText;
+        Button imgSticker;
+        Button imgSave;
+        Button imgClose;
 
         mPhotoEditorView = findViewById(R.id.photoEditorView);
         mTxtCurrentTool = findViewById(R.id.txtCurrentTool);
@@ -175,15 +176,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         imgUndo = findViewById(R.id.imgUndo);
         imgUndo.setOnClickListener(this);
-
-        imgRedo = findViewById(R.id.imgRedo);
-        imgRedo.setOnClickListener(this);
-
-        imgCamera = findViewById(R.id.imgCamera);
-        imgCamera.setOnClickListener(this);
-
-        imgGallery = findViewById(R.id.imgGallery);
-        imgGallery.setOnClickListener(this);
 
         imgSave = findViewById(R.id.imgSave);
         imgSave.setOnClickListener(this);
@@ -294,10 +286,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                 mPhotoEditor.undo();
                 break;
 
-            case R.id.imgRedo:
-                mPhotoEditor.redo();
-                break;
-
             case R.id.imgSave:
                 saveImage();
                 break;
@@ -315,52 +303,41 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             case R.id.imgSticker:
                 mStickerBSFragment.show(getSupportFragmentManager(), mStickerBSFragment.getTag());
                 break;
-
-            case R.id.imgCamera:
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                break;
-
-            case R.id.imgGallery:
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_REQUEST);
-                break;
         }
     }
 
     @SuppressLint("MissingPermission")
     private void saveImage()
     {
+        //add sticker Index List to shared pref - not using intent (extras) as I want to ensure list is available should users
+        //use back key.
+        tinydb.putListString("stickerIndexAL", sliList );
+        Log.d(TAG, "sliList added to SP");
+
         if (requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
         {
-            showLoading("Saving...");
-            File file = new File(Environment.getExternalStorageDirectory()
-                    + File.separator + ""
-                    + System.currentTimeMillis() + ".png");
+            File photoFile = null;
             try
             {
-                file.createNewFile();
-                mPhotoEditor.saveImage(file.getAbsolutePath(), new PhotoEditor.OnSaveListener()
+                photoFile = createImageFile();
+                mPhotoEditor.saveAsFile(photoFile.getAbsolutePath(), new PhotoEditor.OnSaveListener()
                 {
                     @Override
                     public void onSuccess(@NonNull String imagePath)
                     {
-                        hideLoading();
                         showSnackbar("Image Saved Successfully");
                         // working mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
                         mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
                         //TODO send image path to addData via intent
                         Intent intent = new Intent(EditImageActivity.this, AddDataActivity.class);
-                        intent.putExtra("editedImageUri", imagePath);
+                        intent.putExtra("editedImageUri", editedImageFilePath);
+                        intent.putExtra("rawImageUri", imageFilePath);
                         startActivity(intent);
                     }
 
                     @Override
                     public void onFailure(@NonNull Exception exception)
                     {
-                        hideLoading();
                         showSnackbar("Failed to save Image");
                     }
                 });
@@ -548,8 +525,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             public void onClick(DialogInterface dialog, int which)
             {
                 Log.d(TAG, "User confirms app not calibrated");
-                //HomeActivity.openCameraIntent("calibrateActivity");
-                //TODO: openCalibrate activity until then return to Home with finish();
                 finish();
             }
         });
@@ -575,5 +550,18 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             }
         });
         builder.create().show();
+    }
+
+    private File createImageFile() throws IOException
+    {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "EDIT_" + timeStamp + "_";
+        //File storageDir = FileUtils.createFolders();
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        editedImageFilePath = image.getAbsolutePath();
+
+        return image;
     }
 }

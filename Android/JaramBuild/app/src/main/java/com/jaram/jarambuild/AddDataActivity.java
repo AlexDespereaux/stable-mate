@@ -4,7 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -24,11 +27,19 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+//shared prefs
+import com.jaram.jarambuild.adapters.LegendListAdapter;
+import com.jaram.jarambuild.models.EditModel;
+import com.jaram.jarambuild.utils.TinyDB;
 
 public class AddDataActivity extends AppCompatActivity implements View.OnClickListener
 {
     //set log name
-    private String LOG_TAG = "AddData";
+    private String TAG = "AddData";
 
     private EditText imgTitleInput;
     private EditText subjectInput;
@@ -47,11 +58,36 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private String pathName;
     private String jsonPathName;
 
+    //Shared Prefs
+    TinyDB tinydb;
+
+    //List of sticker images (drawable resource files)
+    int[] stickerList;
+
+    //Array list of sticklerlist indexs of drawables used.
+    private ArrayList<String> sliList;
+
+    //Recycler View
+    private RecyclerView legendRecyclerView;
+    private LegendListAdapter legendListAdapter;
+    public ArrayList<EditModel> editModelArrayList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_data);
+
+        //generate Legend Input
+        genLegend();
+
+        //Recycler View
+        legendRecyclerView = (RecyclerView) findViewById(R.id.legendRecycler);
+        legendRecyclerView.setNestedScrollingEnabled(false);
+        editModelArrayList = populateList();
+        legendListAdapter = new LegendListAdapter(this, editModelArrayList);
+        legendRecyclerView.setAdapter(legendListAdapter);
+        legendRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
 
         //buttons
         Button saveBtn = findViewById(R.id.saveBtn);
@@ -60,7 +96,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         imgTitleInput = findViewById(R.id.imgTitleInput);
         subjectInput = findViewById(R.id.subjectInput);
         descInput = findViewById(R.id.descInput);
-
 
         //register listeners
         saveBtn.setOnClickListener(this);
@@ -98,7 +133,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             //Bitmap scaledImg = JBitmapScaler.scaleToFitWidth(BitmapFactory.decodeFile(editedImgUri), 400);
             //imageView.setImageBitmap(scaledImg);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bitmap = BitmapFactory.decodeFile(editedImgUri,bmOptions);
+            Bitmap bitmap = BitmapFactory.decodeFile(editedImgUri, bmOptions);
             imageView.setImageBitmap(bitmap);
         }
     }
@@ -140,22 +175,22 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
         } catch (JSONException e)
         {
-            Log.e(LOG_TAG, "JSONException: " + e.getMessage());
+            Log.e(TAG, "JSONException: " + e.getMessage());
         } catch (java.lang.NumberFormatException e)
         {
-            Log.e(LOG_TAG, "NumberFormatException" + e.getMessage());
+            Log.e(TAG, "NumberFormatException" + e.getMessage());
             return;
         }
 
         //write JSON Object to string and save in file
         if (uploadObj != null)
         {
-            Log.d(LOG_TAG, "Created JSON Object");
+            Log.d(TAG, "Created JSON Object");
             writeJsonToBinaryFile(context, uploadObj);
             writeJsonToFile(context, uploadObj);
         } else
         {
-            Log.d(LOG_TAG, "JSON Object is null, Upload failed");
+            Log.d(TAG, "JSON Object is null, Upload failed");
         }
     }
 
@@ -177,11 +212,11 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             //fos.write(uploadObj.toString().getBytes());  //to use if base64 image no ling requires replace
             fos.flush();
             fos.close();
-            Log.d(LOG_TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
+            Log.d(TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
             pathName = newFile.getAbsolutePath();
         } catch (Exception e)
         {
-            Log.d(LOG_TAG, "Unable to save file", e);
+            Log.d(TAG, "Unable to save file", e);
         }
     }
 
@@ -203,11 +238,11 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             //fos.write(uploadObj.toString().getBytes());  //to use if base64 image no ling requires replace
             fos.flush();
             fos.close();
-            Log.d(LOG_TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
+            Log.d(TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
             jsonPathName = newFile.getAbsolutePath();
         } catch (Exception e)
         {
-            Log.d(LOG_TAG, "Unable to save file", e);
+            Log.d(TAG, "Unable to save file", e);
         }
     }
 
@@ -234,7 +269,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 75, baos);
         byte[] byteArrayImage = baos.toByteArray();
-        Log.d(LOG_TAG, "Image converted to Base64");
+        Log.d(TAG, "Image converted to Base64");
         return Base64.encodeToString(byteArrayImage, Base64.NO_WRAP);
     }
 
@@ -256,7 +291,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .startUpload();
-            Log.d(LOG_TAG, "Binary File uploaded");
+            Log.d(TAG, "Binary File uploaded");
         } catch (Exception exc)
         {
             Log.e("AndroidUploadService", exc.getMessage(), exc);
@@ -277,7 +312,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .startUpload();
-            Log.d(LOG_TAG, "Binary File uploaded");
+            Log.d(TAG, "Binary File uploaded");
         } catch (Exception exc)
         {
             Log.e("AndroidUploadService", exc.getMessage(), exc);
@@ -285,6 +320,50 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
         //TODO: check sucessful upload & delete system image files & Obj upon confirm
         //TODO: save binary files to database and load from database in loop IF wifi access available. Otherwise wait for broadcast RX msg
+    }
+
+    public void genLegend()
+    {
+        //get sliList (ArrayList containing index numbers of used stickers from stickerlist) from SP
+        tinydb = new com.jaram.jarambuild.utils.TinyDB(this);
+        sliList = tinydb.getListStringTinyDB("stickerIndexAL");
+
+        //get stickerList
+        stickerList = com.jaram.jarambuild.utils.StickerConstants.getStickerList();
+
+        //remove duplicates from legend image arraylist by conversting to hashset and back.
+        Set<String> hs = new HashSet<>();
+        hs.addAll(sliList);
+        sliList.clear();
+        sliList.addAll(hs);
+
+        //For Debugging
+        Iterator itr = sliList.iterator();
+        while (itr.hasNext())
+        {
+            Log.d(TAG, "iterated array list " + itr.next());
+        }
+    }
+
+    private ArrayList<EditModel> populateList()
+    {
+        ArrayList<EditModel> list = new ArrayList<>();
+        Iterator itr = sliList.iterator();
+        while (itr.hasNext())
+        {
+            EditModel editModel = new EditModel();
+            editModel.setEditTextValue("Enter legend here");
+            list.add(editModel);
+            Log.d(TAG, "iterated array list " + itr.next());
+        }
+        /*
+        for (int i = 0; i < 8; i++)
+        {
+            EditModel editModel = new EditModel();
+            editModel.setEditTextValue(String.valueOf(i));
+            list.add(editModel);
+        }*/
+        return list;
     }
 }
 

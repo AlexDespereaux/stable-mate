@@ -187,7 +187,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageFileName = "IMG_" + timeStamp + "_";
+        String imageFileName = "RAW_" + timeStamp + "_";
         //File storageDir = FileUtils.createFolders();
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
