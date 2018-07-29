@@ -30,27 +30,6 @@
             app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/imgGallery"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/galleryopen"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_gallery"
-                    tools:layout_editor_absoluteY="342dp" />
-
-                <ImageView
-                    android:id="@+id/imgCamera"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/camera"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_camera"
-                    tools:layout_editor_absoluteX="50dp"
-                    tools:layout_editor_absoluteY="342dp" />
-
-                <ImageView
                     android:id="@+id/imgSave"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -91,16 +70,6 @@
                     tools:layout_editor_absoluteX="284dp"
                     tools:layout_editor_absoluteY="342dp" />
 
-                <ImageView
-                    android:id="@+id/imgRedo"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/redo"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_redo"
-                    tools:layout_editor_absoluteX="334dp"
-                    tools:layout_editor_absoluteY="342dp" />
         </LinearLayout>
 
         <ja.burhanrashid52.photoeditor.PhotoEditorView

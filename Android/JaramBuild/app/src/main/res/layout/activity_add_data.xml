@@ -4,127 +4,148 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddDataActivity"
-    tools:layout_editor_absoluteY="81dp">
+    tools:context=".AddDataActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout5"
-        android:layout_width="0dp"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top|center"
-        android:orientation="horizontal"
+        android:scrollbarStyle="outsideOverlay"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:baselineAligned="false"
-            android:contentDescription="@string/image"
-            android:padding="5dp"
-            app:srcCompat="@drawable/got_s" />
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="65dp">
 
             <TextView
-                android:id="@+id/locationTV"
-                android:layout_width="wrap_content"
+                android:id="@+id/heading"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:fontFamily="@font/roboto_medium"
-                android:text="@string/location"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/background_light" />
+                android:text="@string/add_image_details"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textSize="24sp" />
 
-            <TextView
-                android:id="@+id/dateTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/roboto_medium"
-                android:text="@string/date"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/background_light" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout4"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
-
-        <EditText
-            android:id="@+id/imgTitleInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:fontFamily="@font/roboto_medium"
-            android:hint="@string/image_title"
-            android:inputType="textPersonName" />
-
-        <EditText
-            android:id="@+id/subjectInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:fontFamily="@font/roboto_medium"
-            android:hint="@string/subject"
-            android:inputType="textPersonName" />
-
-        <EditText
-            android:id="@+id/descInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:fontFamily="@font/roboto_medium"
-            android:hint="@string/notes"
-            android:inputType="textMultiLine"
-            tools:layout_editor_absoluteX="73dp"
-            tools:layout_editor_absoluteY="97dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/legendRecycler"
+            <LinearLayout
+                android:id="@+id/linearLayout5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="15dp" />
+                android:gravity="top|center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:contentDescription="@string/image"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/white_star" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+                <TextView
+                    android:id="@+id/heading2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_image_details"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+                <EditText
+                    android:id="@+id/imgTitleInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:fontFamily="@font/roboto_medium"
+                    android:hint="@string/image_title"
+                    android:inputType="textPersonName"
+                    android:textAppearance="@style/TextAppearance.AppCompat" />
+
+                <EditText
+                    android:id="@+id/subjectInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:fontFamily="@font/roboto_medium"
+                    android:hint="@string/subject"
+                    android:inputType="textPersonName"
+                    android:textAppearance="@style/TextAppearance.AppCompat" />
+
+                <EditText
+                    android:id="@+id/descInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:fontFamily="@font/roboto_medium"
+                    android:hint="@string/notes"
+                    android:inputType="textMultiLine"
+                    android:textAppearance="@style/TextAppearance.AppCompat"
+                    tools:layout_editor_absoluteX="73dp"
+                    tools:layout_editor_absoluteY="97dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/heading3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_legend_definitions"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/legendRecycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/saveBtn"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginBottom="8dp"
+                    android:background="@color/jaramGray"
+                    android:drawableTop="@drawable/ic_done_white_48dp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:paddingBottom="5dp"
+                    android:text="@string/upload_to_cloud"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="181dp"
+                    tools:layout_editor_absoluteY="174dp" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
-        <Button
-            android:id="@+id/saveBtn"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="8dp"
-            android:background="@color/jaramGray"
-            android:drawableTop="@drawable/ic_done_white_48dp"
-            android:fontFamily="@font/roboto_medium"
-            android:paddingBottom="5dp"
-            android:text="@string/upload_to_cloud"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="181dp"
-            tools:layout_editor_absoluteY="174dp" />
-
-    </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

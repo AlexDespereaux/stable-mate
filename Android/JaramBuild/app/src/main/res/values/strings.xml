@@ -114,6 +114,10 @@
     <string name="enter_legend_here">Enter Legend here</string>
     <string name="location">Location</string>
     <string name="date">Date</string>
+    <string name="add_image_details">Add Image Details</string>
+    <string name="add_legend_definitions">Add Legend definitions</string>
+    <string name="enter_your_legend_here">Enter your legend here</string>
+    <string name="legend_image">Legend Image</string>
 
     <!-- Scale Bar colour Dialog -->
     <string-array name="sbcolour">

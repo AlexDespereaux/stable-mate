@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -77,8 +78,12 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_data);
 
+        //generate Legend Input
+        genLegend();
+
         //Recycler View
         legendRecyclerView = (RecyclerView) findViewById(R.id.legendRecycler);
+        legendRecyclerView.setNestedScrollingEnabled(false);
         editModelArrayList = populateList();
         legendListAdapter = new LegendListAdapter(this, editModelArrayList);
         legendRecyclerView.setAdapter(legendListAdapter);
@@ -91,9 +96,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         imgTitleInput = findViewById(R.id.imgTitleInput);
         subjectInput = findViewById(R.id.subjectInput);
         descInput = findViewById(R.id.descInput);
-
-        //generate Legend Input
-        genLegend();
 
         //register listeners
         saveBtn.setOnClickListener(this);
@@ -346,12 +348,21 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private ArrayList<EditModel> populateList()
     {
         ArrayList<EditModel> list = new ArrayList<>();
+        Iterator itr = sliList.iterator();
+        while (itr.hasNext())
+        {
+            EditModel editModel = new EditModel();
+            editModel.setEditTextValue("Enter legend here");
+            list.add(editModel);
+            Log.d(TAG, "iterated array list " + itr.next());
+        }
+        /*
         for (int i = 0; i < 8; i++)
         {
             EditModel editModel = new EditModel();
             editModel.setEditTextValue(String.valueOf(i));
             list.add(editModel);
-        }
+        }*/
         return list;
     }
 }

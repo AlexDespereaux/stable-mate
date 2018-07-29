@@ -31,7 +31,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     //photo editor
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.android.support:design:27.1.1'
     //implementation 'ja.burhanrashid52:photoeditor:0.2.1'
     implementation project(':photoeditor')
@@ -47,4 +46,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     //recycler List view
     implementation 'com.android.support:recyclerview-v7:27.1.1'
+    //Material stepper (in add data activity)
+    implementation 'com.ernestoyaquello.stepperform:vertical-stepper-form:0.9.9'
+
 }
