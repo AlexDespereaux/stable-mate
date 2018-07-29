@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A6499C620EE31CF00ED2654 /* PhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6499C520EE31CF00ED2654 /* PhotoViewController.swift */; };
+		3A649A0220EE5F9500ED2654 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A649A0120EE5F9500ED2654 /* CameraViewController.swift */; };
 		3A9639C320A098640016D20B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9639C220A098640016D20B /* AppDelegate.swift */; };
 		3A9639C520A098640016D20B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9639C420A098640016D20B /* ViewController.swift */; };
 		3A9639C820A098640016D20B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A9639C620A098640016D20B /* Main.storyboard */; };
@@ -35,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3A6499C520EE31CF00ED2654 /* PhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
+		3A649A0120EE5F9500ED2654 /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		3A9639BF20A098640016D20B /* tester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tester.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A9639C220A098640016D20B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3A9639C420A098640016D20B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -101,6 +105,8 @@
 			children = (
 				3A9639C220A098640016D20B /* AppDelegate.swift */,
 				3A9639C420A098640016D20B /* ViewController.swift */,
+				3A649A0120EE5F9500ED2654 /* CameraViewController.swift */,
+				3A6499C520EE31CF00ED2654 /* PhotoViewController.swift */,
 				3A9639C620A098640016D20B /* Main.storyboard */,
 				3A9639C920A098640016D20B /* Assets.xcassets */,
 				3A9639CB20A098640016D20B /* LaunchScreen.storyboard */,
@@ -196,6 +202,7 @@
 				TargetAttributes = {
 					3A9639BE20A098640016D20B = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = VK5TUL79W9;
 						ProvisioningStyle = Automatic;
 					};
 					3A9639D220A098640016D20B = {
@@ -263,6 +270,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A9639C520A098640016D20B /* ViewController.swift in Sources */,
+				3A649A0220EE5F9500ED2654 /* CameraViewController.swift in Sources */,
+				3A6499C620EE31CF00ED2654 /* PhotoViewController.swift in Sources */,
 				3A9639F120A099540016D20B /* RegisterPaige.swift in Sources */,
 				3A9639C320A098640016D20B /* AppDelegate.swift in Sources */,
 			);
@@ -416,6 +425,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = VK5TUL79W9;
 				INFOPLIST_FILE = tester/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = JARAM.tester;
@@ -428,6 +438,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = VK5TUL79W9;
 				INFOPLIST_FILE = tester/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = JARAM.tester;
@@ -509,6 +520,7 @@
 				3A9639E920A098640016D20B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3A9639EA20A098640016D20B /* Build configuration list for PBXNativeTarget "testerTests" */ = {
 			isa = XCConfigurationList;
@@ -517,6 +529,7 @@
 				3A9639EC20A098640016D20B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3A9639ED20A098640016D20B /* Build configuration list for PBXNativeTarget "testerUITests" */ = {
 			isa = XCConfigurationList;
@@ -525,6 +538,7 @@
 				3A9639EF20A098640016D20B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
