@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -150,16 +151,13 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
     private void initViews()
     {
-        ImageView imgPencil;
-        ImageView imgEraser;
-        ImageView imgUndo;
-        ImageView imgRedo;
-        ImageView imgText;
-        ImageView imgCamera;
-        ImageView imgGallery;
-        ImageView imgSticker;
-        ImageView imgSave;
-        ImageView imgClose;
+        Button imgPencil;
+        Button imgEraser;
+        Button imgUndo;
+        Button imgText;
+        Button imgSticker;
+        Button imgSave;
+        Button imgClose;
 
         mPhotoEditorView = findViewById(R.id.photoEditorView);
         mTxtCurrentTool = findViewById(R.id.txtCurrentTool);
