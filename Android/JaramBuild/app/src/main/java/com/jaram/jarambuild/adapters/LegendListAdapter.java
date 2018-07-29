@@ -45,7 +45,12 @@ public class LegendListAdapter extends RecyclerView.Adapter<LegendListAdapter.My
     @Override
     public void onBindViewHolder(final LegendListAdapter.MyViewHolder holder, final int position)
     {
+        //get stickerList
+        int[] stickerList = com.jaram.jarambuild.utils.StickerConstants.getStickerList();
+
         holder.editText.setText(editModelArrayList.get(position).getEditTextValue());
+        int imgIndex = editModelArrayList.get(position).getStickerIndex();
+        holder.legendImage.setImageResource(stickerList[imgIndex]);
         Log.d("print", "yes");
     }
 
@@ -59,12 +64,14 @@ public class LegendListAdapter extends RecyclerView.Adapter<LegendListAdapter.My
     {
 
         protected EditText editText;
+        protected ImageView legendImage;
 
         public MyViewHolder(View itemView)
         {
             super(itemView);
 
             editText = (EditText) itemView.findViewById(R.id.editTextDescription);
+            legendImage = (ImageView) itemView.findViewById(R.id.stickerLegend);
 
             editText.addTextChangedListener(new TextWatcher()
             {

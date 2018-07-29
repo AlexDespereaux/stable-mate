@@ -25,15 +25,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity" />
-        <activity android:name=".SignUpActivity" />
-        <activity android:name=".EditImageActivity" />
+        <activity android:name=".SignUpActivity"
+            android:noHistory="true"/>
+        <activity android:name=".EditImageActivity"
+            android:noHistory="true"/>
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".AddDataActivity" />
-        <activity android:name=".GalleryActivity" />
+        <activity android:name=".AddDataActivity"
+            android:noHistory="true"/>
+        <activity android:name=".GalleryActivity"
+            android:noHistory="true"/>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"></activity>
