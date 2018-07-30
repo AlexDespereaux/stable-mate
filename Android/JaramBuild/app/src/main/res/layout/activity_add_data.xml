@@ -22,16 +22,6 @@
             tools:layout_editor_absoluteX="8dp"
             tools:layout_editor_absoluteY="65dp">
 
-            <TextView
-                android:id="@+id/heading"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_medium"
-                android:text="@string/add_image_details"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:textSize="24sp" />
-
             <LinearLayout
                 android:id="@+id/linearLayout5"
                 android:layout_width="match_parent"
@@ -48,7 +38,6 @@
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
                     android:contentDescription="@string/image"
-                    android:padding="5dp"
                     app:srcCompat="@drawable/white_star" />
             </LinearLayout>
 
@@ -57,7 +46,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -68,14 +56,23 @@
                     android:id="@+id/heading2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/roboto_medium"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
                     android:text="@string/add_image_details"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                    android:textAppearance="@style/TextAppearance.AppCompat"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
                 <EditText
                     android:id="@+id/imgTitleInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
                     android:ems="10"
                     android:fontFamily="@font/roboto_medium"
                     android:hint="@string/image_title"
@@ -85,17 +82,23 @@
                 <EditText
                     android:id="@+id/subjectInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
                     android:ems="10"
                     android:fontFamily="@font/roboto_medium"
                     android:hint="@string/subject"
                     android:inputType="textPersonName"
-                    android:textAppearance="@style/TextAppearance.AppCompat" />
+                    android:textAppearance="@style/TextAppearance.AppCompat"
+                    android:textColor="@color/white" />
 
                 <EditText
                     android:id="@+id/descInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
                     android:ems="10"
                     android:fontFamily="@font/roboto_medium"
                     android:hint="@string/notes"
@@ -110,37 +113,66 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/heading3"
+                        android:id="@+id/legendHeading"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:background="@color/colorPrimary"
+                        android:fontFamily="@font/roboto_medium"
+                        android:paddingBottom="8dp"
+                        android:paddingTop="8dp"
                         android:text="@string/add_legend_definitions"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                        android:textAppearance="@style/TextAppearance.AppCompat"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/legendRecycler"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/saveBtn"
-                    style="@style/Widget.AppCompat.Button.Colored"
+                <TableLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginBottom="8dp"
-                    android:background="@color/jaramGray"
-                    android:drawableTop="@drawable/ic_done_white_48dp"
-                    android:fontFamily="@font/roboto_medium"
-                    android:paddingBottom="5dp"
-                    android:text="@string/upload_to_cloud"
-                    android:textAlignment="center"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    tools:layout_editor_absoluteX="181dp"
-                    tools:layout_editor_absoluteY="174dp" />
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp">
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:ignore="UselessParent">
+
+                        <Button
+                            android:id="@+id/cancelBtn"
+                            style="@style/Widget.AppCompat.Button.Colored"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_cancel_white_48dp"
+                            android:fontFamily="@font/roboto_medium"
+                            android:text="@android:string/cancel"
+                            android:textAlignment="center"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/saveBtn"
+                            style="@style/Widget.AppCompat.Button.Colored"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_cloud_upload_white_48dp"
+                            android:fontFamily="@font/roboto_medium"
+                            android:text="@string/upload"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </TableRow>
+
+                </TableLayout>
 
             </LinearLayout>
 

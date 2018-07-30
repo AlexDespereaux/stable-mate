@@ -392,7 +392,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     @Override
     public void onStickerClick(Bitmap bitmap)
     {
-        mPhotoEditor.addImage(bitmap);;
+        mPhotoEditor.addImage(bitmap);
     }
 
     @Override

@@ -122,6 +122,8 @@
     <string name="symbol">Symbol</string>
     <string name="close2">Close</string>
     <string name="save2">Save</string>
+    <string name="applogo">appLogo</string>
+    <string name="upload">upload</string>
 
     <!-- Scale Bar colour Dialog -->
     <string-array name="sbcolour">
