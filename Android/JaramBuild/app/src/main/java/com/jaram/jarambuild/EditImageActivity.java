@@ -64,7 +64,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private PhotoEditorView mPhotoEditorView;
     private PropertiesBSFragment mPropertiesBSFragment;
     private StickerBSFragment mStickerBSFragment;
-    private TextView mTxtCurrentTool;
     private String imageFilePath;
     private String editedImageFilePath = "";
     //log
@@ -160,7 +159,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         Button imgClose;
 
         mPhotoEditorView = findViewById(R.id.photoEditorView);
-        mTxtCurrentTool = findViewById(R.id.txtCurrentTool);
 
         imgSticker = findViewById(R.id.imgSticker);
         imgSticker.setOnClickListener(this);
@@ -209,7 +207,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             public void onDone(String inputText, int colorCode)
             {
                 mPhotoEditor.editText(rootView, inputText, colorCode);
-                mTxtCurrentTool.setText(R.string.label_text);
             }
         });
     }
@@ -262,12 +259,10 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         {
             case R.id.imgPencil:
                 mPhotoEditor.setBrushDrawingMode(true);
-                mTxtCurrentTool.setText(R.string.label_brush);
                 mPropertiesBSFragment.show(getSupportFragmentManager(), mPropertiesBSFragment.getTag());
                 break;
             case R.id.btnEraser:
                 mPhotoEditor.brushEraser();
-                mTxtCurrentTool.setText(R.string.label_eraser);
                 break;
             case R.id.imgText:
                 TextEditorDialogFragment textEditorDialogFragment = TextEditorDialogFragment.show(this);
@@ -277,7 +272,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                     public void onDone(String inputText, int colorCode)
                     {
                         mPhotoEditor.addText(inputText, colorCode);
-                        mTxtCurrentTool.setText(R.string.label_text);
                     }
                 });
                 break;
@@ -333,6 +327,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         intent.putExtra("editedImageUri", editedImageFilePath);
                         intent.putExtra("rawImageUri", imageFilePath);
                         startActivity(intent);
+                        finish();
                     }
 
                     @Override
@@ -380,28 +375,24 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     public void onColorChanged(int colorCode)
     {
         mPhotoEditor.setBrushColor(colorCode);
-        mTxtCurrentTool.setText(R.string.label_brush);
     }
 
     @Override
     public void onOpacityChanged(int opacity)
     {
         mPhotoEditor.setOpacity(opacity);
-        mTxtCurrentTool.setText(R.string.label_brush);
     }
 
     @Override
     public void onBrushSizeChanged(int brushSize)
     {
         mPhotoEditor.setBrushSize(brushSize);
-        mTxtCurrentTool.setText(R.string.label_brush);
     }
 
     @Override
     public void onStickerClick(Bitmap bitmap)
     {
-        mPhotoEditor.addImage(bitmap);
-        mTxtCurrentTool.setText(R.string.label_sticker);
+        mPhotoEditor.addImage(bitmap);;
     }
 
     @Override

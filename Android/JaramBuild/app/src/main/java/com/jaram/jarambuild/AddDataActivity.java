@@ -348,13 +348,17 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private ArrayList<EditModel> populateList()
     {
         ArrayList<EditModel> list = new ArrayList<>();
-        Iterator itr = sliList.iterator();
-        while (itr.hasNext())
+        for (int a = 0; a <sliList.size(); a++)
         {
-            EditModel editModel = new EditModel();
-            editModel.setEditTextValue("Enter legend here");
-            list.add(editModel);
-            Log.d(TAG, "iterated array list " + itr.next());
+            String sLindex = sliList.get(a);
+            if (!sLindex.equals("notSticker"))
+            {
+                EditModel editModel = new EditModel();
+                //editModel.setEditTextValue("Enter legend here");
+                editModel.setStickerIndex(Integer.parseInt(sLindex));
+                list.add(editModel);
+                Log.d(TAG, "populated sticker index " + Integer.parseInt(sLindex));
+            }
         }
         /*
         for (int i = 0; i < 8; i++)
