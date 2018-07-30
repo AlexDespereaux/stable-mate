@@ -21,17 +21,26 @@ let printRequestHeaders = function(req) {
   console.log('');
 };
 
+let contentType = function(str) {
+  switch (str) {
+    case 'image/png':
+      return '.png';
+    case 'image/jpeg':
+      return '.jpg';
+    default:
+      return '.unk';
+  }
+};
+
 let uploadHandler = function(req, res) {
   console.log('\n\nUpload Request from: ' + req.ip);
   printRequestHeaders(req);
   if (!req.headers['token'] || req.headers['token'] !== TOKEN) {
-    res.sendStatus(401);
-  } else {
-    let fileExt = '.unk';
-    if (req.headers['Content-Type'] === 'image/png')
-      fileExt = '.png';
-    if (req.headers['Content-Type'] === 'image/jpeg')
-      fileExt = '.jpg';
+    res.sendStatus(401); }
+  else if (!req.headers['content-type']) {
+    res.sendStatus(400); }
+  else {
+    let fileExt = contentType(req.headers['content-type']);
     console.log('Started upload from: ' + req.ip);
     req.pipe(uploadFromStream(s3, fileExt));
     req.on('end', function () {
