@@ -25,22 +25,26 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity" />
-        <activity android:name=".SignUpActivity"
-            android:noHistory="true"/>
-        <activity android:name=".EditImageActivity"
-            android:noHistory="true"/>
+        <activity
+            android:name=".SignUpActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".EditImageActivity"
+            android:noHistory="true" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".AddDataActivity"
-            android:noHistory="true"/>
-        <activity android:name=".GalleryActivity"
-            android:noHistory="true"/>
+        <activity
+            android:name=".AddDataActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".GalleryActivity"
+            android:noHistory="true" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -52,7 +56,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".CalibrateActivity"></activity>
+        <activity
+            android:name=".CalibrateActivity" />
+        <activity android:name=".CalibrateEditorActivity"></activity>
     </application>
 
 </manifest>

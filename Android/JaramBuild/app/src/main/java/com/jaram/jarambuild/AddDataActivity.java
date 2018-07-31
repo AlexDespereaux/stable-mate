@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-//image utils
 
 //upload utils
 import net.gotev.uploadservice.BinaryUploadRequest;

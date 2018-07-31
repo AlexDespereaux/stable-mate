@@ -36,6 +36,9 @@
     <string name="notes">Notes</string>
     <string name="upload_to_cloud">Upload to Cloud</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="input_hint">Reference length and unit</string>
+    <string name="input_hint_units">Output unit</string>
+    <string name="error_numberFormat">Please enter a decimal number</string>
 
     <!-- Strings related to Settings -->
 
@@ -124,6 +127,8 @@
     <string name="save2">Save</string>
     <string name="applogo">appLogo</string>
     <string name="upload">upload</string>
+    <string name="ok">OK</string>
+    <string name="clear">clear</string>
 
     <!-- Scale Bar colour Dialog -->
     <string-array name="sbcolour">
