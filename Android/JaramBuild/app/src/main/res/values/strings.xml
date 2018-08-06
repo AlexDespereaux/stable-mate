@@ -129,6 +129,17 @@
     <string name="upload">upload</string>
     <string name="ok">OK</string>
     <string name="clear">clear</string>
+    <string name="please_input_the_reference_length_and_unit">Please input the reference length and unit</string>
+    <string name="reference_measurement_ie_30_micron">Reference measurement (ie 30 micron)</string>
+    <string name="magnification">Magnification</string>
+    <string name="objective_lens_magnification">Objective lens magnification</string>
+    <string name="reference_measurement">reference measurement</string>
+    <string name="ocular_lens_magnification">Ocular lens magnification</string>
+    <string name="save_calibration">Save Calibration</string>
+    <string name="calculate_scale">Calculate Scale</string>
+    <string name="lens_settings">Lens Settings</string>
+    <string name="calibration_name">Calibration Name</string>
+    <string name="calibration_identifier">Calibration identifier</string>
 
     <!-- Scale Bar colour Dialog -->
     <string-array name="sbcolour">

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="units">
-        <item>Meters</item>
-        <item>Centimeters</item>
+        <item>Nanometre</item>
+        <item>Micron</item>
         <item>Millimetres</item>
-        <item>Inches</item>
-
+        <item>Centimeters</item>
     </string-array>
 
     <string-array name="count">

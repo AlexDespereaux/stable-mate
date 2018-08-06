@@ -263,13 +263,20 @@ public class DrawingOnImage extends SurfaceView {
      * @param outputUnitIndex The output length unit index
      * @return The value of the measurement, converted to outputUnitIndex
      */
-    public double [] calculate(double reference, int inputUnitIndex, int outputUnitIndex){
+    public double calculate(double reference, int inputUnitIndex, int outputUnitIndex){
         if(circlePoints.size() != 4 ){
             Toast.makeText(context, "Select points for desired object", Toast.LENGTH_SHORT).show();
-            return null;
+            return -1;
         }
         return MathUtils.compute(circlePoints, reference, inputUnitIndex, outputUnitIndex);
     }
 
-
+    public double calculatePixelsPerMicron(double reference, int inputUnitIndex)
+    {
+        if(circlePoints.size() != 4 ){
+            Toast.makeText(context, "Select points for desired object", Toast.LENGTH_SHORT).show();
+            return -1;
+        }
+        return MathUtils.computePixelPerMicron(circlePoints, reference, inputUnitIndex);
+    }
 }

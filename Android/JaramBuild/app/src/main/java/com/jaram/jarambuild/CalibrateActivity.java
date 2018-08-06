@@ -3,6 +3,7 @@ package com.jaram.jarambuild;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,9 +14,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -23,6 +26,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 //zoom
 import com.jaram.jarambuild.CalibrateUtils.DrawingOnImage;
@@ -43,12 +47,14 @@ public class CalibrateActivity extends AppCompatActivity
     DrawingOnImage drawing;
     private String imageFilePath;
     //private Context context;
-    double[] result;
-    int outputUnit;
+    double result;
 
     //buttons
     Button clearBtn;
     Button okBtn;
+
+    //textview
+    TextView instructTxt;
 
 
     @Override
@@ -61,7 +67,6 @@ public class CalibrateActivity extends AppCompatActivity
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_calibrate);
 
-        //final ZoomLayout zoomLayout = findViewById(R.id.zoomLayout);
         imageholder = (FrameLayout) findViewById(R.id.frame);
 
         //hide action bar
@@ -80,6 +85,7 @@ public class CalibrateActivity extends AppCompatActivity
         SurfaceImage image = new SurfaceImage(this, imageFilePath);
         Log.d(TAG, "made newSI");
 
+        //add views to frameLayout
         imageholder.addView(image);
         Log.d(TAG, "added photoView");
         drawing = new DrawingOnImage(this, 2);
@@ -99,7 +105,6 @@ public class CalibrateActivity extends AppCompatActivity
                 Log.d(TAG, "in onClickClick");
                 if (drawing.circlePoints.size() != 0)
                 {
-
                     drawing.clearCanvas();
                 }
                 if (drawing.circlePoints.size() > 0 && drawing.circlePoints.size() <= 2)
@@ -137,55 +142,7 @@ public class CalibrateActivity extends AppCompatActivity
                 }
                 if (drawing.circlePoints.size() > 3 && objects1)
                 {
-                    //LayoutInflater li = (LayoutInflater) .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    LayoutInflater li = LayoutInflater.from(CalibrateActivity.this);
-
-                    final View promptsView = li.inflate(R.layout.unit_prompt_dialog, null);
-
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CalibrateActivity.this);
-
-                    alertDialogBuilder.setView(promptsView);
-
-
-                    alertDialogBuilder.setTitle("Reference Object Measurements");
-                    alertDialogBuilder.setIcon(R.drawable.black_arrow);
-
-                    alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
-                    {
-                        public void onClick(DialogInterface dialog, int whichButton)
-                        {
-                            int inputUnit = ((Spinner) promptsView.findViewById(R.id.input_unit_chooser)).getSelectedItemPosition();
-                            outputUnit = ((Spinner) promptsView.findViewById(R.id.output_unit_chooser)).getSelectedItemPosition();
-
-                            try
-                            {
-                                double reference = Double.parseDouble(((EditText) promptsView.findViewById(R.id.reference_input)).getText().toString());
-                                result = drawing.calculate(reference, inputUnit, outputUnit);
-                                //result toast
-                                String unit = ((Spinner) promptsView.findViewById(R.id.output_unit_chooser)).getItemAtPosition(outputUnit).toString();
-                                DecimalFormat decimalFormat = new DecimalFormat("#.##");
-                                Toast.makeText(CalibrateActivity.this, "dFOV = " + decimalFormat.format(result[0]) + unit, Toast.LENGTH_SHORT).show();
-                            } catch (NumberFormatException ex)
-                            {
-                                Toast.makeText(CalibrateActivity.this, getResources().getString(R.string.error_numberFormat), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                    alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-                    {
-                        public void onClick(DialogInterface dialog, int whichButton)
-                        {
-                            //Put actions for CANCEL button here, or leave in blank
-                        }
-                    });
-
-                    final AlertDialog alertDialog = alertDialogBuilder.create();
-                    final Spinner mSpinner = (Spinner) promptsView
-                            .findViewById(R.id.input_unit_chooser);
-
-
-                    alertDialog.show();
-                    alertDialog.setCanceledOnTouchOutside(true);
+                    getInfoDialog();
                 } else if (drawing.circlePoints.size() == 3)
                 {
                     Toast.makeText(CalibrateActivity.this, "Please draw all dots first", Toast.LENGTH_SHORT).show();
@@ -210,6 +167,90 @@ public class CalibrateActivity extends AppCompatActivity
 
     }
 
+    protected void getInfoDialog()
+    {
+        //LayoutInflater li = (LayoutInflater) .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater li = LayoutInflater.from(CalibrateActivity.this);
+
+        final View promptsView = li.inflate(R.layout.unit_prompt_dialog, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CalibrateActivity.this);
+
+        alertDialogBuilder.setView(promptsView);
+
+        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                int inputUnit = ((Spinner) promptsView.findViewById(R.id.input_unit_chooser)).getSelectedItemPosition();
+
+                try
+                {
+                    double reference = Double.parseDouble(((EditText) promptsView.findViewById(R.id.reference_input)).getText().toString());
+                    //result is dFOV in microns
+                    result = drawing.calculate(reference, inputUnit, 1);
+                    //pixPerMic is pixels per micron
+                    double pixPerMic = drawing.calculatePixelsPerMicron(reference, inputUnit);
+
+                    //temp toast for debugging
+                    Toast.makeText(CalibrateActivity.this,
+                            "dFOV = " + result + " microns"
+                                    + " pixel per micron = " + pixPerMic, Toast.LENGTH_LONG).show();
+
+                } catch (NumberFormatException ex)
+                {
+                    Toast.makeText(CalibrateActivity.this, "Please enter valid reference", Toast.LENGTH_SHORT).show();
+                }
+
+                //get ocular lens details
+                try
+                {
+                    double ocularLens = Double.parseDouble(((EditText) promptsView.findViewById(R.id.ocular_input)).getText().toString());
+                } catch (
+                        NumberFormatException ex)
+                {
+                    Toast.makeText(CalibrateActivity.this, "Please enter valid ocular lens", Toast.LENGTH_SHORT).show();
+                }
+                //get objective lens details
+                try
+                {
+                    double objectiveLens = Double.parseDouble(((EditText) promptsView.findViewById(R.id.objective_input)).getText().toString());
+                } catch (
+                        NumberFormatException ex)
+                {
+                    Toast.makeText(CalibrateActivity.this, "Please enter valid objective lens", Toast.LENGTH_SHORT).show();
+                }
+
+                String calibrationId = ((EditText) promptsView.findViewById(R.id.settingName_input)).getText().toString().trim();
+
+                if (calibrationId.equals(""))
+                {
+                    Toast.makeText(CalibrateActivity.this, "Please enter Calibration Id", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    //TODO: Save to database
+                    finish();
+                    Intent homeIntent = new Intent(CalibrateActivity.this, HomeActivity.class);
+                    startActivity(homeIntent);
+                }
+            }
+    });
+        alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener()
+
+    {
+        public void onClick (DialogInterface dialog,int whichButton)
+        {
+            //closes dialog by default
+        }
+    });
+
+    final AlertDialog alertDialog = alertDialogBuilder.create();
+    //final Spinner mSpinner = (Spinner) promptsView.findViewById(R.id.input_unit_chooser);
+
+        alertDialog.show();
+        alertDialog.setCanceledOnTouchOutside(true);
+}
 
 
 }
