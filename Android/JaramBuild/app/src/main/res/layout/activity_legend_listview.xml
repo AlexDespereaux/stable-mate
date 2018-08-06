@@ -4,7 +4,7 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/background_light"
+    android:background="?android:attr/colorBackground"
     android:paddingBottom="8dp"
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
@@ -19,12 +19,13 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="0dp"
-        card_view:cardCornerRadius="7dp"
+        android:background="?android:attr/colorBackground"
         card_view:cardElevation="13dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?android:attr/colorBackground"
             android:orientation="horizontal">
 
             <ImageView
@@ -39,13 +40,16 @@
             <EditText
                 android:id="@+id/editTextDescription"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
+                android:background="?android:attr/colorBackground"
+                android:fontFamily="@font/roboto_medium"
                 android:hint="Enter symbol definition"
                 android:inputType="text"
+                android:lineSpacingExtra="14sp"
                 android:paddingLeft="10dp"
                 android:text="@string/enter_your_legend_here"
-                android:textColor="#000" />
+                android:textAppearance="@style/TextAppearance.AppCompat" />
 
         </LinearLayout>
 

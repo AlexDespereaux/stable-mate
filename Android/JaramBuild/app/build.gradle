@@ -46,7 +46,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     //recycler List view
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-    //Material stepper (in add data activity)
-    implementation 'com.ernestoyaquello.stepperform:vertical-stepper-form:0.9.9'
+    //pinch zoom canvas
+    implementation 'com.otaliastudios:zoomlayout:1.3.0'
 
 }

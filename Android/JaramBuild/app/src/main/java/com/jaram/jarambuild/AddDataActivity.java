@@ -1,6 +1,7 @@
 package com.jaram.jarambuild;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,8 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-//image utils
 
 //upload utils
 import net.gotev.uploadservice.BinaryUploadRequest;
@@ -44,6 +45,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private EditText imgTitleInput;
     private EditText subjectInput;
     private EditText descInput;
+    private TextView legendHeading;
 
     //JSON data variables
     private String imgTitle;
@@ -72,6 +74,9 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private LegendListAdapter legendListAdapter;
     public ArrayList<EditModel> editModelArrayList;
 
+    //check if there are legend rows to discern if the heading should be displayed
+    private boolean isLegend = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -89,8 +94,13 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         legendRecyclerView.setAdapter(legendListAdapter);
         legendRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
 
+        //display legend heading if legend exists
+        legendHeading = findViewById(R.id.legendHeading);
+        setLegendHeadingVis();
+
         //buttons
         Button saveBtn = findViewById(R.id.saveBtn);
+        Button cancelBtn = findViewById(R.id.cancelBtn);
 
         //text fields
         imgTitleInput = findViewById(R.id.imgTitleInput);
@@ -99,6 +109,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
         //register listeners
         saveBtn.setOnClickListener(this);
+        cancelBtn.setOnClickListener(this);
 
         //Get bitmap from EditImageActivity and add to image view
         editedImgUri = getIntent().getStringExtra("editedImageUri");
@@ -116,6 +127,14 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
                 //JSON upload
                 uploadToCloudJson(v);
+                break;
+            case R.id.cancelBtn:
+                //Return to home activity
+                Intent cancelIntent = new Intent(this, HomeActivity.class);
+                startActivity(cancelIntent);
+                //TODO delete generated files
+                Log.e(TAG, "Returned to home");
+                finish();
                 break;
         }
     }
@@ -338,11 +357,12 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         sliList.addAll(hs);
 
         //For Debugging
+        /*
         Iterator itr = sliList.iterator();
         while (itr.hasNext())
         {
             Log.d(TAG, "iterated array list " + itr.next());
-        }
+        }*/
     }
 
     private ArrayList<EditModel> populateList()
@@ -350,6 +370,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         ArrayList<EditModel> list = new ArrayList<>();
         for (int a = 0; a <sliList.size(); a++)
         {
+            isLegend = true;
             String sLindex = sliList.get(a);
             if (!sLindex.equals("notSticker"))
             {
@@ -360,14 +381,16 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
                 Log.d(TAG, "populated sticker index " + Integer.parseInt(sLindex));
             }
         }
-        /*
-        for (int i = 0; i < 8; i++)
-        {
-            EditModel editModel = new EditModel();
-            editModel.setEditTextValue(String.valueOf(i));
-            list.add(editModel);
-        }*/
         return list;
+    }
+
+    private void setLegendHeadingVis()
+    {
+        //if there is no legend symbols to collect data for, hide the legend section heading
+        if(!isLegend)
+        {
+            legendHeading.setVisibility(View.GONE);
+        }
     }
 }
 
