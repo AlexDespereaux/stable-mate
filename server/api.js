@@ -3,6 +3,8 @@ const AWS = require('aws-sdk');
 const stream = require('stream');
 const _ = require('lodash');
 
+const connection = require('./connection.js');
+
 const router = express.Router();
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 const BUCKET = 'annomate';
@@ -68,9 +70,15 @@ let uploadFromStream = function(s3, fileExt) {
   return pass;
 };
 
+let testdb = function() {
+  return new connection;
+};
+
 router.get('/', function(req, res){
   res.send('hello world');
 });
+
+router.get('/test', testdb);
 
 router.post('/image', uploadHandler);
 
