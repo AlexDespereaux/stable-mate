@@ -14,15 +14,12 @@ import { AdminComponent } from './admin/admin.component';
 import { DisplayClassComponent } from './display-class/display-class.component';
 import { StarRatingModule } from 'angular-star-rating';
 import { NewUserComponent } from './new-user/new-user.component';
-const appRoutes: Routes = [
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'displayClass', component: DisplayClassComponent},
-  { path: 'admin-dashboard', component: AdminDashboardComponent},
-  { path: 'register', component: RegisterComponent },
-  { path: 'login', component: LoginPageComponent },
-  { path: '',   redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', component: PageNotFoundComponent }
-];
+import { routing } from './app.routing';
+import { LoginComponent } from './login';
+import { HomeComponent } from './home';
+import { ReactiveFormsModule, FormsModule } from '../../node_modules/@angular/forms';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,12 +31,18 @@ const appRoutes: Routes = [
     RegisterComponent,
     AdminComponent,
     DisplayClassComponent,
-    NewUserComponent
+    NewUserComponent,
+    HomeComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
-    RouterModule.forRoot(appRoutes),
+    routing,
     BrowserModule,
-    StarRatingModule
+    StarRatingModule,
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
