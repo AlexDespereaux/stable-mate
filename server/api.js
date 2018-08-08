@@ -70,9 +70,7 @@ let uploadFromStream = function(s3, fileExt) {
   return pass;
 };
 
-let testdb = function() {
-  return new connection;
-};
+console.log(connection.toString());
 
 router.get('/', function(req, res){
   res.send('hello world');
