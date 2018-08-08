@@ -10,9 +10,9 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "aws-sdk": "latest",
-    "express": "latest",
-    "lodash": "latest"
+    "aws-sdk": "^2.288.0",
+    "express": "^4.16.3",
+    "lodash": "^4.17.10"
   },
   "repository": {
     "type": "git",
