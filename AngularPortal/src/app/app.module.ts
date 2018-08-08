@@ -10,19 +10,22 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { RegisterComponent } from './register/register.component';
 import { AdminComponent } from './admin/admin.component';
 import { DisplayClassComponent } from './display-class/display-class.component';
-import { StarRatingModule } from 'angular-star-rating';
 import { NewUserComponent } from './new-user/new-user.component';
 import { routing } from './app.routing';
 import { LoginComponent } from './login';
 import { HomeComponent } from './home';
 import { ReactiveFormsModule, FormsModule } from '../../node_modules/@angular/forms';
+import {AdminDashboardComponent} from "./admin/admin-dashboard/admin-dashboard.component";
+import { StudentComponent } from './student/student.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    LoginComponent,
     DashboardComponent,
     DisplayImageComponent,
+    AdminDashboardComponent,
     PageNotFoundComponent,
     RegisterComponent,
     AdminComponent,
@@ -30,12 +33,12 @@ import { ReactiveFormsModule, FormsModule } from '../../node_modules/@angular/fo
     NewUserComponent,
     HomeComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    StudentComponent
   ],
   imports: [
     routing,
     BrowserModule,
-    StarRatingModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule
