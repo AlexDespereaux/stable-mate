@@ -322,7 +322,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         showSnackbar("Image Saved Successfully");
                         // working mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
                         mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
-                        //TODO send image path to addData via intent
                         Intent intent = new Intent(EditImageActivity.this, AddDataActivity.class);
                         intent.putExtra("editedImageUri", editedImageFilePath);
                         intent.putExtra("rawImageUri", imageFilePath);
@@ -550,7 +549,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         String imageFileName = "EDIT_" + timeStamp + "_";
         //File storageDir = FileUtils.createFolders();
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        File image = File.createTempFile(imageFileName, ".png", storageDir);
         editedImageFilePath = image.getAbsolutePath();
 
         return image;

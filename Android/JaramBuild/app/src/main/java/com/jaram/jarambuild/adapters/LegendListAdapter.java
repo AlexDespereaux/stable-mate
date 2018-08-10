@@ -52,7 +52,6 @@ public class LegendListAdapter extends RecyclerView.Adapter<LegendListAdapter.My
         int imgIndex = editModelArrayList.get(position).getStickerIndex();
         holder.legendImage.setImageResource(stickerList[imgIndex]);
         Log.d("print", "yes");
-        Log.d("print", "yes");
     }
 
     @Override
