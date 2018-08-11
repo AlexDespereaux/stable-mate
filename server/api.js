@@ -2,13 +2,22 @@ const express = require('express');
 const AWS = require('aws-sdk');
 const stream = require('stream');
 const _ = require('lodash');
+const mysql = require('mysql');
 
-const connection = require('./connection.js');
 
 const router = express.Router();
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+
 const BUCKET = 'annomate';
 const TOKEN = '1F8065545D842E0098709630DBDBEB596D4D6194';
+
+
+const connection = mysql.createConnection({
+  host: process.env.RDS_HOSTNAME,
+  user: process.env.RDS_USERNAME,
+  password: process.env.RDS_PASSWORD,
+  port: process.env.RDS_PORT
+});
 
 let imageCounter = 0;
 
@@ -76,7 +85,18 @@ router.get('/', function(req, res){
   res.send('hello world');
 });
 
-router.get('/test', testdb);
+router.get('/test', () => {
+  connection.connect(function(err) {
+    if (err) {
+      console.error('Database connection failed: ' + err.stack);
+      return;
+    }
+
+    console.log('Connected to database.');
+  });
+
+  connection.end();
+});
 
 router.post('/image', uploadHandler);
 
