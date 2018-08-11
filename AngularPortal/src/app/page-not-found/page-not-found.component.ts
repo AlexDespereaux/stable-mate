@@ -1,15 +1,24 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '../../../node_modules/@angular/router';
 
 @Component({
   selector: 'app-page-not-found',
-  templateUrl: './page-not-found.component.html',
+  template: `
+  <h1>User with id {{id}}</h1>
+  `,
   styleUrls: ['./page-not-found.component.css']
 })
 export class PageNotFoundComponent implements OnInit {
 
-  constructor() { }
+  id: number;
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.route.params.subscribe(
+      (id) => {
+        this.id = 1;
+      }
+    );
   }
 
 }

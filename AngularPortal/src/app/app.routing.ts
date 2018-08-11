@@ -7,9 +7,11 @@ import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import {RegisterComponent} from "./register/register.component";
 import {LoginComponent} from "./login";
+import { StudentComponent } from './student/student.component';
 
 const appRoutes: Routes = [
     { path: 'dashboard', component: DashboardComponent },
+    { path: 'student/:id', component: StudentComponent},
     { path: 'displayClass', component: DisplayClassComponent},
     { path: 'admin-dashboard', component: AdminDashboardComponent},
     { path: 'register', component: RegisterComponent },
