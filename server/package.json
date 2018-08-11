@@ -18,5 +18,8 @@
   "repository": {
     "type": "git",
     "url": "git@bitbucket.org:teamjaram/stablemate-plus.git"
+  },
+  "devDependencies": {
+    "archiver": "^2.1.1"
   }
 }
