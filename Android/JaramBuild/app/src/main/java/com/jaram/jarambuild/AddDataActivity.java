@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -118,6 +120,49 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         //Get bitmap from EditImageActivity and add to image view
         editedImgUri = getIntent().getStringExtra("editedImageUri");
         setImageView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.bar_menu, menu);
+        return true;
+    }
+
+    //custom menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if(item.getItemId()== R.id.settingsMenuBtn)
+        {
+            Log.d(TAG, "Settings Btn Clicked");
+            //Go to settings activity
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+        }
+        else if(item.getItemId()== R.id.helpMenuBtn)
+        {
+            //TODO Make help activity
+            Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Help Btn Clicked");
+
+        }
+
+        else if(item.getItemId()== R.id.logoutMenuBtn)
+        {
+            Log.d(TAG, "Logout Btn Clicked");
+            //set logged in user to null
+            tinydb.putString("loggedInAccount", "");
+            //return to Login Page
+            Intent settingsIntent = new Intent(this, MainActivity.class);
+            startActivity(settingsIntent);
+            finish();
+        }
+        else
+        {
+            return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     @Override
@@ -250,6 +295,9 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+
+
+    
 
     //UPLOAD TEST CODE*****************************************************************************************************
 

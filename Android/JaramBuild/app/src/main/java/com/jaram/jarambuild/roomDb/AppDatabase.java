@@ -15,10 +15,12 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract CalibrationDao getCalibrationDao();
     public abstract LegendDao getLegendDao();
 
-    public static AppDatabase getInMemoryDatabase(Context context) {
+    public static AppDatabase getDatabase(Context context) {
         if (INSTANCE == null) {
             INSTANCE =
-                    Room.inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class)
+                    Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "AppDatabase")
+                            //for testing only remove prior to production
+                            .allowMainThreadQueries()
                             .build();
         }
         return INSTANCE;

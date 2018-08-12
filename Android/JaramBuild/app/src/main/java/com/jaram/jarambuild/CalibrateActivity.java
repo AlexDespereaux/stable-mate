@@ -1,6 +1,7 @@
 package com.jaram.jarambuild;
 
 import android.app.AlertDialog;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,12 +33,17 @@ import android.widget.Toast;
 //zoom
 import com.jaram.jarambuild.CalibrateUtils.DrawingOnImage;
 import com.jaram.jarambuild.CalibrateUtils.SurfaceImage;
+import com.jaram.jarambuild.roomDb.AppDatabase;
+import com.jaram.jarambuild.roomDb.CaliListViewModel;
+import com.jaram.jarambuild.roomDb.Calibration;
+import com.jaram.jarambuild.utils.TinyDB;
 import com.otaliastudios.zoom.ZoomImageView;
 import com.otaliastudios.zoom.ZoomLayout;
 import com.otaliastudios.zoom.ZoomLogger;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -46,8 +53,13 @@ public class CalibrateActivity extends AppCompatActivity
     FrameLayout imageholder;
     DrawingOnImage drawing;
     private String imageFilePath;
-    //private Context context;
-    double result;
+
+    //results of calibration
+    double dFov;
+    double pixPerMic;
+    int ocularLens;
+    int objectiveLens;
+    String calibrationId;
 
     //buttons
     Button clearBtn;
@@ -55,6 +67,13 @@ public class CalibrateActivity extends AppCompatActivity
 
     //textview
     TextView instructTxt;
+
+    //get logged in user
+    TinyDB tinydb;
+    String loggedInUser;
+
+    //db
+    private CaliListViewModel caliViewModel;
 
 
     @Override
@@ -68,6 +87,11 @@ public class CalibrateActivity extends AppCompatActivity
         setContentView(R.layout.activity_calibrate);
 
         imageholder = (FrameLayout) findViewById(R.id.frame);
+
+        //get logged in user for db
+        tinydb = new TinyDB(this);
+        loggedInUser = tinydb.getString("loggedInAccount");
+        Log.d(TAG, "loggedInUser: " + loggedInUser);
 
         //hide action bar
         android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
@@ -164,7 +188,6 @@ public class CalibrateActivity extends AppCompatActivity
             }
         });
 
-
     }
 
     protected void getInfoDialog()
@@ -188,13 +211,13 @@ public class CalibrateActivity extends AppCompatActivity
                 {
                     double reference = Double.parseDouble(((EditText) promptsView.findViewById(R.id.reference_input)).getText().toString());
                     //result is dFOV in microns
-                    result = drawing.calculate(reference, inputUnit, 1);
+                    dFov = drawing.calculate(reference, inputUnit, 1);
                     //pixPerMic is pixels per micron
-                    double pixPerMic = drawing.calculatePixelsPerMicron(reference, inputUnit);
+                    pixPerMic = drawing.calculatePixelsPerMicron(reference, inputUnit);
 
                     //temp toast for debugging
                     Toast.makeText(CalibrateActivity.this,
-                            "dFOV = " + result + " microns"
+                            "dFOV = " + dFov + " microns"
                                     + " pixel per micron = " + pixPerMic, Toast.LENGTH_LONG).show();
 
                 } catch (NumberFormatException ex)
@@ -205,7 +228,7 @@ public class CalibrateActivity extends AppCompatActivity
                 //get ocular lens details
                 try
                 {
-                    double ocularLens = Double.parseDouble(((EditText) promptsView.findViewById(R.id.ocular_input)).getText().toString());
+                    ocularLens = Integer.parseInt(((EditText) promptsView.findViewById(R.id.ocular_input)).getText().toString());
                 } catch (
                         NumberFormatException ex)
                 {
@@ -214,43 +237,91 @@ public class CalibrateActivity extends AppCompatActivity
                 //get objective lens details
                 try
                 {
-                    double objectiveLens = Double.parseDouble(((EditText) promptsView.findViewById(R.id.objective_input)).getText().toString());
+                    objectiveLens = Integer.parseInt(((EditText) promptsView.findViewById(R.id.objective_input)).getText().toString());
                 } catch (
                         NumberFormatException ex)
                 {
                     Toast.makeText(CalibrateActivity.this, "Please enter valid objective lens", Toast.LENGTH_SHORT).show();
                 }
 
-                String calibrationId = ((EditText) promptsView.findViewById(R.id.settingName_input)).getText().toString().trim();
+                calibrationId = ((EditText) promptsView.findViewById(R.id.settingName_input)).getText().toString().trim();
 
                 if (calibrationId.equals(""))
                 {
                     Toast.makeText(CalibrateActivity.this, "Please enter Calibration Id", Toast.LENGTH_SHORT).show();
-                }
-                else
+                } else
                 {
-                    //TODO: Save to database
+                    saveCaliToDatabase(calibrationId, dFov, pixPerMic, ocularLens, objectiveLens);
                     finish();
                     Intent homeIntent = new Intent(CalibrateActivity.this, HomeActivity.class);
                     startActivity(homeIntent);
                 }
             }
-    });
-        alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener()
-
-    {
-        public void onClick (DialogInterface dialog,int whichButton)
+        });
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
         {
-            //closes dialog by default
-        }
-    });
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                //closes dialog by default
+            }
+        });
 
-    final AlertDialog alertDialog = alertDialogBuilder.create();
-    //final Spinner mSpinner = (Spinner) promptsView.findViewById(R.id.input_unit_chooser);
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        //final Spinner mSpinner = (Spinner) promptsView.findViewById(R.id.input_unit_chooser);
 
         alertDialog.show();
         alertDialog.setCanceledOnTouchOutside(true);
-}
+    }
 
+    private void saveCaliToDatabase(String calibrationId, double dFov, double pixPerMic, int ocularLens, int objectiveLens)
+    {
+        //TODO resolve cali
+        Log.d(TAG, "Calibration: " + calibrationId + " " + String.valueOf(dFov) + " " + String.valueOf(pixPerMic) + " " + objectiveLens + " " + ocularLens + " " + loggedInUser);
+        //Calibration inCali = new Calibration(calibrationId, String.valueOf(dFov), String.valueOf(pixPerMic), objectiveLens, ocularLens, "me@me.com");
+        //Log.d(TAG, "Calibration inCali generated" + inCali.toString());
+        //caliViewModel.addOneCalibration(inCali);
+        caliViewModel.addOneCalibration(new Calibration(calibrationId, String.valueOf(dFov), String.valueOf(pixPerMic), objectiveLens, ocularLens, loggedInUser));
+        Log.d(TAG, "Calibration saved to dataBase");
+        //debugging
+        getOneUserCaliListFromDb(loggedInUser);
+    }
 
+    //for debugging
+    private void getAllCalibrationsFromDb()
+    {
+
+        caliViewModel.getCalibrationList().observe(this, new Observer<List<Calibration>>()
+        {
+            @Override
+            public void onChanged(@Nullable List<Calibration> calibrations)
+            {
+                if(calibrations != null)
+                {
+                        for (Calibration calibration : calibrations)
+                        {
+                            Log.d(TAG, "in loop" + calibration.toString());
+                        }
+                }
+            }
+        });
+    }
+
+    //for debugging
+    private void getOneUserCaliListFromDb(String loggedInUser)
+    {
+        caliViewModel.getCalibrationListByUser(loggedInUser).observe(this, new Observer<List<Calibration>>()
+        {
+            @Override
+            public void onChanged(@Nullable List<Calibration> calibrations)
+            {
+                if(calibrations != null)
+                {
+                    for (Calibration calibration : calibrations)
+                    {
+                        Log.d(TAG, "in loop" + calibration.toString());
+                    }
+                }
+            }
+        });
+    }
 }

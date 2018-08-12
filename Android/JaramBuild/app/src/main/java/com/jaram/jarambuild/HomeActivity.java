@@ -13,9 +13,13 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.view.Menu;
+
+import com.jaram.jarambuild.utils.TinyDB;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,11 +44,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     //log
     private static final String TAG = "HomeActivity";
 
+    //logged in user
+    TinyDB tinydb;
+    String loggedInUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        //shared prefs
+        tinydb = new TinyDB(this);
 
         //buttons
         cameraBtn = findViewById(R.id.cameraBtn);
@@ -65,6 +76,49 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
             Log.d(TAG, "Requesting Permissions ");
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.bar_menu, menu);
+        return true;
+    }
+
+    //custom menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if(item.getItemId()== R.id.settingsMenuBtn)
+        {
+            Log.d(TAG, "Settings Btn Clicked");
+            //Go to settings activity
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+        }
+        else if(item.getItemId()== R.id.helpMenuBtn)
+        {
+            //TODO Make help activity
+            Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Help Btn Clicked");
+
+        }
+
+        else if(item.getItemId()== R.id.logoutMenuBtn)
+        {
+            Log.d(TAG, "Logout Btn Clicked");
+            //set logged in user to null
+            tinydb.putString("loggedInAccount", "");
+            //return to Login Page
+            Intent settingsIntent = new Intent(this, MainActivity.class);
+            startActivity(settingsIntent);
+            finish();
+        }
+        else
+        {
+            return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     @Override

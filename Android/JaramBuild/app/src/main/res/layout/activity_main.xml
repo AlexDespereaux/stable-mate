@@ -44,14 +44,14 @@
             android:textSize="18sp"/>
 
         <EditText
-            android:id="@+id/nameField"
+            android:id="@+id/emailField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:ems="10"
             android:fontFamily="@font/roboto_medium"
-            android:hint="@string/user_name"
+            android:hint="@string/login_email"
             android:inputType="textPersonName"
             android:textSize="14sp" />
 

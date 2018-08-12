@@ -11,7 +11,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
         android:background="@color/colorPrimary"
         android:fontFamily="@font/roboto_medium"
         android:paddingBottom="8dp"
@@ -23,8 +22,7 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -39,12 +37,22 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <EditText
-            android:id="@+id/nameField"
+            android:id="@+id/firstNameField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:fontFamily="@font/roboto_medium"
-            android:hint="@string/your_name"
+            android:hint="@string/first_name"
+            android:inputType="textPersonName"
+            android:textAppearance="@style/TextAppearance.AppCompat" />
+
+        <EditText
+            android:id="@+id/lastNameField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:fontFamily="@font/roboto_medium"
+            android:hint="@string/last_name"
             android:inputType="textPersonName"
             android:textAppearance="@style/TextAppearance.AppCompat" />
 
@@ -69,15 +77,6 @@
             android:textAppearance="@style/TextAppearance.AppCompat" />
 
 
-        <Switch
-            android:id="@+id/saveLoginSwitch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_medium"
-            android:paddingStart="5dp"
-            android:text="@string/save_login_details"
-            android:textAppearance="@style/TextAppearance.AppCompat" />
-
         <Button
             android:id="@+id/signUpBtn"
             style="@style/Widget.AppCompat.Button.Colored"
@@ -89,4 +88,18 @@
             android:textSize="18sp" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_account_circle_black_48dp" />
 </android.support.constraint.ConstraintLayout>

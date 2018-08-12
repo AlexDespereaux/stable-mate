@@ -16,6 +16,14 @@ public class Legend
     private int legendId;
     private String symbol;
     private String legendTxt;
+    private int imgId;
+
+    public Legend(String symbol, String legendTxt, int imgId)
+    {
+        this.symbol = symbol;
+        this.legendTxt = legendTxt;
+        this.imgId = imgId;
+    }
 
     public int getLegendId()
     {
@@ -45,5 +53,15 @@ public class Legend
     public void setLegendTxt(String legendTxt)
     {
         this.legendTxt = legendTxt;
+    }
+
+    public int getImgId()
+    {
+        return imgId;
+    }
+
+    public void setImgId(int imgId)
+    {
+        this.imgId = imgId;
     }
 }

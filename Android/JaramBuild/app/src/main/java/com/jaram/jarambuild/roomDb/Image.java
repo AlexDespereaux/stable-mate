@@ -7,7 +7,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(entity = User.class,
         parentColumns = "email",
-        childColumns = "emailId",
+        childColumns = "email",
         onDelete = CASCADE))
 public class Image
 {
@@ -21,6 +21,20 @@ public class Image
     private String latitude;
     private String dFov;
     private String pixelsPerMicron;
+    private String email;
+
+    public Image(String title, String description, String notes, String date, String longitude, String latitude, String dFov, String pixelsPerMicron, String email)
+    {
+        this.title = title;
+        this.description = description;
+        this.notes = notes;
+        this.date = date;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.dFov = dFov;
+        this.pixelsPerMicron = pixelsPerMicron;
+        this.email = email;
+    }
 
     public int getImageId()
     {
@@ -92,12 +106,12 @@ public class Image
         this.latitude = latitude;
     }
 
-    public String getdFov()
+    public String getDFov()
     {
         return dFov;
     }
 
-    public void setdFov(String dFov)
+    public void setDFov(String dFov)
     {
         this.dFov = dFov;
     }
@@ -110,5 +124,15 @@ public class Image
     public void setPixelsPerMicron(String pixelsPerMicron)
     {
         this.pixelsPerMicron = pixelsPerMicron;
+    }
+
+    public String getEmail()
+    {
+        return email;
+    }
+
+    public void setEmail(String email)
+    {
+        this.email = email;
     }
 }

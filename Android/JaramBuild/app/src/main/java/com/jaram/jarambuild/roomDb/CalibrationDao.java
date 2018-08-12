@@ -1,5 +1,7 @@
 package com.jaram.jarambuild.roomDb;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -8,6 +10,7 @@ import java.util.List;
 
 import static android.arch.persistence.room.OnConflictStrategy.IGNORE;
 
+@Dao
 public interface CalibrationDao
 {
     @Insert(onConflict = IGNORE)
@@ -20,10 +23,13 @@ public interface CalibrationDao
     void deleteCalibration(Calibration calibration);
 
     @Query("select * from calibration")
-    List<Calibration> loadAllCalibrations();
+    LiveData<List<Calibration>> getAllCalibrations();
 
     @Query("select * from calibration where caliId = :caliId")
-    Calibration loadCalibrationById(int caliId);
+    Calibration getCalibrationById(int caliId);
+
+    @Query("select * from calibration where email = :email")
+    LiveData<List<Calibration>> getCalibrationListByUser(String email);
 
     @Query("DELETE FROM Calibration")
     void deleteAll();
