@@ -19,7 +19,7 @@ export class RegisterComponent implements OnInit {
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             // tslint:disable-next-line:max-line-length
-            email: ['', Validators.compose([Validators.required, Validators.pattern('^[^\s@]+@[^\s@]+\.[^\s@]{2,}$'), Validators.minLength(1)])],
+            email: ['', Validators.required],
             password: ['', [Validators.required, Validators.minLength(6)]]
         });
     }
@@ -33,8 +33,10 @@ export class RegisterComponent implements OnInit {
         // stop here if form is invalid
         if (this.registerForm.invalid) {
             return;
-        } else{
-            this.router.navigate(['new-user']); 
+        } else {
+            // register should be verified on server or client?
+            // redirect after confirmation.
+            this.router.navigate(['new-user']);
 
         }
     }

@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
         switch (userType) {
             case 'student': this.router.navigate(['student'], { queryParams: { id: userId } }); break;
             case 'admin': this.router.navigate(['admin-dashboard'], { queryParams: { id: userId } }); break;
-            default: this.router.navigate(['**', userId]); break;
+            default: this.router.navigate(['**', userId],{ queryParams: { id: userId } }); break;
         }
     }
 
