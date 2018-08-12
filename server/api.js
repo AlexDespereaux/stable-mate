@@ -32,67 +32,53 @@ let printRequestHeaders = function(req) {
   console.log('');
 };
 
-let contentType = function(str) {
-  switch (str) {
-    case 'image/png':
-      return '.png';
-    case 'image/jpeg':
-      return '.jpg';
-    default:
-      return '.unk';
-  }
-};
-
 let uploadHandler = function(req, res) {
   console.log('\n\nUpload Request from: ' + req.ip);
   printRequestHeaders(req);
-  if (!req.headers['token'] || req.headers['token'] !== TOKEN) {
-    res.sendStatus(401); }
-  else if (!req.headers['content-type']) {
-    res.sendStatus(400); }
-  else {
-    let fileExt = contentType(req.headers['content-type']);
-    console.log('Started upload from: ' + req.ip);
-    req.pipe(uploadFromStream(s3, fileExt));
-    req.on('end', function () {
-      res.sendStatus(200);
-    });
+  if (req.get('token') !== TOKEN) {
+    res.sendStatus(401);
+  } else {
+    switch (req.get('Content-Type')) {
+      case 'application/json':
+        break;
+      case 'image/png':
+        console.log('Started upload from: ' + req.ip);
+        req.pipe(uploadFromStream(s3));
+        req.on('end', function () { res.sendStatus(200); });
+        break;
+      default:
+        res.sendStatus(400);
+    }
   }
 };
 
-let uploadFromStream = function(s3, fileExt) {
+let uploadFromStream = function(s3) {
   let pass = new stream.PassThrough();
 
   let params = {
     Body: pass,
     Bucket: BUCKET,
-    Key: 'image' + _.padStart(imageCounter++, 6, '0') + fileExt
+    Key: 'image' + _.padStart(imageCounter++, 6, '0') + '.png'
     // Metadata: { "metadata1": "value1", "metadata2": "value2" }
   };
-  s3.upload(params, function(err, data) {
+  s3.upload(params, function(err) {
     if (err)
       console.log(err, err.stack); // an error occurred
-    else
-      console.log(data);
   });
-
   return pass;
 };
-
-console.log(connection.toString());
 
 router.get('/', function(req, res){
   res.send('hello world');
 });
 
-router.get('/test', () => {
+router.get('/test', (req, res) => {
   connection.connect(function(err) {
     if (err) {
       console.error('Database connection failed: ' + err.stack);
       return;
     }
-
-    console.log('Connected to database.');
+    res.send('Connected to database.');
   });
 
   connection.end();
