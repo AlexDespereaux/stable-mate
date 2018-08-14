@@ -12,7 +12,6 @@ import android.view.SurfaceView;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,15 +51,11 @@ public class DrawingOnImage extends SurfaceView {
     protected void onDraw(Canvas canvas){
         int size = circlePoints.size();
         for(int i = 0; i < size; i++){
-            //Set color based on order. First 2 points are the reference points.
             if(i < 2){
                 paint.setColor(REFERENCE_POINT_COLOR);
-
-
             }
             else if (i>1 && i<4) {
                 paint.setColor(MEASURE_POINT_COLOR);
-
             }
             else{
                 paint.setColor(MEASURE_POINT_COLOR2);
@@ -124,20 +119,6 @@ public class DrawingOnImage extends SurfaceView {
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             final int pointerCount = event.getPointerCount();
             Point pointinscreen = getTouchedCircle(xTouch,yTouch);
-
-//            if (pointinscreen != null) {
-//                xTouch = (int) pointinscreen.x;
-//                yTouch = (int) pointinscreen.y;
-//
-//                touchedCircle = mCirclePointer.get(mCircles.get(pointinscreen));
-//
-//                if (null != touchedCircle) {
-//                    touchedCircle.x = xTouch;
-//                    touchedCircle.y = yTouch;
-//                }
-//
-//            }
-
             for (actionIndex = 0; actionIndex < pointerCount; actionIndex++) {
                 // Some pointer has moved, search it by pointer id
                 pointerId = event.getPointerId(actionIndex);
@@ -155,24 +136,6 @@ public class DrawingOnImage extends SurfaceView {
             invalidate();
 
         }
-//        if (event.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
-//            // It secondary pointers, so obtain their ids and check circles
-//            pointerId = event.getPointerId(actionIndex);
-//
-//            xTouch = (int) event.getX(actionIndex);
-//            yTouch = (int) event.getY(actionIndex);
-//
-//            // check if we've touched inside some circle
-//            touchedCircle = obtainTouchedCircle(xTouch, yTouch);
-//
-//            mCirclePointer.put(pointerId, touchedCircle);
-//            touchedCircle.x = xTouch;
-//            touchedCircle.y = yTouch;
-//            invalidate();
-//        }
-
-
-
         if (event.getAction() == MotionEvent.ACTION_POINTER_UP)
 
         {
@@ -185,40 +148,18 @@ public class DrawingOnImage extends SurfaceView {
         }
         return true;
     }
-    /**
-     * Search and creates new (if needed) circle based on touch area
-     *
-     * @param xTouch int x of touch
-     * @param yTouch int y of touch
-     *
-     * @return obtained {@link Point}
-     */
+
     private Point obtainTouchedCircle(final int xTouch, final int yTouch) {
         Point touchedCircle = getTouchedCircle(xTouch, yTouch);
 
         if (null == touchedCircle) {
             touchedCircle = new Point(xTouch, yTouch);
-
-//            if (mCircles.size() == 3) {
-//              //  Log.w(TAG, "Clear all circles, size is " + mCircles.size());
-//                // remove first circle
-//                mCircles.clear();
-//            }
-
-            //Log.w(TAG, "Added circle " + touchedCircle);
             circlePoints.add(touchedCircle);
         }
 
         return touchedCircle;
     }
-    /**
-     * Determines touched circle
-     *
-     * @param xTouch int x touch coordinate
-     * @param yTouch int y touch coordinate
-     *
-     * @return {@link Point} touched circle or null if no circle has been touched
-     */
+
     private Point getTouchedCircle(final int xTouch, final int yTouch) {
         Point touched = null;
 
@@ -232,9 +173,6 @@ public class DrawingOnImage extends SurfaceView {
         return touched;
     }
 
-    /**
-     * Clears all drawn points and shapes
-     */
     public void clearCanvas(){
         if (circlePoints.size() <= 2){
             circlePoints.remove(circlePoints.size()-1);
@@ -247,11 +185,6 @@ public class DrawingOnImage extends SurfaceView {
             circlePoints.remove(circlePoints.size()-1);
             nums=6;
         }
-
-//        for (int i = 0; i < circlePoints.size(); i++){
-//            circlePoints.remove(i);
-//        }
-        //((TextView) ((Activity)context).findViewById(R.id.textView2)).setText(getResources().getString(R.string.setPicture));
         invalidate();
     }
 

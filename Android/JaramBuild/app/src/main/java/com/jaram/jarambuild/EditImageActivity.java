@@ -2,7 +2,6 @@ package com.jaram.jarambuild;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -21,17 +20,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.jaram.jarambuild.imageUtils.PropertiesBSFragment;
 import com.jaram.jarambuild.imageUtils.StickerBSFragment;
 import com.jaram.jarambuild.imageUtils.TextEditorDialogFragment;
 import com.jaram.jarambuild.utils.AddStickerEvent;
 import com.jaram.jarambuild.utils.TinyDB;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -40,15 +36,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
-
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import ja.burhanrashid52.photoeditor.ViewType;
-
-////Original Code Source by Burhanuddin Rashid on 1/17/2018 as part of the https://github.com/burhanrashid52/PhotoEditor
-////Used under the http://www.apache.org/licenses/LICENSE-2.0
-////Edited May 2018 team Jaram >> JARAM12358@gmail.com
 
 public class EditImageActivity extends BaseActivity implements OnPhotoEditorListener,
         View.OnClickListener,

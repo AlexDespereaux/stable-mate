@@ -29,7 +29,10 @@ public interface CalibrationDao
     Calibration getCalibrationById(int caliId);
 
     @Query("select * from calibration where email = :email")
-    LiveData<List<Calibration>> getCalibrationListByUser(String email);
+    List<Calibration> getCalibrationListByUser(String email);
+
+    @Query("select * from calibration where email = :email")
+    LiveData<List<Calibration>> getLiveCalibrationListByUser(String email);
 
     @Query("DELETE FROM Calibration")
     void deleteAll();

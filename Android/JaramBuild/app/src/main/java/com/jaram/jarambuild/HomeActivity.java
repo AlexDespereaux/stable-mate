@@ -192,11 +192,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 case REQUEST_IMAGE:
                     if (resultCode == RESULT_OK)
                     {
-                        Intent intent = new Intent(HomeActivity.this, EditImageActivity.class);
+                        Intent intent = new Intent(HomeActivity.this, CheckCalibrationActivity.class);
                         //add raw file path URI string to intent
                         intent.putExtra("rawPhotoPath", imageFilePath);
                         Log.d(TAG, "rawPhotoPath: " + imageFilePath);
-                        //open edit Image Activity
+                        //open edit Check calibration Activity
                         startActivity(intent);
                     } else if (resultCode == RESULT_CANCELED)
                     {

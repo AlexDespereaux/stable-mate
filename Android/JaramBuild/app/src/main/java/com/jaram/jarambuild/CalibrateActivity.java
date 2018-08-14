@@ -2,50 +2,31 @@ package com.jaram.jarambuild;
 
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
-import android.content.Context;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-//zoom
 import com.jaram.jarambuild.CalibrateUtils.DrawingOnImage;
 import com.jaram.jarambuild.CalibrateUtils.SurfaceImage;
-import com.jaram.jarambuild.roomDb.AppDatabase;
+import com.jaram.jarambuild.roomDb.CaliListByUserViewModel;
 import com.jaram.jarambuild.roomDb.CaliListViewModel;
 import com.jaram.jarambuild.roomDb.Calibration;
 import com.jaram.jarambuild.utils.TinyDB;
-import com.otaliastudios.zoom.ZoomImageView;
-import com.otaliastudios.zoom.ZoomLayout;
-import com.otaliastudios.zoom.ZoomLogger;
-
-import java.io.File;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
-
 
 public class CalibrateActivity extends AppCompatActivity
 {
@@ -74,6 +55,7 @@ public class CalibrateActivity extends AppCompatActivity
 
     //db
     private CaliListViewModel caliViewModel;
+    private CaliListByUserViewModel caliByUserViewModel;
 
 
     @Override
@@ -119,6 +101,10 @@ public class CalibrateActivity extends AppCompatActivity
         //buttons
         okBtn = (Button) findViewById(R.id.okBtn);
         clearBtn = (Button) findViewById(R.id.clearBtn);
+
+        //db
+        caliViewModel = ViewModelProviders.of(this).get(CaliListViewModel.class);
+        caliByUserViewModel = ViewModelProviders.of(this).get(CaliListByUserViewModel.class);
 
         //clear onclick
         clearBtn.setOnClickListener(new View.OnClickListener()
@@ -267,7 +253,6 @@ public class CalibrateActivity extends AppCompatActivity
         });
 
         final AlertDialog alertDialog = alertDialogBuilder.create();
-        //final Spinner mSpinner = (Spinner) promptsView.findViewById(R.id.input_unit_chooser);
 
         alertDialog.show();
         alertDialog.setCanceledOnTouchOutside(true);
@@ -275,15 +260,12 @@ public class CalibrateActivity extends AppCompatActivity
 
     private void saveCaliToDatabase(String calibrationId, double dFov, double pixPerMic, int ocularLens, int objectiveLens)
     {
-        //TODO resolve cali
-        Log.d(TAG, "Calibration: " + calibrationId + " " + String.valueOf(dFov) + " " + String.valueOf(pixPerMic) + " " + objectiveLens + " " + ocularLens + " " + loggedInUser);
-        //Calibration inCali = new Calibration(calibrationId, String.valueOf(dFov), String.valueOf(pixPerMic), objectiveLens, ocularLens, "me@me.com");
-        //Log.d(TAG, "Calibration inCali generated" + inCali.toString());
-        //caliViewModel.addOneCalibration(inCali);
+        Log.d(TAG, "Calibration data prior to insert: " + calibrationId + " " + String.valueOf(dFov) + " " + String.valueOf(pixPerMic) + " " + objectiveLens + " " + ocularLens + " " + loggedInUser);
         caliViewModel.addOneCalibration(new Calibration(calibrationId, String.valueOf(dFov), String.valueOf(pixPerMic), objectiveLens, ocularLens, loggedInUser));
         Log.d(TAG, "Calibration saved to dataBase");
         //debugging
-        getOneUserCaliListFromDb(loggedInUser);
+        //getOneUserCaliListFromDb();
+        //getAllCalibrationsFromDb();
     }
 
     //for debugging
@@ -307,14 +289,14 @@ public class CalibrateActivity extends AppCompatActivity
     }
 
     //for debugging
-    private void getOneUserCaliListFromDb(String loggedInUser)
+    private void getOneUserCaliListFromDb()
     {
-        caliViewModel.getCalibrationListByUser(loggedInUser).observe(this, new Observer<List<Calibration>>()
+        caliByUserViewModel.getLiveCalibrationListByUser(loggedInUser).observe(this, new Observer<List<Calibration>>()
         {
             @Override
             public void onChanged(@Nullable List<Calibration> calibrations)
             {
-                if(calibrations != null)
+                if (calibrations != null)
                 {
                     for (Calibration calibration : calibrations)
                     {

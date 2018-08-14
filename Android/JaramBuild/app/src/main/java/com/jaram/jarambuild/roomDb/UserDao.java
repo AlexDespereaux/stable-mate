@@ -34,8 +34,4 @@ public interface UserDao
     @Query("DELETE FROM User")
     void deleteAll();
 
-    @Insert(onConflict = IGNORE)
-    void insertUserList(List<User> user);
-
-
 }

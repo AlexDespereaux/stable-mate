@@ -161,6 +161,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
+    //to check if user exists
     private void getOneUserFromDb(String email)
     {
         User test = AppDatabase
