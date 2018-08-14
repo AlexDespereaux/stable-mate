@@ -56,9 +56,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity
-            android:name=".CalibrateActivity" />
-        <activity android:name=".CalibrateEditorActivity"></activity>
+        <activity android:name=".CalibrateActivity" />
+        <activity android:name=".CalibrateEditorActivity" />
+        <activity android:name=".CheckCalibrationActivity"></activity>
     </application>
 
 </manifest>

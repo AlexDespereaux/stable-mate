@@ -239,7 +239,7 @@ public class TinyDB {
      * @return double value at 'key' or 'defaultValue' if exception is thrown
      */
     public double getDouble(String key, double defaultValue) {
-        String number = getStringTinyDB(key);
+        String number = getString(key);
 
         try {
             return Double.parseDouble(number);
@@ -286,7 +286,7 @@ public class TinyDB {
      * @param key SharedPreferences key
      * @return String value at 'key' or "" (empty String) if key not found
      */
-    public String getStringTinyDB(String key) {
+    public String getString(String key) {
         return preferences.getString(key, "");
     }
 
@@ -347,7 +347,7 @@ public class TinyDB {
 
     public <T> T getObject(String key, Class<T> classOfT){
 
-        String json = getStringTinyDB(key);
+        String json = getString(key);
         Object value = new Gson().fromJson(json, classOfT);
         if (value == null)
             throw new NullPointerException();
@@ -416,7 +416,7 @@ public class TinyDB {
      */
     public void putDouble(String key, double value) {
         checkForNullKey(key);
-        putStringTinyDB(key, String.valueOf(value));
+        putString(key, String.valueOf(value));
     }
 
     /**
@@ -435,7 +435,7 @@ public class TinyDB {
      * @param key SharedPreferences key
      * @param value String value to be added
      */
-    public void putStringTinyDB(String key, String value) {
+    public void putString(String key, String value) {
         checkForNullKey(key); checkForNullValue(value);
         preferences.edit().putString(key, value).apply();
     }
@@ -489,7 +489,7 @@ public class TinyDB {
     public void putObject(String key, Object obj){
     	checkForNullKey(key);
     	Gson gson = new Gson();
-    	putStringTinyDB(key, gson.toJson(obj));
+    	putString(key, gson.toJson(obj));
     }
 
     public void putListObject(String key, ArrayList<Object> objArray){

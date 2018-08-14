@@ -2,22 +2,16 @@ package com.jaram.jarambuild.CalibrateUtils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import com.jaram.jarambuild.CalibrateActivity;
-import com.jaram.jarambuild.R;
-
-import java.io.File;
 
 public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -43,11 +37,7 @@ public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback 
         Log.d(TAG, "in onDraw");  */
 
         //Get screen size
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((CalibrateActivity) getContext()).getWindowManager()
-                .getDefaultDisplay()
-                .getMetrics(displayMetrics);
-
+        DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
         int maxHeight = displayMetrics.heightPixels;
         int maxWidth = displayMetrics.widthPixels;
 
@@ -78,9 +68,6 @@ public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback 
         //canvas = new Canvas(scaledBitmap);
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-
-
-
 /*
         int cx = (canvas.getWidth() - icon.getWidth()) / 2;
         int cy = (canvas.getHeight() - icon.getHeight()) / 2;

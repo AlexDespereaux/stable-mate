@@ -4,12 +4,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.jaram.jarambuild.roomDb.AppDatabase;
+import com.jaram.jarambuild.roomDb.User;
 import com.jaram.jarambuild.utils.NetworkUtils;
+import com.jaram.jarambuild.utils.TinyDB;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -17,16 +21,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Easier to debug
 
     //variables
-    private EditText nameField;
+    private EditText emailField;
     private EditText pWordField;
     private Button loginBtn;
     private Button goToSignUpBtn;
 
-    private String name;
+    private String email;
     private String pWord;
     private boolean validInput = false;
-    private String prefName;
-    private String prefPWord;
+
+    //logging
+    private String TAG = "MainAct";
+
+    //shared Prefs
+    TinyDB tinydb;
+
+    //login status - if !null user is logged in
+    private String loggedInAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -39,12 +50,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         goToSignUpBtn = findViewById(R.id.goToSignUpBtn);
 
         //text fields
-        nameField = findViewById(R.id.nameField);
+        emailField = findViewById(R.id.emailField);
         pWordField = findViewById(R.id.pWordField);
 
         //register listeners
         loginBtn.setOnClickListener(this);
         goToSignUpBtn.setOnClickListener(this);
+
+        //shared prefs
+        tinydb = new TinyDB(this);
+
+        //check if logged in & skip to home screen
+        loggedInCheck();
     }
 
     @Override
@@ -53,17 +70,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId())
         {
             case R.id.loginBtn:
-                //set variables & validate input
+                //validate input
                 validInput = getUserInput();
-                //check internet status
-                if (NetworkUtils.isNetworkConnected(this))
-                {
-                    login(validInput);
-                } else
-                {
-                    //allow use of app and saving files to database until user logs in again
-                    localLogin(v, validInput);
-                }
+                login(validInput);
                 break;
             case R.id.goToSignUpBtn:
                 //Go to signup activity
@@ -75,58 +84,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void login(boolean validInput)
     {
-        if(validInput)
+        if (validInput && checkAccount(email, pWord))
         {
-            //TODO: login to server
-            if (true)
+            if (NetworkUtils.isNetworkConnected(this))
             {
-                //go to home menu
-                Intent intent = new Intent(this, HomeActivity.class);
-                startActivity(intent);
-            } else
-            {
-                Toast.makeText(this, "Login Failed please try again", Toast.LENGTH_SHORT).show();
+                //TODO: login to server
             }
-        }
-        else
+            //go to home menu
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
+        } else
         {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
         }
-
-    }
-
-    private void localLogin(View v, boolean validInput)
-    {
-        //get stored variables
-        getInputPrefs(v);
-        if(validInput)
-        {
-            if ((prefName != null) && (prefPWord != null))
-            {
-                if ((name.equals(prefName)) && (pWord.equals(prefPWord)))
-                {
-                    Toast.makeText(this, "No internet, saving files locally", Toast.LENGTH_SHORT).show();
-                    //go to home menu
-                    Intent intent = new Intent(this, HomeActivity.class);
-                    startActivity(intent);
-                } else
-                {
-                    Toast.makeText(this, "Login Failed please try again", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-        else
-        {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    private void getInputPrefs(View v)
-    {
-        SharedPreferences jaramSharedP = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-        prefName = jaramSharedP.getString("userNameLogin", null);
-        prefPWord = jaramSharedP.getString("userPwordLogin", null);
     }
 
     private boolean getUserInput()
@@ -134,12 +104,62 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boolean validInput = false;
         //TODO add input validation
         //get data from login fields
-        if(true)
+        email = emailField.getText().toString().trim();
+        pWord = pWordField.getText().toString().trim();
+        if (pWord.equals("") || email.equals(""))
         {
-            name = nameField.getText().toString().trim();
-            pWord = pWordField.getText().toString().trim();
+            validInput = false;
+            Log.d(TAG, "valid input - false");
+        }
+        else
+        {
             validInput = true;
+            Log.d(TAG, "valid input - true:" + " email:" + email + " pword:" + pWord);
         }
         return validInput;
+    }
+
+    private void loggedInCheck()
+    {
+        if (tinydb.getString("loggedInAccount") != "")
+        {
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    private boolean checkAccount(String email, String pWord)
+    {
+        User userToCheck = getOneUserFromDb(email);
+        boolean checked = false;
+        //Log.d(TAG, "checkAccount - User to check = " + userToCheck.getEmail() + " " + userToCheck.getPWord());
+        if (userToCheck != null)
+        {
+            //Log.d(TAG, "email from field: " + email + "pword from field" + pWord);
+            if (userToCheck.getEmail().equals(email)&& userToCheck.getPWord().equals(pWord))
+            {
+                Log.d(TAG, "here");
+
+                checked = true;
+                Log.d(TAG, "passed account check");
+                //set prefs
+                tinydb.putString("loggedInAccount", userToCheck.getEmail());
+                tinydb.putString("loggedInName", userToCheck.getFirstName());
+            }
+        } else
+        {
+            Log.d(TAG, "failed account check");
+            Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
+        }
+        return checked;
+    }
+
+    private User getOneUserFromDb(String email)
+    {
+        User user = AppDatabase
+                .getDatabase(this)
+                .getUserDao()
+                .getUserbyId(email);
+        return user;
     }
 }
