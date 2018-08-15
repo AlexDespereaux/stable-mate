@@ -1,0 +1,35 @@
+CREATE DATABASE IF NOT EXISTS annomate;
+USE annomate;
+
+CREATE TABLE IF NOT EXISTS users (
+  user_id       INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  username      VARCHAR(100),
+  password      CHAR(60),
+  email         VARCHAR(255),
+  PRIMARY KEY (user_id)
+);
+
+CREATE TABLE IF NOT EXISTS legend (
+  legend_id     INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name          VARCHAR(100) NOT NULL,
+  text          TEXT NOT NULL,
+  PRIMARY KEY (legend_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS images (
+  image_id      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  filename      VARCHAR(100) NOT NULL,
+  description   TEXT,
+  notes         TEXT,
+  datetime      INT UNSIGNED NOT NULL,
+  latitude      DECIMAL(20, 10),
+  longitude     DECIMAL(20, 10),
+  d_fov         DECIMAL(10, 5),
+  ppm           DECIMAL(10, 5),
+  legend_id     INT UNSIGNED NOT NULL,
+  user_id       INT UNSIGNED NOT NULL,
+  PRIMARY KEY(image_id),
+  FOREIGN KEY(legend_id) REFERENCES legend(legend_id),
+  FOREIGN KEY(user_id) REFERENCES users(user_id)
+);
