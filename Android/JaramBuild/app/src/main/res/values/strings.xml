@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">JaramBuild</string>
+    <string name="user_name">User Name</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="welcome_to_annomate">Welcome to Annomate</string>
+    <string name="create_account">Create Account</string>
+    <string name="your_name">Your Name</string>
+    <string name="email_address">Email address</string>
+    <string name="sign_up">Sign Up</string>
+
+    <!-- Strings related to login -->
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+
+    <!-- Example settings for Data & Sync -->
+
+    <string name="label_brush">Brush</string>
+    <string name="label_emoji">Emoji</string>
+    <string name="label_sticker">Sticker</string>
+    <string name="label_eraser">Eraser</string>
+    <string name="label_text">Text</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="camera">Camera</string>
+    <string name="calibrate">Calibrate</string>
+    <string name="settings">settings</string>
+    <string name="gallery">gallery</string>
+    <string name="welcome">Welcome</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+    <string name="galleryopen">GalleryOpen</string>
+    <string name="close">close</string>
+    <string name="save">save</string>
+    <string name="save_login_details">Save Login Details</string>
+    <string name="brush">Brush</string>
+    <string name="opacity">Opacity</string>
+    <string name="done">Done</string>
+    <string name="sticker">Sticker</string>
+    <string name="emoji">Emoji</string>
+    <string name="eraser">Eraser</string>
+    <string name="text">Text</string>
+    <string name="pencil">pencil</string>
+    <string name="image">image</string>
+    <string name="image_title">Image Title</string>
+    <string name="subject">Subject</string>
+    <string name="notes">Notes</string>
+    <string name="upload_to_cloud">Upload to Cloud</string>
+    <string name="symbol">Symbol</string>
+
+
+</resources>

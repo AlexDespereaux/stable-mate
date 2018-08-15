@@ -3,40 +3,50 @@ import { NgModule } from '@angular/core';
 
 
 import { AppComponent } from './app.component';
-import { LoginPageComponent } from './login-page/login-page.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { DisplayImageComponent } from './display-image/display-image.component';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { RegisterComponent } from './register/register.component';
 import { AdminComponent } from './admin/admin.component';
 import { NewUserComponent } from './new-user/new-user.component';
-import {ImageService} from "./image.service";
+ import {ImageService} from "./image.service";
+ 
+import { routing } from './app.routing';
+import { LoginComponent } from './login';
+import { HomeComponent } from './home';
+import { ReactiveFormsModule, FormsModule } from '../../node_modules/@angular/forms';
+import {AdminDashboardComponent} from "./admin/admin-dashboard/admin-dashboard.component";
+import { StudentComponent } from './student/student.component';
+import { DashboardComponent } from './student/student-dashboard/dashboard.component';
+import { DisplayImageComponent } from './student/student-dashboard/display-class/display-image/display-image.component';
+import { DisplayClassComponent } from './student/student-dashboard/display-class/display-class.component';
+import { MatSelectModule } from '@angular/material';
 
-const appRoutes: Routes = [
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'admin-dashboard', component: AdminDashboardComponent},
-  { path: 'register', component: RegisterComponent },
-  { path: 'login', component: LoginPageComponent },
-  { path: '',   redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', component: PageNotFoundComponent }
-];
+
+ 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginPageComponent,
+    LoginComponent,
     DashboardComponent,
     DisplayImageComponent,
-    PageNotFoundComponent,
     AdminDashboardComponent,
+    PageNotFoundComponent,
     RegisterComponent,
     AdminComponent,
-    NewUserComponent
+    DisplayClassComponent,
+    NewUserComponent,
+    HomeComponent,
+    LoginComponent,
+    RegisterComponent,
+    StudentComponent
   ],
   imports: [
-    RouterModule.forRoot(appRoutes),
-    BrowserModule
+    routing,
+    BrowserModule,
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule 
   ],
   providers: [ImageService],
   bootstrap: [AppComponent]

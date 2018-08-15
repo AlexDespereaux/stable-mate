@@ -18,7 +18,6 @@
     "forin": true,
     "import-blacklist": [
       true,
-      "rxjs",
       "rxjs/Rx"
     ],
     "import-spacing": true,
@@ -85,8 +84,9 @@
     ],
     "prefer-const": true,
     "quotemark": [
-      true,
-      "single"
+      false,
+      "single",
+      "double"
     ],
     "radix": true,
     "semicolon": [
