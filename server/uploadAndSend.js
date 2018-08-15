@@ -43,5 +43,7 @@ _.forEach(filesToArchive, (file) => {
 
 archive.directory('dist/', 'dist', {name: 'dist'});
 
+archive.directory('.ebextensions/', '.ebextensions', {name: '.ebextensions'});
+
 archive.finalize();
 
