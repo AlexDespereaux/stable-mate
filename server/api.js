@@ -24,32 +24,10 @@ let imageCounter = 0;
 let printRequestHeaders = function(req) {
   console.log('\nReceived headers');
   console.log('----------------');
-
   for (let key in req.headers) {
     console.log(key + ': ' + req.headers[key]);
   }
-
   console.log('');
-};
-
-let uploadHandler = function(req, res) {
-  console.log('\n\nUpload Request from: ' + req.ip);
-  printRequestHeaders(req);
-  if (req.get('token') !== TOKEN) {
-    res.sendStatus(401);
-  } else {
-    switch (req.get('Content-Type')) {
-      case 'application/json':
-        break;
-      case 'image/png':
-        console.log('Started upload from: ' + req.ip);
-        req.pipe(uploadFromStream(s3));
-        req.on('end', function () { res.sendStatus(200); });
-        break;
-      default:
-        res.sendStatus(400);
-    }
-  }
 };
 
 let uploadFromStream = function(s3) {
@@ -84,6 +62,23 @@ router.get('/test', (req, res) => {
   connection.end();
 });
 
-router.post('/image', uploadHandler);
+router.post('/image', function(req, res, next) {
+  console.log('\n\nUpload Request from: ' + req.ip);
+  printRequestHeaders(req);
+  if (req.get('token') !== TOKEN) {
+    res.sendStatus(401);
+    next('router')
+  } else {
+    if (req.get('Content-Type') === 'image/png') {
+      console.log('Started upload from: ' + req.ip);
+      req.pipe(uploadFromStream(s3));
+      req.on('end', function () { res.sendStatus(200); });
+    } else {
+      next();
+    }
+  }
+}, express.json(), function (req, res) {
+  res.send(req.body);
+});
 
 module.exports = router;
