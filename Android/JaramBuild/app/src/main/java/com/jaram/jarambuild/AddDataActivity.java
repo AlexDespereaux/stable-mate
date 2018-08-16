@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -60,9 +61,9 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private String userPassword;
     private String studentNo;
     private JSONObject uploadObj;
-    private String utcTime;
     private String pathName;
     private String jsonPathName;
+    private String unixTime;
 
     //Shared Prefs
     TinyDB tinydb;
@@ -236,11 +237,10 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         return Base64.encodeToString(byteArrayImage, Base64.NO_WRAP);
     }
 
-    public void getUTCTime(View view)
+    public void getUnixEpochTime()
     {
-        //TODO: make date UTC
-        //long time = getTime();
-        utcTime = "123456";
+        Date dateObj = new Date();
+        unixTime =  Long.toString(dateObj.getTime());
     }
 
     public void genLegend()
@@ -304,14 +304,14 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
     private void uploadToCloudBinary(View v)
     {
-        getUTCTime(v);
+        getUnixEpochTime();
         createJsonObj(getApplicationContext());
         uploadBinary(getApplicationContext());
     }
 
     private void uploadToCloudJson(View v)
     {
-        getUTCTime(v);
+        getUnixEpochTime();
         createJsonObj(getApplicationContext());
         uploadJson(getApplicationContext());
     }
@@ -324,17 +324,22 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         getTexts();
         //convert image from image path to Base64 string
         String editedImgBase64 = convertToBase64(editedImgUri);
+
         //create JSON object
         uploadObj = new JSONObject();
+        JSONObject locationObj = new JSONObject();
         try
         {
-            uploadObj.put("user", userName);
-            uploadObj.put("password", userPassword);
-            uploadObj.put("studentNo", studentNo);
-            uploadObj.put("editedImage64", editedImgBase64);
-            uploadObj.put("imgTitle", imgTitle);
-            uploadObj.put("subject", subject);
-            uploadObj.put("description", desc);
+            //TODO : confirm data types
+            uploadObj.put("filename", imgTitle);
+            uploadObj.put("description", subject);
+            uploadObj.put("notes", desc);
+            uploadObj.put("datetime", unixTime);
+                locationObj.put("latitude", "-37.719523");
+                locationObj.put("longitude", "145.045910");
+            uploadObj.put("location", locationObj);
+            uploadObj.put("dFov", "1.34456");
+            uploadObj.put("ppm", "342");
 
         } catch (JSONException e)
         {

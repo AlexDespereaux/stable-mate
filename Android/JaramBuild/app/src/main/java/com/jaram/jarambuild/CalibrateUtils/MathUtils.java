@@ -48,6 +48,21 @@ public class MathUtils
         return msPoints;
     }
 
+    public static double computeCheckCaliDistance(List<Point> points){
+        double msPoints;
+        String TAG = "MathUtils";
+        if(points.size() < 2){msPoints=-1; return msPoints ;}
+
+        //Get reference points
+        Point ref1 = points.get(0);
+        Point ref2 = points.get(1);
+
+        double distBetween2points = getDistance(ref1, ref2);
+        Log.d(TAG, "Distance between Calibration points: " + distBetween2points);
+
+        return distBetween2points;
+    }
+
     //reference is the reference distance input by user!
     public static double computePixelPerMicron(List<Point> points, double reference, int inputUnitIndex){
         double pixelPerMicron = -1;

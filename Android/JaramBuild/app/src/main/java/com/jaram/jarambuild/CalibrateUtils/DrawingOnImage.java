@@ -212,4 +212,12 @@ public class DrawingOnImage extends SurfaceView {
         }
         return MathUtils.computePixelPerMicron(circlePoints, reference, inputUnitIndex);
     }
+
+    public double calculateCalidFovinPixels(){
+        if(circlePoints.size() != 2 ){
+            Toast.makeText(context, "Select points for desired object", Toast.LENGTH_SHORT).show();
+            return -1;
+        }
+        return MathUtils.computeCheckCaliDistance(circlePoints);
+    }
 }

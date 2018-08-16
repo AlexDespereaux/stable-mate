@@ -17,11 +17,13 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.jaram.jarambuild.CalibrateUtils.DrawingOnImage;
 import com.jaram.jarambuild.CalibrateUtils.SurfaceImage;
 import com.jaram.jarambuild.roomDb.AppDatabase;
 import com.jaram.jarambuild.roomDb.Calibration;
 import com.jaram.jarambuild.utils.TinyDB;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -33,12 +35,15 @@ public class CheckCalibrationActivity extends AppCompatActivity
     private String imageFilePath;
     private double confirmedPixelsPerMicron;
 
-    //results of calibration
+    //results of new calibration
     double dFov;
     double pixPerMic;
     int ocularLens;
     int objectiveLens;
     String calibrationId;
+    double distBetweenCaliPointsInPix;
+    double newPPM = 0; // new image pixel per micron
+    double newDFOV = 0; // new diagonal field of view
 
     //buttons
     Button clearBtn;
@@ -136,11 +141,12 @@ public class CheckCalibrationActivity extends AppCompatActivity
                 if (drawing.circlePoints.size() > 1 && objects1)
                 {
                     //check user has populated calibrationlist
-                    if(calibrationList.size()>0)
+                    if (calibrationList.size() > 0)
                     {
                         getInfoDialog();
-                    }
-                    else
+                        //get distance between 2 selected points in pixels
+                        distBetweenCaliPointsInPix = drawing.calculateCalidFovinPixels();
+                    } else
                     {
                         //TODO make dialog with button to calibration activity
                         Toast.makeText(CheckCalibrationActivity.this, "Please save calibrations prior to taking photo", Toast.LENGTH_LONG).show();
@@ -169,23 +175,22 @@ public class CheckCalibrationActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int whichButton)
             {
                 //get scale bar colour
-                sBcolorPosition = ((Spinner) caliCheckView.findViewById(R.id.colourSbSpinner)).getSelectedItemPosition();
                 try
                 {
-                    Toast.makeText(CheckCalibrationActivity.this, "placeholder in cali check dialog", Toast.LENGTH_SHORT).show();
-
+                    sBcolorPosition = ((Spinner) caliCheckView.findViewById(R.id.colourSbSpinner)).getSelectedItemPosition();
                 } catch (NumberFormatException ex)
                 {
                     Toast.makeText(CheckCalibrationActivity.this, "Please choose scalebar colour", Toast.LENGTH_SHORT).show();
                 }
 
                 //get saved calibration details
-                int savedCaliPosition = ((Spinner) caliCheckView.findViewById(R.id.caliSpinner)).getSelectedItemPosition();
                 try
                 {
+                    int savedCaliPosition = ((Spinner) caliCheckView.findViewById(R.id.caliSpinner)).getSelectedItemPosition();
                     Calibration selectedCali = calibrationList.get(savedCaliPosition);
                     double savedDfov = Double.parseDouble(selectedCali.getDFov());
                     double savedPPM = Double.parseDouble(selectedCali.getPixelsPerMicron());
+                    Log.d(TAG, "Selected Calibration = " + selectedCali.getCaliName());
                     int savedObjLens = selectedCali.getObjectiveLens();
                     int savedOcuLens = selectedCali.getOcularLens();
                     checkCalibrationMath(savedDfov, savedPPM, savedObjLens, savedOcuLens);
@@ -213,12 +218,18 @@ public class CheckCalibrationActivity extends AppCompatActivity
                     Log.d(TAG, "invalid obj lens value");
                 }
 
-                if ((ocularLens > 0) || (objectiveLens > 0))
+                if ((ocularLens >= 0) && (objectiveLens >= 0) && (newPPM != 0) && newDFOV != 0)
                 {
+                    //TODO: move to seperateclass messy no likey
                     Intent intent = new Intent(CheckCalibrationActivity.this, EditImageActivity.class);
                     //add raw file path URI string to intent
                     intent.putExtra("rawPhotoPath", imageFilePath);
-                    intent.putExtra("confirmedPixelsPerMicron", confirmedPixelsPerMicron);
+                    //add scale information to intent
+                    intent.putExtra("confirmedPixelsPerMicron", newPPM);
+                    intent.putExtra("confirmedDFOv", newDFOV);
+                    //add selected int index of colour in scale bar colour array
+                    intent.putExtra("scaleBarColourIndex", sBcolorPosition);
+                    Log.d(TAG, "scaleBarColourIndex: " + sBcolorPosition);
                     Log.d(TAG, "rawPhotoPath: " + imageFilePath);
                     //open edit Image Activity
                     startActivity(intent);
@@ -240,18 +251,30 @@ public class CheckCalibrationActivity extends AppCompatActivity
         final AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
         alertDialog.setCanceledOnTouchOutside(true);
+
         //populate saved calibration settings spinner
         Spinner spinner = (Spinner) alertDialog.findViewById(R.id.caliSpinner);
-        ArrayAdapter<String>adapter = new ArrayAdapter<String>(CheckCalibrationActivity.this,
-                android.R.layout.simple_spinner_item,populateSpinnerArray());
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CheckCalibrationActivity.this,
+                android.R.layout.simple_spinner_item, populateSpinnerArray());
 
         spinner.setAdapter(adapter);
     }
 
     private void checkCalibrationMath(double savedDfov, double savedPPM, int savedObjLens, int savedOcuLens)
     {
-        //do stuff with stuff
-        //aka get pixels in current dFov and compare to saved dFov, check lenses and compute scale
+        //I'm sure there are nicer ways to do this.. I'm a bit spatially deficient when it comes to math !
+        //the saved calibration dFov is in microns
+        double scaleRatio;
+        double savedDFOVinPixels = savedDfov * savedPPM;
+
+        //TODO: add other lens options
+
+        scaleRatio = distBetweenCaliPointsInPix / savedDFOVinPixels; //ie(50/10) = 5 new image is 5 times bigger than calibration picture
+        //therefore pixels per micron in new image is ;
+        newPPM = savedPPM * scaleRatio; //if original pixels per micron was 20 it would now be 100 as new image is 5 times bigger
+        Log.d(TAG, "newPPM: " + newPPM + " savedCaliPPM: " + savedPPM);
+        newDFOV = distBetweenCaliPointsInPix * newPPM;
+        Log.d(TAG, "newDFOV: " + newDFOV + " savedDFOV: " + savedDfov);
     }
 
     private List<Calibration> getOneUserCaliListFromDb()
@@ -271,7 +294,7 @@ public class CheckCalibrationActivity extends AppCompatActivity
         for (Calibration calibration : calibrationList)
         {
             Log.d(TAG, "Filling array: " + calibration.getCaliName());
-            caliPopulateArray[i] = calibration.getCaliName();
+            caliPopulateArray[i] = calibration.getCaliName() + " Ocu:" + calibration.getOcularLens() + " Obj:" + calibration.getObjectiveLens();
             i++;
         }
         return caliPopulateArray;
