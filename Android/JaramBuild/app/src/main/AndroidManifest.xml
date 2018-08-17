@@ -30,6 +30,7 @@
             android:noHistory="true" />
         <activity
             android:name=".EditImageActivity"
+            android:screenOrientation="portrait"
             android:noHistory="true" />
 
         <meta-data
@@ -38,9 +39,11 @@
 
         <activity
             android:name=".AddDataActivity"
+            android:screenOrientation="portrait"
             android:noHistory="true" />
         <activity
             android:name=".GalleryActivity"
+            android:screenOrientation="portrait"
             android:noHistory="true" />
         <activity
             android:name=".SettingsActivity"
@@ -56,8 +59,10 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".CalibrateActivity" />
-        <activity android:name=".CheckCalibrationActivity"></activity>
+        <activity android:name=".CalibrateActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CheckCalibrationActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

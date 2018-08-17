@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.support.annotation.ColorInt;
@@ -111,14 +112,20 @@ public class PhotoEditor implements BrushViewChangeListener
 
     }
 
-    public void addSBImage(Bitmap desiredImage)
+    public void addSBImage(Bitmap desiredImage, String result, String textColour)
     {
         final View imageRootView = getLayout(ViewType.IMAGESB);
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
+        final TextView text = imageRootView.findViewById(R.id.scaleTextView);
 
         imageView.setImageBitmap(desiredImage);
+        //style text
+        text.setText(result);
+        text.setGravity(Gravity.CENTER);
+        text.setTextColor(Color.parseColor(textColour));
+        text.setTypeface(null, Typeface.BOLD);
         MultiTouchListener multiTouchListener = getMultiTouchListenerNSND();
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl()
         {

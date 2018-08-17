@@ -430,28 +430,32 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private void selectSBColour(int pos)
     {
         Bitmap bm;
+        String colour;
         //choose bitmap colour (using position in sbcolour string array)
         switch (pos)
         {
-            case 0: //grey
+            case 0:
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.scalegrey);
-                insertSBandText(bm);
+                colour = "#858585";
+                insertSBandText(bm, colour);
                 Log.d(TAG, "Grey Scale Bar colour selected");
                 break;
             case 1:
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.scaleblack);
-                insertSBandText(bm);
+                colour = "#000000";
+                insertSBandText(bm, colour);
                 Log.d(TAG, "Black Scale Bar colour selected");
                 break;
             case 2:
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.scalewhite);
-                insertSBandText(bm);
+                colour = "#ffffff";
+                insertSBandText(bm, colour);
                 Log.d(TAG, "White Scale Bar colour selected");
                 break;
         }
     }
 
-    private void insertSBandText(Bitmap bm)
+    private void insertSBandText(Bitmap bm, String textColour)
     {
         //variable to store pixel width of scalebar
         double tempPixels = pixelsPerMicron;
@@ -459,7 +463,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         double maxSbWidthInDouble = mvWidth / 4; // 1/4 image width
         double minSbWidthInDouble = mvWidth / 6; // 1/6 image width
         //get scale bar height (1/20 image height)
-        double sbHeightInDouble = mvHeight / 25;
+        double sbHeightInDouble = mvHeight / 40;
         Log.d(TAG, "Max sbW: " + maxSbWidthInDouble + " Min sbW: " + minSbWidthInDouble);
         Log.d(TAG, "Max sbH: " + sbHeightInDouble);
         //round to int  TODO: inline conversion ..too sleepy to math right now
@@ -488,13 +492,13 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         int w = (int) Math.round(tempPixels);
 
-        String resultPrintString = Double.toString(resultSbSizeinMicrons) + " microns";
+        String resultPrintString = "  " + Double.toString(resultSbSizeinMicrons) + " microns  ";
         Log.d(TAG, "Scale Bar width = " + w + " Scale bar height = " + h);
 
         Bitmap scaled = Bitmap.createScaledBitmap(bm, w, h, true); // Make sure w and h are in the correct order
         //insert bitmap
-        mPhotoEditor.addSBImage(scaled);
-        Log.d(TAG, "Scale Bar inserted, value = " + resultPrintString + " Microns");
+        mPhotoEditor.addSBImage(scaled, resultPrintString, textColour);
+        Log.d(TAG, "Scale Bar inserted, value = " + resultPrintString);
     }
 
     private void showCaliRemindDialog()

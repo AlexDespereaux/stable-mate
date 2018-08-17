@@ -4,13 +4,14 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(indices = {@Index("email")},
         foreignKeys = @ForeignKey(entity = User.class,
-        parentColumns = "email",
-        childColumns = "email",
-        onDelete = CASCADE))
+                parentColumns = "email",
+                childColumns = "email",
+                onDelete = CASCADE))
 public class Image
 {
     @PrimaryKey(autoGenerate = true)
@@ -23,9 +24,12 @@ public class Image
     private String latitude;
     private String dFov;
     private String pixelsPerMicron;
+    private int uploadId;
+    private String photoPath_raw;
+    private String photoPath_edited;
     private String email;
 
-    public Image(String title, String description, String notes, String date, String longitude, String latitude, String dFov, String pixelsPerMicron, String email)
+    public Image(String title, String description, String notes, String date, String longitude, String latitude, String dFov, String pixelsPerMicron, int uploadId, String photoPath_raw, String photoPath_edited, String email)
     {
         this.title = title;
         this.description = description;
@@ -35,6 +39,9 @@ public class Image
         this.latitude = latitude;
         this.dFov = dFov;
         this.pixelsPerMicron = pixelsPerMicron;
+        this.uploadId = uploadId;
+        this.photoPath_raw = photoPath_raw;
+        this.photoPath_edited = photoPath_edited;
         this.email = email;
     }
 
@@ -128,6 +135,36 @@ public class Image
         this.pixelsPerMicron = pixelsPerMicron;
     }
 
+    public int getUploadId()
+    {
+        return uploadId;
+    }
+
+    public void setUploadId(int uploadId)
+    {
+        this.uploadId = uploadId;
+    }
+
+    public String getPhotoPath_raw()
+    {
+        return photoPath_raw;
+    }
+
+    public void setPhotoPath_raw(String photoPath_raw)
+    {
+        this.photoPath_raw = photoPath_raw;
+    }
+
+    public String getPhotoPath_edited()
+    {
+        return photoPath_edited;
+    }
+
+    public void setPhotoPath_edited(String photoPath_edited)
+    {
+        this.photoPath_edited = photoPath_edited;
+    }
+
     public String getEmail()
     {
         return email;
@@ -136,5 +173,25 @@ public class Image
     public void setEmail(String email)
     {
         this.email = email;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Image{" +
+                "imageId=" + imageId +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", notes='" + notes + '\'' +
+                ", date='" + date + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", dFov='" + dFov + '\'' +
+                ", pixelsPerMicron='" + pixelsPerMicron + '\'' +
+                ", uploadId=" + uploadId +
+                ", photoPath_raw='" + photoPath_raw + '\'' +
+                ", photoPath_edited='" + photoPath_edited + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

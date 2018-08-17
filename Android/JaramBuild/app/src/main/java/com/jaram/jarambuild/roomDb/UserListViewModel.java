@@ -21,8 +21,9 @@ public class UserListViewModel extends AndroidViewModel
         appDatabase = AppDatabase.getDatabase(this.getApplication());
 
         userList = appDatabase.getUserDao().getAllUsers();
-    }
 
+        //requestedUser = getOneUser(email);
+    }
 
     public LiveData<List<User>> getUserList()
     {

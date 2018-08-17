@@ -61,7 +61,7 @@ public class DrawingOnImage extends SurfaceView {
                 paint.setColor(MEASURE_POINT_COLOR2);
             }
             Point p = circlePoints.get(i);
-            canvas.drawCircle(p.x, p.y, 60, paint);
+            canvas.drawCircle(p.x, p.y, 40, paint);
 
             if(i == 1){
                 canvas.drawLine(circlePoints.get(0).x, circlePoints.get(0).y, circlePoints.get(1).x, circlePoints.get(1).y, paint);

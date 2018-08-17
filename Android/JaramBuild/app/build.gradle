@@ -39,6 +39,9 @@ dependencies {
     def uploadServiceVersion = "3.4.2"
     implementation "net.gotev:uploadservice:$uploadServiceVersion"
     implementation "net.gotev:uploadservice-okhttp:$uploadServiceVersion"
+    //fast android networking
+    implementation 'com.amitshekhar.android:android-networking:1.0.2'
+    //vectors
     implementation 'com.android.support:support-vector-drawable:27.1.1'
     //tinyDB
     implementation 'com.google.code.gson:gson:2.8.5'
@@ -54,5 +57,7 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:$room_version"
     implementation "android.arch.lifecycle:extensions:$room_version"
     annotationProcessor "android.arch.lifecycle:compiler:$room_version"
+    //debugging
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
 
 }

@@ -66,4 +66,15 @@ public class Legend
     {
         this.imgId = imgId;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Legend{" +
+                "legendId=" + legendId +
+                ", symbol='" + symbol + '\'' +
+                ", legendTxt='" + legendTxt + '\'' +
+                ", imgId=" + imgId +
+                '}';
+    }
 }

@@ -1,5 +1,6 @@
 package com.jaram.jarambuild;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,12 +20,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 //upload utils
 import net.gotev.uploadservice.BinaryUploadRequest;
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.UploadNotificationConfig;
 //json utils
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 //binary creation utils
@@ -35,38 +38,49 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-//shared prefs
+//data
 import com.jaram.jarambuild.adapters.LegendListAdapter;
 import com.jaram.jarambuild.models.EditModel;
+import com.jaram.jarambuild.roomDb.AppDatabase;
+import com.jaram.jarambuild.roomDb.Image;
+import com.jaram.jarambuild.roomDb.ImageListViewModel;
+import com.jaram.jarambuild.roomDb.Legend;
+import com.jaram.jarambuild.roomDb.LegendListViewModel;
+import com.jaram.jarambuild.roomDb.User;
+import com.jaram.jarambuild.roomDb.UserListViewModel;
+import com.jaram.jarambuild.utils.ImageIdEvent;
+import com.jaram.jarambuild.utils.LegendCreatedEvent;
 import com.jaram.jarambuild.utils.TinyDB;
+
+import static com.jaram.jarambuild.roomDb.AppDatabase.getDatabase;
 
 public class AddDataActivity extends AppCompatActivity implements View.OnClickListener
 {
     //set log name
     private String TAG = "AddData";
 
+    //layout
     private EditText imgTitleInput;
-    private EditText subjectInput;
-    private EditText descInput;
+    private EditText descriptionInput;
+    private EditText notesInput;
     private TextView legendHeading;
 
-    //JSON data variables
+    //variables
     private String imgTitle;
-    private String subject;
-    private String desc;
+    private String description;
+    private String notes;
     private String editedImgUri;
     private String rawImgUri;
-    private String userName;
-    private String userPassword;
-    private String studentNo;
-    private JSONObject uploadObj;
     private String pathName;
     private String jsonPathName;
-    private String unixTime;
-
-    //Shared Prefs
-    TinyDB tinydb;
+    private String fusedLocationLong;
+    private String fusedLocationLat;
+    private Double dFov;
+    private Double pixelsPerMicron;
+    private int uploadId = -1;
 
     //List of sticker images (drawable resource files)
     int[] stickerList;
@@ -81,6 +95,24 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
     //check if there are legend rows to discern if the heading should be displayed
     private boolean isLegend = false;
+
+    //counter to check number of legends saved to database = total legends in image (reset each image upload)
+    int legendUpLoadCounter = 0;
+    int imageIdFromEvent;
+
+    //db
+    private LegendListViewModel legendViewModel;
+    private ImageListViewModel imageViewModel;
+    Context context;
+    private AppDatabase db;
+
+    //get logged in user
+    TinyDB tinydb;
+    String loggedInUser; // email address, which is primary key of user db
+    //user details
+    String userFirstName;
+    String userLastName;
+    String userPword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -109,8 +141,8 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
         //text fields
         imgTitleInput = findViewById(R.id.imgTitleInput);
-        subjectInput = findViewById(R.id.subjectInput);
-        descInput = findViewById(R.id.descInput);
+        descriptionInput = findViewById(R.id.descInput);
+        notesInput = findViewById(R.id.notesInput);
 
         //register listeners
         saveBtn.setOnClickListener(this);
@@ -118,9 +150,60 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
         //Get raw image from intent
         rawImgUri = getIntent().getStringExtra("rawImageUri");
-        //Get bitmap from EditImageActivity and add to image view
+        //Get edited bitmap from EditImageActivity and add to image view
         editedImgUri = getIntent().getStringExtra("editedImageUri");
+        //get edited image dfov & pixels per micron from intent
+        dFov = Objects.requireNonNull(getIntent().getExtras()).getDouble("dFov");
+        pixelsPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("pixelsPerMicron");
+
+        //set image in view
         setImageView();
+
+        //db
+        legendViewModel = ViewModelProviders.of(this).get(LegendListViewModel.class);
+        imageViewModel = ViewModelProviders.of(this).get(ImageListViewModel.class);
+        db = AppDatabase.getDatabase(getApplicationContext());
+
+        //get logged in user for db
+        tinydb = new TinyDB(this);
+        loggedInUser = tinydb.getString("loggedInAccount");
+        Log.d(TAG, "loggedInUser: " + loggedInUser);
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop()
+    {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe
+    public void onImageIdEvent(ImageIdEvent event)
+    {
+        legendUpLoadCounter = 0;
+        Log.d(TAG, "Image ID from ImageIdEvent " + event.imageIdMessage);
+        imageIdFromEvent =(int)event.imageIdMessage;
+        saveLegendToDb(imageIdFromEvent);
+    }
+
+    @Subscribe
+    public void onLegendCreatedEvent(LegendCreatedEvent event)
+    {
+        Log.d(TAG, "legend created " + event.legendCreated);
+        legendUpLoadCounter++;
+        Log.d(TAG, "inEL count = " + legendUpLoadCounter + "arr " + LegendListAdapter.editModelArrayList.size());
+        //temp
+        if(legendUpLoadCounter == LegendListAdapter.editModelArrayList.size() )
+        {
+            createJsonObj(imageIdFromEvent);
+        }
     }
 
     @Override
@@ -134,22 +217,19 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if(item.getItemId()== R.id.settingsMenuBtn)
+        if (item.getItemId() == R.id.settingsMenuBtn)
         {
             Log.d(TAG, "Settings Btn Clicked");
             //Go to settings activity
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
-        }
-        else if(item.getItemId()== R.id.helpMenuBtn)
+        } else if (item.getItemId() == R.id.helpMenuBtn)
         {
             //TODO Make help activity
             Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Help Btn Clicked");
 
-        }
-
-        else if(item.getItemId()== R.id.logoutMenuBtn)
+        } else if (item.getItemId() == R.id.logoutMenuBtn)
         {
             Log.d(TAG, "Logout Btn Clicked");
             //set logged in user to null
@@ -158,8 +238,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             Intent settingsIntent = new Intent(this, MainActivity.class);
             startActivity(settingsIntent);
             finish();
-        }
-        else
+        } else
         {
             return super.onOptionsItemSelected(item);
         }
@@ -172,14 +251,13 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId())
         {
             case R.id.saveBtn:
-                // Binary upload
-                //uploadToCloudBinary(v);
-
-                //JSON upload
-                //uploadToCloudJson(v);
-
-                //Test Upload
-                //uploadTest(getApplicationContext());
+                //get text data from fields (not legend list)
+                getTexts();
+                //get User Details for upload
+                getUserDetails();
+                getLocation();
+                //Save Image in database
+                saveImageToDb();
                 break;
             case R.id.cancelBtn:
                 //Return to home activity
@@ -192,6 +270,30 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void saveLegendToDb(int imageId)
+    {
+        String legendText;
+        String stickerImgName;
+        String[] stickerListNamesArr = com.jaram.jarambuild.utils.StickerConstants.getStickerListPaths();
+        for (int i = 0; i < LegendListAdapter.editModelArrayList.size(); i++)
+        {
+
+            legendText = LegendListAdapter.editModelArrayList.get(i).getEditTextValue();
+            stickerImgName = stickerListNamesArr[LegendListAdapter.editModelArrayList.get(i).getStickerIndex()];
+            context = getApplicationContext();
+            //saveLegendToDatabase(stickerImgName, legendText, imageId);
+            legendViewModel.addOneLegend(new Legend(stickerImgName, legendText, imageId));
+            Log.d(TAG, "Legend saved to dataBase");
+        }
+    }
+
+    private boolean saveImageToDb()
+    {
+        imageViewModel.addOneImage(new Image(imgTitle, description, notes, getUnixEpochTime(), fusedLocationLong, fusedLocationLat, Double.toString(dFov), Double.toString(pixelsPerMicron), uploadId, rawImgUri, editedImgUri, loggedInUser));
+        Log.d(TAG, "Image saved to dataBase");
+        return true;
+    }
+
     private void setImageView()
     {
         ImageView imageView = findViewById(R.id.imageView);
@@ -201,12 +303,20 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(this, "Unable to set imageView", Toast.LENGTH_SHORT).show();
         } else
         {
-            //TODO: scale image for display if required-> https://github.com/codepath/android_guides/wiki/Working-with-the-ImageView
-            //Bitmap scaledImg = JBitmapScaler.scaleToFitWidth(BitmapFactory.decodeFile(editedImgUri), 400);
-            //imageView.setImageBitmap(scaledImg);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(editedImgUri, bmOptions);
             imageView.setImageBitmap(bitmap);
+        }
+    }
+
+    private void getLocation()
+    {
+        //TODO: put settings conditional
+        if (true)
+        {
+            //deliberately invalid valid values are lat +90 to -90 long +180 to -180
+            fusedLocationLong = "181";
+            fusedLocationLat = "181";
         }
     }
 
@@ -214,33 +324,32 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     {
         //get data as strings from image input fields
         imgTitle = imgTitleInput.getText().toString().trim();
-        subject = subjectInput.getText().toString().trim();
-        desc = descInput.getText().toString().trim();
+        description = descriptionInput.getText().toString().trim();
+        notes = notesInput.getText().toString().trim();
     }
 
     private void getUserDetails()
     {
-        userName = "test";
-        userPassword = "pass";
-        studentNo = "12345678";
-        //TODO: get data from shared preferences once login & signup set
+        User user =
+                getDatabase(this)
+                        .getUserDao()
+                        .getUserbyId(loggedInUser);
+        if (user != null)
+        {
+            Log.d(TAG, "User exists " + user.toString());
+            userFirstName = user.getPWord();
+            userLastName = user.getFirstName();
+            userPword = user.getLastName();
+        } else
+        {
+            Log.d(TAG, "user does not exist");
+        }
     }
 
-    private String convertToBase64(String imagePath)
-    {
-        //TODO make quality settings user controlled in settings
-        Bitmap bm = BitmapFactory.decodeFile(imagePath);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.PNG, 75, baos);
-        byte[] byteArrayImage = baos.toByteArray();
-        Log.d(TAG, "Image converted to Base64");
-        return Base64.encodeToString(byteArrayImage, Base64.NO_WRAP);
-    }
-
-    public void getUnixEpochTime()
+    public String getUnixEpochTime()
     {
         Date dateObj = new Date();
-        unixTime =  Long.toString(dateObj.getTime());
+        return Long.toString(dateObj.getTime());
     }
 
     public void genLegend()
@@ -257,20 +366,12 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         hs.addAll(sliList);
         sliList.clear();
         sliList.addAll(hs);
-
-        //For Debugging
-        /*
-        Iterator itr = sliList.iterator();
-        while (itr.hasNext())
-        {
-            Log.d(TAG, "iterated array list " + itr.next());
-        }*/
     }
 
     private ArrayList<EditModel> populateList()
     {
         ArrayList<EditModel> list = new ArrayList<>();
-        for (int a = 0; a <sliList.size(); a++)
+        for (int a = 0; a < sliList.size(); a++)
         {
             isLegend = true;
             String sLindex = sliList.get(a);
@@ -289,58 +390,58 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private void setLegendHeadingVis()
     {
         //if there is no legend symbols to collect data for, hide the legend section heading
-        if(!isLegend)
+        if (!isLegend)
         {
             legendHeading.setVisibility(View.GONE);
         }
     }
 
-
-
-
-
-    //UPLOAD TEST CODE*****************************************************************************************************
-
-
-    private void uploadToCloudBinary(View v)
+    private void saveLegendToDatabase(String symbol, String legendTxt, int imgId)
     {
-        getUnixEpochTime();
-        createJsonObj(getApplicationContext());
-        uploadBinary(getApplicationContext());
+        legendViewModel.addOneLegend(new Legend(symbol, legendTxt, imgId));
+        Log.d(TAG, "Legend saved to dataBase");
     }
 
-    private void uploadToCloudJson(View v)
-    {
-        getUnixEpochTime();
-        createJsonObj(getApplicationContext());
-        uploadJson(getApplicationContext());
-    }
 
-    private void createJsonObj(Context context)
+    private void createJsonObj(int imageId)
     {
-        //get user data from shared prefs
-        getUserDetails();
-        //get data input by user into this activity
-        getTexts();
-        //convert image from image path to Base64 string
-        String editedImgBase64 = convertToBase64(editedImgUri);
+        //AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        //get image data by imageId
+        Image imageDataObject =
+                db.getImageDao().getImageById(imageId);
+
+        //get legend data by imageId
+        List<Legend> listOfLegendsFromDb =
+                db.getLegendDao().getAllLegendsByImageId(imageId);
+
+        //check legend list
+        Log.d(TAG, "listOfLegendsFromDb size" + listOfLegendsFromDb.size());
 
         //create JSON object
-        uploadObj = new JSONObject();
+        JSONObject uploadObj = new JSONObject();
         JSONObject locationObj = new JSONObject();
+        JSONArray legendArr = new JSONArray();
         try
         {
-            //TODO : confirm data types
-            uploadObj.put("filename", imgTitle);
-            uploadObj.put("description", subject);
-            uploadObj.put("notes", desc);
-            uploadObj.put("datetime", unixTime);
-                locationObj.put("latitude", "-37.719523");
-                locationObj.put("longitude", "145.045910");
+            uploadObj.put("filename", imageDataObject.getTitle());
+            uploadObj.put("description", imageDataObject.getDescription());
+            uploadObj.put("notes", imageDataObject.getNotes());
+            uploadObj.put("datetime", Double.parseDouble(imageDataObject.getDate()));
+            //put location details in location Object
+            locationObj.put("latitude", Double.parseDouble(imageDataObject.getLatitude()));
+            locationObj.put("longitude", Double.parseDouble(imageDataObject.getLongitude()));
+            //put location object in upload object
             uploadObj.put("location", locationObj);
-            uploadObj.put("dFov", "1.34456");
-            uploadObj.put("ppm", "342");
-
+            uploadObj.put("dFov", Double.parseDouble(imageDataObject.getDFov()));
+            uploadObj.put("ppm", Double.parseDouble(imageDataObject.getPixelsPerMicron()));
+            for (Legend legend : listOfLegendsFromDb)
+            {
+                JSONObject singleLegend = new JSONObject();
+                singleLegend.put("name", legend.getSymbol());
+                singleLegend.put("text", legend.getLegendTxt());
+                legendArr.put(singleLegend);
+            }
+            uploadObj.put("Legend", legendArr);
         } catch (JSONException e)
         {
             Log.e(TAG, "JSONException: " + e.getMessage());
@@ -349,17 +450,30 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             Log.e(TAG, "NumberFormatException" + e.getMessage());
             return;
         }
-
-        //write JSON Object to string and save in file
-        if (uploadObj != null)
+        Log.d(TAG, "Created JSON Object");
+        //debug jsonObjPretty
+        try
         {
-            Log.d(TAG, "Created JSON Object");
-            writeJsonToBinaryFile(context, uploadObj);
-            writeJsonToFile(context, uploadObj);
-        } else
+            Log.d(TAG, uploadObj.toString(4));
+        } catch (JSONException e)
         {
-            Log.d(TAG, "JSON Object is null, Upload failed");
+            e.printStackTrace();
         }
+    }
+
+
+    //UPLOAD TEST CODE*****************************************************************************************************
+
+    /*
+
+        private String convertToBase64(String imagePath)
+    {
+        Bitmap bm = BitmapFactory.decodeFile(imagePath);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 75, baos);
+        byte[] byteArrayImage = baos.toByteArray();
+        Log.d(TAG, "Image converted to Base64");
+        return Base64.encodeToString(byteArrayImage, Base64.NO_WRAP);
     }
 
     private void writeJsonToBinaryFile(Context context, JSONObject uploadObj)
@@ -430,12 +544,8 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         {
             Log.e("AndroidUploadService", exc.getMessage(), exc);
         }
-
-        //TODO: check sucessful upload & delete system image files & Obj upon confirm
-        //TODO: save binary files to database and load from database in loop IF wifi access available. Otherwise wait for broadcast RX msg
     }
 
-    //TODO Just added for testing
     public void uploadTestBinary(final Context context)
     {
         try
@@ -487,13 +597,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         {
             Log.e("AndroidUploadService", exc.getMessage(), exc);
         }
-
-        //TODO: check sucessful upload & delete system image files & Obj upon confirm
-        //TODO: save binary files to database and load from database in loop IF wifi access available. Otherwise wait for broadcast RX msg
     }
-
-
-
-
+*/
 }
 

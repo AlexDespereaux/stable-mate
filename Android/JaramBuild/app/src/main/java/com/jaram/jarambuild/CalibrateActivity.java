@@ -263,9 +263,6 @@ public class CalibrateActivity extends AppCompatActivity
         Log.d(TAG, "Calibration data prior to insert: " + calibrationId + " " + String.valueOf(dFov) + " " + String.valueOf(pixPerMic) + " " + objectiveLens + " " + ocularLens + " " + loggedInUser);
         caliViewModel.addOneCalibration(new Calibration(calibrationId, String.valueOf(dFov), String.valueOf(pixPerMic), objectiveLens, ocularLens, loggedInUser));
         Log.d(TAG, "Calibration saved to dataBase");
-        //debugging
-        //getOneUserCaliListFromDb();
-        //getAllCalibrationsFromDb();
     }
 
     //for debugging

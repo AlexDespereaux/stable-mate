@@ -147,6 +147,7 @@
     <string name="help">Help</string>
     <string name="log_out">Log Out</string>
     <string name="select_scalebar_colour">Select Scalebar colour</string>
+    <string name="description">Description</string>
 
     <!-- Scale Bar colour Dialog -->
     <string-array name="sbcolour">

@@ -1,5 +1,6 @@
 package com.jaram.jarambuild.roomDb;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -13,7 +14,7 @@ import static android.arch.persistence.room.OnConflictStrategy.IGNORE;
 public interface LegendDao
 {
     @Insert(onConflict = IGNORE)
-    void insertLegend(Legend legend);
+    long insertLegend(Legend legend);
 
     @Insert(onConflict = IGNORE)
     void insertOrReplaceLegend(Legend... legends);
@@ -22,7 +23,13 @@ public interface LegendDao
     void deleteLegend(Legend legend);
 
     @Query("select * from legend")
-    List<Legend> loadAllLegends();
+    List<Legend> getAllLegends();
+
+    @Query("select * from legend where imgId = :imgId")
+    List<Legend> getAllLegendsByImageId(int imgId);
+
+    @Query("select * from Legend")
+    LiveData<List<Legend>> getAllLiveLegends();
 
     @Query("select * from legend where legendId = :legendId")
     Legend loadLegendById(int legendId);

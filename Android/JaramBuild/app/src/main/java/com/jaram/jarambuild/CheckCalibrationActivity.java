@@ -3,9 +3,12 @@ package com.jaram.jarambuild;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -103,8 +106,14 @@ public class CheckCalibrationActivity extends AppCompatActivity
         Log.d(TAG, "added drawingView");
 
         //buttons
-        okBtn = (Button) findViewById(R.id.okBtn);
-        clearBtn = (Button) findViewById(R.id.clearBtn);
+        okBtn = findViewById(R.id.okBtn);
+        clearBtn = findViewById(R.id.clearBtn);
+
+        //text
+        instructTxt = findViewById(R.id.instructTxt);
+        //instructTxt.setText("Tap to select first referance point");
+        //instructTxt.setGravity(Gravity.CENTER);
+        //instructTxt.setTextColor(Color.YELLOW);
 
         //get list of calibrations from database (calibrations)
         calibrationList = getOneUserCaliListFromDb();
@@ -266,10 +275,8 @@ public class CheckCalibrationActivity extends AppCompatActivity
         //the saved calibration dFov is in microns
         double scaleRatio;
         double savedDFOVinPixels = savedDfov * savedPPM;
-
-        //TODO: add other lens options
-
         scaleRatio = distBetweenCaliPointsInPix / savedDFOVinPixels; //ie(50/10) = 5 new image is 5 times bigger than calibration picture
+
         //therefore pixels per micron in new image is ;
         newPPM = savedPPM * scaleRatio; //if original pixels per micron was 20 it would now be 100 as new image is 5 times bigger
         Log.d(TAG, "newPPM: " + newPPM + " savedCaliPPM: " + savedPPM);

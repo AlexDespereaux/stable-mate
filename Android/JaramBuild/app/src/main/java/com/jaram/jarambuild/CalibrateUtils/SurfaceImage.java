@@ -31,10 +31,6 @@ public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        /*
-        int newWidth = canvas.getHeight() * icon.getWidth() / icon.getHeight();
-        icon = Bitmap.createScaledBitmap(icon, newWidth, canvas.getHeight(), false);
-        Log.d(TAG, "in onDraw");  */
 
         //Get screen size
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
@@ -68,7 +64,9 @@ public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback 
         //canvas = new Canvas(scaledBitmap);
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-/*
+
+
+        /*
         int cx = (canvas.getWidth() - icon.getWidth()) / 2;
         int cy = (canvas.getHeight() - icon.getHeight()) / 2;
         canvas.drawBitmap(icon, cx, cy, paint);  */

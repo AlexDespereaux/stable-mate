@@ -80,20 +80,19 @@
                     android:textAppearance="@style/TextAppearance.AppCompat" />
 
                 <EditText
-                    android:id="@+id/subjectInput"
+                    android:id="@+id/descInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:ems="10"
                     android:fontFamily="@font/roboto_medium"
-                    android:hint="@string/subject"
+                    android:hint="@string/description"
                     android:inputType="textPersonName"
-                    android:textAppearance="@style/TextAppearance.AppCompat"
-                    android:textColor="@color/white" />
+                    android:textAppearance="@style/TextAppearance.AppCompat" />
 
                 <EditText
-                    android:id="@+id/descInput"
+                    android:id="@+id/notesInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginBottom="8dp"
