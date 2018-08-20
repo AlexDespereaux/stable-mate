@@ -5,7 +5,11 @@ import { StudentComponent } from "../student/student.component";
 import { AdminComponent } from "../admin/admin.component";
 
 
-@Component({ templateUrl: 'login.component.html' })
+@Component({ 
+    templateUrl: 'login.component.html',
+    selector: 'app-login',
+    styleUrls: ['login.component.css']
+})
 export class LoginComponent implements OnInit {
     loginForm: FormGroup;
     loading = false;
@@ -29,9 +33,9 @@ export class LoginComponent implements OnInit {
 
     redirect(userType: string, userId: string) {
         switch (userType) {
-            case 'student': this.router.navigate(['student'], { queryParams: { id: userId } }); break;
+            case 'student': this.router.navigate(['student', userId]); break;
             case 'admin': this.router.navigate(['admin-dashboard'], { queryParams: { id: userId } }); break;
-            default: this.router.navigate(['**', userId],{ queryParams: { id: userId } }); break;
+            default: this.router.navigate(['',]); break;
         }
     }
 
@@ -41,7 +45,7 @@ export class LoginComponent implements OnInit {
         let user: String = this.loginForm.get('username').value;
         let id = user.replace(/[^0-9]/g, '');
 
-        if(!id){
+        if (!id) {
             // in further development can be replaced by any alerting library.
             alert('enter a valide ID');
             return;

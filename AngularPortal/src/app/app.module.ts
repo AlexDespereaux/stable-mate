@@ -11,15 +11,15 @@ import { NewUserComponent } from './new-user/new-user.component';
  import {ImageService} from "./image.service";
  
 import { routing } from './app.routing';
-import { LoginComponent } from './login';
-import { HomeComponent } from './home';
 import { ReactiveFormsModule, FormsModule } from '../../node_modules/@angular/forms';
 import {AdminDashboardComponent} from "./admin/admin-dashboard/admin-dashboard.component";
 import { StudentComponent } from './student/student.component';
-import { DashboardComponent } from './student/student-dashboard/dashboard.component';
-import { DisplayImageComponent } from './student/student-dashboard/display-class/display-image/display-image.component';
-import { DisplayClassComponent } from './student/student-dashboard/display-class/display-class.component';
-import { MatSelectModule } from '@angular/material';
+  import { MatSelectModule } from '@angular/material';
+import { LoginComponent } from './login';
+ import { FilterStudentClassesPipe } from './filter-student-classes.pipe';
+import { DisplayImageComponent } from './student/display-class/display-image/display-image.component';
+import { DisplayClassComponent } from './student/display-class/display-class.component';
+import { SortImagesPipe } from './sort-images.pipe';
 
 
  
@@ -27,26 +27,24 @@ import { MatSelectModule } from '@angular/material';
   declarations: [
     AppComponent,
     LoginComponent,
-    DashboardComponent,
-    DisplayImageComponent,
+     DisplayImageComponent,
     AdminDashboardComponent,
     PageNotFoundComponent,
     RegisterComponent,
     AdminComponent,
     DisplayClassComponent,
     NewUserComponent,
-    HomeComponent,
-    LoginComponent,
-    RegisterComponent,
-    StudentComponent
+    StudentComponent,
+    FilterStudentClassesPipe,
+    SortImagesPipe
   ],
   imports: [
-    routing,
+    routing, 
     BrowserModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSelectModule 
+    MatSelectModule
   ],
   providers: [ImageService],
   bootstrap: [AppComponent]

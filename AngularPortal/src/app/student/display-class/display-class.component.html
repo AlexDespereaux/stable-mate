@@ -1,0 +1,10 @@
+<p class="badge">
+  {{class}}</p>
+
+<div class="flex-container">
+  <div class="row">
+    <div class="card" (click)="redirect(class)" *ngFor="let image of images">
+      <img src="{{image}}">
+    </div>
+  </div>
+</div>

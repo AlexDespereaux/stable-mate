@@ -7,20 +7,25 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./display-class.component.css']
 })
 export class DisplayClassComponent implements OnInit {
-  images;
+  // this will be replaced by a service call to get images of a ceratin class 
+  images = [
+    'assets/images/img1.jpg',
+    'assets/images/img2.jpg',
+    'assets/images/img3.jpg',
+    'assets/images/img4.jpg',
+    'assets/images/img5.jpg',
+  ];
   class;
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(
+    this.route.params.subscribe(
       params => {
-        this.class = params.class;
-        this.images = params.images;
-        console.log(params.class);
+        this.class = params.id;
       },
-    (err) => {
-      console.log('Something went wrong');
-    });
+      (err) => {
+        console.log('Something went wrong');
+      });
   }
 
 }
