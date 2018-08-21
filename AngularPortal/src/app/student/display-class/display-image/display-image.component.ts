@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, Params } from '@angular/router';
+import { Image } from '../../../_models/image';
 
 @Component({
   selector: 'app-display-image',
@@ -7,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DisplayImageComponent implements OnInit {
 
-  constructor() { }
+  // has to be initialized when getting all for one image.
+  image = new Image();
+  imageUrl:'assets/images/img1.jpg'
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
+    this.route.params.subscribe(
+      (params: Params) => {
+        this.image.imageId = params.id;
+      }
+    );
   }
 
 }

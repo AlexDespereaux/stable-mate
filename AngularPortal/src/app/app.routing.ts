@@ -15,7 +15,7 @@ const appRoutes: Routes = [
     children: [
       {
         path: 'displayClass/:id', component: DisplayClassComponent, children: [
-          { path: 'image', component: DisplayImageComponent }
+          { path: 'image/:id', component: DisplayImageComponent }
         ]
       },
     ]

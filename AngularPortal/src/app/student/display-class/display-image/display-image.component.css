@@ -1,8 +1,29 @@
-/* @media (min-width: 768px) {
-  .carousel-multi-item-2 .col-md-3 {
-    float: left;
-    width: 25%;
-    max-width: 100%; } }
+.card {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);
+  box-sizing: border-box;
+  transition: box-shadow .5s;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  width: 28%;
+  /* min-width: 350px; */
+  height: auto;
+  margin: 30px;
+  padding: 30px;
+  box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+}
 
-.carousel-multi-item-2 .card img {
-  border-radius: 2px; } */
+
+.card:hover{
+  opacity: 0.4;
+  transition: background-color 2s ease-out;
+}
+
+
+
+
+

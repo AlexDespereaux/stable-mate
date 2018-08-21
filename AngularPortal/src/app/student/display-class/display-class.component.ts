@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-display-class',
@@ -9,16 +9,18 @@ import { ActivatedRoute } from '@angular/router';
 export class DisplayClassComponent implements OnInit {
   // this will be replaced by a service call to get images of a ceratin class 
   images = [
-    'assets/images/img1.jpg',
-    'assets/images/img2.jpg',
-    'assets/images/img3.jpg',
-    'assets/images/img4.jpg',
-    'assets/images/img5.jpg',
+    {id:1,image:'assets/images/img1.jpg'},
+    {id:1,image:'assets/images/img2.jpg'},
+    {id:1,image:'assets/images/img3.jpg'},
+    {id:1,image:'assets/images/img4.jpg'},
+    {id:1,image:'assets/images/img1.jpg'},
+    {id:1,image:'assets/images/img2.jpg'},
   ];
   class;
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
+    console.log('from display class student');
     this.route.params.subscribe(
       params => {
         this.class = params.id;
@@ -26,6 +28,10 @@ export class DisplayClassComponent implements OnInit {
       (err) => {
         console.log('Something went wrong');
       });
+  }
+
+  redirect(image) {
+      this.router.navigate(['image',image.id], {relativeTo: this.route});
   }
 
 }

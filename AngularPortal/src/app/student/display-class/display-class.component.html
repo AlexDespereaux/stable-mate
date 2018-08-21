@@ -3,8 +3,11 @@
 
 <div class="flex-container">
   <div class="row">
-    <div class="card" (click)="redirect(class)" *ngFor="let image of images">
-      <img src="{{image}}">
+    <div class="card" (click)="redirect(image)" *ngFor="let image of images">
+      <img src="{{image.image}}">
     </div>
   </div>
 </div>
+
+
+<router-outlet></router-outlet>
