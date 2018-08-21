@@ -8,44 +8,35 @@
 
 import UIKit
 import iOSPhotoEditor
-class PhotoViewController: UIViewController {
-@IBOutlet weak var imageView: UIImageView!
-   
+class PhotoViewController: UIViewController{
+    @IBOutlet weak var imageView: UIImageView!
+    
     override func viewDidLoad() {
     super.viewDidLoad()
-
+        
+        if UIImagePickerController.isCameraDeviceAvailable( UIImagePickerControllerCameraDevice.front)
+        {
+            let Picker =  UIImagePickerController()
+            Picker.delegate = self
+            Picker.sourceType = .camera;
+            present(Picker, animated: true, completion: nil)
+        }
        
     }
     
     
-   // override func viewDidAppear(_ animated: Bool) {
-     //   if UIImagePickerController.isCameraDeviceAvailable( UIImagePickerControllerCameraDevice.front)
-     //   {
-       //     let Picker =  UIImagePickerController()
-       //     Picker.delegate = self
-       //     Picker.sourceType = .camera;
-       //     present(Picker, animated: true, completion: nil)
-   //     }
-   // }
-    
-    
-    @IBAction func buttonPress(_ sender: Any) {
+  //  @IBAction func buttonPress(_ sender: Any) {
         
-            if UIImagePickerController.isCameraDeviceAvailable( UIImagePickerControllerCameraDevice.front)
-            {
-                let Picker =  UIImagePickerController()
-                Picker.delegate = self
-                Picker.sourceType = .camera;
-                present(Picker, animated: true, completion: nil)
-            }
-    }
+          //  if UIImagePickerController.isCameraDeviceAvailable( UIImagePickerControllerCameraDevice.front)
+          //  {
+          //      let Picker =  UIImagePickerController()
+         //       Picker.delegate = self
+        //        Picker.sourceType = .camera;
+        //        present(Picker, animated: true, completion: nil)
+   //         }
+ //   }
     
     
-   // private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-      //  let image = info[UIImagePickerControllerOriginalImage] as! UIImage
-       // imagePicked.image = image
-       // dismiss(animated:true, completion: nil)
-   // }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -68,6 +59,7 @@ extension PhotoViewController: PhotoEditorDelegate {
     
     func doneEditing(image: UIImage) {
         imageView.image = image
+        //Here is where the sending Jason stuff will go
     }
     
     func canceledEditing() {
@@ -82,10 +74,10 @@ extension PhotoViewController:  UIImagePickerControllerDelegate, UINavigationCon
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        guard let image = info[UIImagePickerControllerOriginalImage] as? UIImage else {
-            picker.dismiss(animated: true, completion: nil)
+       guard let image = info[UIImagePickerControllerOriginalImage] as? UIImage else {
+           picker.dismiss(animated: true, completion: nil)
             return
-        }
+      }
         picker.dismiss(animated: true, completion: nil)
         
         
