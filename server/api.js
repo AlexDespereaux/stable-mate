@@ -10,13 +10,15 @@ const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 const BUCKET = 'annomate';
 const TOKEN = '1F8065545D842E0098709630DBDBEB596D4D6194';
+const DATABASE = 'annomate';
 
 
 const connection = mysql.createConnection({
   host: process.env.RDS_HOSTNAME,
   user: process.env.RDS_USERNAME,
   password: process.env.RDS_PASSWORD,
-  port: process.env.RDS_PORT
+  port: process.env.RDS_PORT,
+  database: DATABASE
 });
 
 let imageCounter = 0;
@@ -46,6 +48,32 @@ let uploadFromStream = function(s3) {
   return pass;
 };
 
+let imageHandler = function(req, res, next) {
+  console.log('\n\nUpload Request from: ' + req.ip);
+  printRequestHeaders(req);
+  if (req.get('token') !== TOKEN) {
+    res.status(401).send('Requires security token');
+    next('router')
+  } else {
+    if (req.get('Content-Type') === 'image/png') {
+      console.log('Started upload from: ' + req.ip);
+      req.pipe(uploadFromStream(s3));
+      req.on('end', function () { res.status(200).send('Image upload complete!'); });
+    } else {
+      next();
+    }
+  }
+};
+
+let dataHandler = function(req, res) {
+  const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm', 'legend'];
+  if (_.intersection(_.keys(req.body), REQUIRED_KEYS).length === 8) {
+    res.status(200).send('Very good!')
+  } else {
+    res.send(_.toPairs(req));
+  }
+};
+
 router.get('/', function(req, res){
   res.send('hello world');
 });
@@ -62,23 +90,10 @@ router.get('/test', (req, res) => {
   connection.end();
 });
 
-router.post('/image', function(req, res, next) {
-  console.log('\n\nUpload Request from: ' + req.ip);
-  printRequestHeaders(req);
-  if (req.get('token') !== TOKEN) {
-    res.sendStatus(401);
-    next('router')
-  } else {
-    if (req.get('Content-Type') === 'image/png') {
-      console.log('Started upload from: ' + req.ip);
-      req.pipe(uploadFromStream(s3));
-      req.on('end', function () { res.sendStatus(200); });
-    } else {
-      next();
-    }
-  }
-}, express.json(), function (req, res) {
-  res.send(req.body);
-});
+router.post('/image',
+  imageHandler,
+  express.json(),
+  dataHandler
+);
 
 module.exports = router;
