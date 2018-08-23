@@ -11,8 +11,8 @@ export class Image {
   ppm: string;
   legend: [{ name: string, text: string }];
   imageId: string;
-  rawUrl: string;
-  annotatedUrl: string;
+  // rawUrl: string;
+  // annotatedUrl: string;
 
   constructor(values: Object = {}) {
     Object.assign(this, values);

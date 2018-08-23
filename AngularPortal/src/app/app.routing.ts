@@ -10,16 +10,9 @@ import { DisplayImageComponent } from './student/display-class/display-image/dis
 import { DisplayClassComponent } from './student/display-class/display-class.component';
 
 const appRoutes: Routes = [
-  {
-    path: 'student/:id', component: StudentComponent,
-    children: [
-      {
-        path: 'displayClass/:id', component: DisplayClassComponent, children: [
-          { path: 'image/:id', component: DisplayImageComponent }
-        ]
-      },
-    ]
-  },
+  { path: 'student/:id', component: StudentComponent },
+  { path: 'student/:id/displayClass/:id', component: DisplayClassComponent },
+  { path: 'student/:id/displayClass/:id/image/:id', component: DisplayImageComponent },
   { path: 'admin-dashboard', component: AdminDashboardComponent },
   { path: 'new-user', component: NewUserComponent },
   { path: 'register', component: RegisterComponent },

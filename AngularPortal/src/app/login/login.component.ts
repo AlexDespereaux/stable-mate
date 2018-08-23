@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
 
     redirect(userType: string, userId: string) {
         switch (userType) {
-            case 'student': this.router.navigate(['student', userId]); break;
+            case 'student': console.log('going to student');this.router.navigate(['student', userId]); break;
             case 'admin': this.router.navigate(['admin-dashboard'], { queryParams: { id: userId } }); break;
             default: this.router.navigate(['',]); break;
         }

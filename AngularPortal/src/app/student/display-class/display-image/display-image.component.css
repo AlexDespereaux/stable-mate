@@ -9,11 +9,10 @@
   align-items: center;
   position: relative;
   cursor: pointer;
-  width: 28%;
-  /* min-width: 350px; */
+  width: 40%;
   height: auto;
   margin: 30px;
-  padding: 30px;
+  float: left;
   box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
 }
 
@@ -22,8 +21,4 @@
   opacity: 0.4;
   transition: background-color 2s ease-out;
 }
-
-
-
-
 
