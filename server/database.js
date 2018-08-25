@@ -33,8 +33,8 @@ exports.insertImageData = function(data){
       if (error) throw error;
       console.log(results);
       console.log(fields);
+      connection.end();
     })
   });
-  connection.end();
   return "insert success";
 };
