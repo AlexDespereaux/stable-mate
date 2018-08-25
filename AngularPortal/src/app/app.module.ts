@@ -20,8 +20,8 @@ import { DisplayImageComponent } from './student/display-class/display-image/dis
 import { DisplayClassComponent } from './student/display-class/display-class.component';
 import { SortImagesPipe } from './sort-images.pipe';
 import { PagerService } from './pager.service';
-
-
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MdSelectModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -42,7 +42,9 @@ import { PagerService } from './pager.service';
     routing,
     BrowserModule,
     FormsModule,
-    ReactiveFormsModule  ],
+    ReactiveFormsModule,
+    MatFormFieldModule,
+  MdSelectModule  ],
   providers: [ImageService,PagerService],
   bootstrap: [AppComponent]
 })

@@ -1,9 +1,36 @@
-<div id="main">
-  <div class="card">
-    <img src="{{imageUrl}}">
+<!-- <div id="apnd ">
+  <div class="card ">
     <p class="badge">{{class}}</p>
   </div>
   <div id="legend">
     dcosp
   </div>
+</div> -->
+
+
+<div class="flex-container">
+  <div class="row">
+    <div class="card col">
+        <img src="{{imageUrl}}">
+    </div>
+  <div class="spaces col-sm-8">
+      <div class="example-container">
+          <mat-form-field>
+            <input matInput placeholder="Input">
+          </mat-form-field>
+        
+          <mat-form-field>
+            <textarea matInput placeholder="Textarea"></textarea>
+          </mat-form-field>
+        
+          <mat-form-field>
+            <mat-select placeholder="Select">
+              <mat-option value="option">Option</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        
+  </div>
+</div>
+
 </div>

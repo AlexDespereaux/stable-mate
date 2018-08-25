@@ -80,3 +80,13 @@
     text-align: center;
     box-sizing: border-box;
   }
+
+
+  .background{
+    box-shadow: 0 10px 10px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+  
+  }
+  
+  .row{
+    margin-left: 0px;
+  }

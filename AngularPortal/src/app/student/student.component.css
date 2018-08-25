@@ -16,6 +16,9 @@
     padding: 30px;
     box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
 }
+.spaces{
+    margin-left: 200px;
+}
 
 
 .card:hover{
@@ -23,3 +26,7 @@
     transition: background-color 2s ease-out;
 }
 
+.flex-container{
+    padding-left: 5px;
+    margin-left: 200px;
+}

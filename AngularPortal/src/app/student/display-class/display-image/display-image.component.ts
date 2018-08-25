@@ -12,6 +12,7 @@ export class DisplayImageComponent implements OnInit {
   // has to be initialized when getting all for one image.
   image = new Image();
   imageUrl  = 'assets/images/img2.jpg';
+  imageName = 'test image';
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {

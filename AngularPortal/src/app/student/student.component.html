@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card spaces">
     <img class="card-img-top" src="assets/studentIcon.jpg" alt="Card image" style="width:100%">
     <div class="card-body">
         <h4 class="card-title">John Doe</h4>
@@ -8,13 +8,14 @@
 </div>
 
 
-<form class="form-inline md-form form-sm active-pink active-pink-2">
-    <i class="fa fa-search" aria-hidden="true"></i>
-    <input name="searchClass" class="form-control form-control-sm ml-3 w-50" type="text" placeholder="Search Class" aria-label="Search"
-        [(ngModel)]="studentClass">
-</form>
+
 
 <div class="flex-container">
+        <form class="form-inline spaces md-form form-sm active-pink active-pink-2">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <input name="searchClass" class="form-control form-control-sm ml-3 w-50" type="text" placeholder="Search Class" aria-label="Search"
+                    [(ngModel)]="studentClass">
+            </form>
     <div class="row">
         <div class="card" (click)="redirect(class)" *ngFor="let class of student.classes| filterStudentClasses:studentClass">
             <img src="{{image}}" alt="Card image cap">
