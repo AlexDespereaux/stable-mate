@@ -57,10 +57,10 @@ let imageHandler = function(req, res, next) {
 
 let dataHandler = function(req, res) {
   const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm', 'legend'];
-  if (_.intersection(_.keys(req.body), REQUIRED_KEYS).length === 8) {
-    res.status(200).send('Very good!')
+  if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
+    res.status(200).send(db.insertImageData(req.body))
   } else {
-    res.send(_.toPairs(req));
+    res.status(400).send('Missing information or malformed json')
   }
 };
 
