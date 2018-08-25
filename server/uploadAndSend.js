@@ -5,9 +5,17 @@ const _ = require('lodash');
 AWS.config.loadFromPath('./config.json');
 // const elasticbeanstalk = new AWS.ElasticBeanstalk({apiVersion: '2010-12-01'});
 
-const filename = 'server-1.0.31.zip';
 
-let output = fs.createWriteStream(filename);
+let currentDir = './';
+let files = fs.readdirSync(currentDir);
+let serverZips = _.filter(files, (file) => _.startsWith(file, 'server-'));
+let versionRegex = /(server-\d+\.\d+\.)(\d+)\.zip/;
+let versionNumbers = _.map(serverZips, (file) => Number(versionRegex.exec(file)[2]));
+let maxExistingVersion = _.reduce(versionNumbers, (a, b) => Math.max(a, b));
+let newFileName = 'server-1.0.' + ++maxExistingVersion + '.zip';
+_.forEach(serverZips, filename => fs.unlink(filename, (err) => {if (err) throw err}));
+
+let output = fs.createWriteStream(newFileName);
 let archive = archiver('zip', {
   zlib: { level: 9 }
 });
