@@ -21,8 +21,11 @@ exports.insertImageData = function(data){
       console.error('Database connection failed: ' + err.stack);
       return;
     }
+    console.log(data);
     let flattenedData = _.merge({}, [data, data.location, DUMMY_USER_VAL]);
+    console.log(flattenedData);
     let insertVals = _.map(COLUMN_VALS, (columnVal) => _.get(flattenedData, columnVal));
+    console.log(insertVals);
     let sql = mysql.format('INSERT INTO images (??) VALUES ??;', [COLUMN_VALS, insertVals]);
     console.log("sql: " + sql);
     connection.query(sql, function (error, results, fields) {

@@ -5,7 +5,7 @@ const _ = require('lodash');
 AWS.config.loadFromPath('./config.json');
 // const elasticbeanstalk = new AWS.ElasticBeanstalk({apiVersion: '2010-12-01'});
 
-const filename = 'server-1.0.17.zip';
+const filename = 'server-1.0.29.zip';
 
 let output = fs.createWriteStream(filename);
 let archive = archiver('zip', {
@@ -14,7 +14,7 @@ let archive = archiver('zip', {
 
 archive.pipe(output);
 
-const filesToArchive = ['package.json', 'package-lock.json', 'server.js', 'api.js'];
+const filesToArchive = ['package.json', 'package-lock.json', 'server.js', 'api.js', 'database.js'];
 
 output.on('close', function() {
   console.log(archive.pointer() + ' total bytes');

@@ -2,9 +2,8 @@ const express = require('express');
 const AWS = require('aws-sdk');
 const stream = require('stream');
 const _ = require('lodash');
-const mysql = require('mysql');
 
-const db = require('./database.js');
+const db = require('./database');
 const router = express.Router();
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
@@ -15,6 +14,7 @@ let imageCounter = 0;
 
 let printRequestHeaders = function(req) {
   console.log('\nReceived headers');
+  console.log(Date());
   console.log('----------------');
   for (let key in req.headers) {
     console.log(key + ': ' + req.headers[key]);
