@@ -5,7 +5,7 @@ const _ = require('lodash');
 AWS.config.loadFromPath('./config.json');
 // const elasticbeanstalk = new AWS.ElasticBeanstalk({apiVersion: '2010-12-01'});
 
-const filename = 'server-1.0.30.zip';
+const filename = 'server-1.0.31.zip';
 
 let output = fs.createWriteStream(filename);
 let archive = archiver('zip', {

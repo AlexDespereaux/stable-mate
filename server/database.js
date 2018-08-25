@@ -23,7 +23,7 @@ exports.insertImageData = function(data){
       return;
     }
     console.log(data);
-    let flattenedData = _.merge({}, [data, data.location, DUMMY_USER_VAL]);
+    let flattenedData = _.merge({}, data, data.location, DUMMY_USER_VAL);
     console.log(flattenedData);
     let insertVals = _.map(COLUMN_VALS, (columnVal) => _.get(flattenedData, columnVal));
     console.log(insertVals);
