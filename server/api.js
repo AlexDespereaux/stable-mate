@@ -39,7 +39,6 @@ let uploadFromStream = function(s3) {
 };
 
 let imageHandler = function(req, res, next) {
-  console.log('\n\nUpload Request from: ' + req.ip);
   printRequestHeaders(req);
   if (req.get('token') !== TOKEN) {
     res.status(401).send('Requires security token');

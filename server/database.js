@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const _ = require('lodash');
 
 const DATABASE = 'annomate';
 
