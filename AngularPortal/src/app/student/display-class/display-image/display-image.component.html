@@ -4,26 +4,19 @@
       <img src="{{imageUrl}}">
     </div>
     <div class="col">
-      <div class="row description">
-          <h3> <span class="badge badge-secondary">Image description</span></h3>
-        <p>Name: {{imageDetails.filename}}</p>
-        <p>Description: {{imageDetails.description}}</p>
-        <p>Notes: {{imageDetails.notes}}</p>
-        <p>Date & Time: {{imageDetails.datetime}}</p>
-        <p>Latitude: {{imageDetails.location.latitude}}</p>
-        <p>Longitude: {{imageDetails.location.longitude}}</p>
-        <p>dFov: {{imageDetails.dFov}}</p>
-        <p>PPM: {{imageDetails.ppm}}</p>
+      <div class=" description">
+        <pre style="display:grid"><h1 class="badge badge-secondary">Image description</h1></pre>
+        <pre>Name: {{imageDetails.filename}}</pre>
+        <pre>Description: {{imageDetails.description}}</pre>
+        <pre>Notes: {{imageDetails.notes}}</pre>
+        <pre>Date & Time: {{imageDetails.datetime}}</pre>
+        <pre>Latitude: {{imageDetails.location.latitude}}</pre>
+        <pre>Longitude: {{imageDetails.location.longitude}}</pre>
+        <pre>dFov: {{imageDetails.dFov}}</pre>
+        <pre>PPM: {{imageDetails.ppm}}</pre>
         <div class="row rating">
           Rating: <br>
-            <bar-rating 
-              [(rate)]="rate" 
-              [max]="6" 
-              [theme]="'stars'"  
-              [showText]="true"
-              (rateChange)="changeRating($event)"
-              [titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']"
-              ></bar-rating>
+          <bar-rating [(rate)]="rate" [readOnly]="true"  [max]="6" [theme]="'stars'" [showText]="true" (rateChange)="changeRating($event)" [titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']"></bar-rating>
         </div>
       </div>
     </div>
@@ -33,4 +26,3 @@
     legend
   </div>
 </div>
-
