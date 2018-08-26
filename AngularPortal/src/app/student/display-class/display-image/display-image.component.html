@@ -1,36 +1,35 @@
-<!-- <div id="apnd ">
-  <div class="card ">
-    <p class="badge">{{class}}</p>
-  </div>
-  <div id="legend">
-    dcosp
-  </div>
-</div> -->
-
-
 <div class="flex-container">
   <div class="row">
-    <div class="card col">
-        <img src="{{imageUrl}}">
+    <div class="card">
+      <img src="{{imageUrl}}">
     </div>
-  <div class="spaces col-sm-8">
-      <div class="example-container">
-          <mat-form-field>
-            <input matInput placeholder="Input">
-          </mat-form-field>
-        
-          <mat-form-field>
-            <textarea matInput placeholder="Textarea"></textarea>
-          </mat-form-field>
-        
-          <mat-form-field>
-            <mat-select placeholder="Select">
-              <mat-option value="option">Option</mat-option>
-            </mat-select>
-          </mat-form-field>
+    <div class="col">
+      <div class="row description">
+        <p>Image description</p>
+        <p>Name: {{imageDetails.filename}}</p>
+        <p>Description: {{imageDetails.description}}</p>
+        <p>Notes: {{imageDetails.notes}}</p>
+        <p>Date & Time: {{imageDetails.datetime}}</p>
+        <p>Latitude: {{imageDetails.location.latitude}}</p>
+        <p>Longitude: {{imageDetails.location.longitude}}</p>
+        <p>dFov: {{imageDetails.dFov}}</p>
+        <p>PPM: {{imageDetails.ppm}}</p>
+        <div class="row rating">
+          Rating: <br>
+            <bar-rating 
+              [(rate)]="rate" 
+              [max]="6" 
+              [theme]="'star'"  
+              [showText]="true"
+              [titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']"
+              ></bar-rating>
         </div>
-        
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    legend
   </div>
 </div>
 
-</div>

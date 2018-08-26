@@ -20,9 +20,7 @@ import { DisplayImageComponent } from './student/display-class/display-image/dis
 import { DisplayClassComponent } from './student/display-class/display-class.component';
 import { SortImagesPipe } from './sort-images.pipe';
 import { PagerService } from './pager.service';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import { MdSelectModule } from '@angular/material';
-
+import { BarRatingModule } from "ngx-bar-rating";
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,9 +41,8 @@ import { MdSelectModule } from '@angular/material';
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-  MdSelectModule  ],
-  providers: [ImageService,PagerService],
+    BarRatingModule],
+  providers: [ImageService, PagerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
