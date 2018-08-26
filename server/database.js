@@ -3,13 +3,15 @@ const _ = require('lodash');
 
 const DATABASE = 'annomate';
 
-let connection = mysql.createConnection({
-  host: process.env.RDS_HOSTNAME,
-  user: process.env.RDS_USERNAME,
-  password: process.env.RDS_PASSWORD,
-  port: process.env.RDS_PORT,
-  database: DATABASE
-});
+let connection = function(){
+  return mysql.createConnection({
+    host: process.env.RDS_HOSTNAME,
+    user: process.env.RDS_USERNAME,
+    password: process.env.RDS_PASSWORD,
+    port: process.env.RDS_PORT,
+    database: DATABASE
+  })
+};
 
 const COLUMN_VALS = ['filename', 'description', 'notes', 'datetime', 'latitude', 'longitude', 'dFov', 'ppm',
   'userId'];
@@ -17,25 +19,20 @@ const COLUMN_VALS = ['filename', 'description', 'notes', 'datetime', 'latitude',
 const DUMMY_USER_VAL = {'userId': 1};
 
 exports.insertImageData = function(data){
+  let connection = connection();
   connection.connect(function(err) {
     if (err) {
       console.error('Database connection failed: ' + err.stack);
-      return;
+      return err;
     }
-    console.log(data);
     let flattenedData = _.merge({}, data, data.location, DUMMY_USER_VAL);
-    console.log(flattenedData);
-    // let insertVals = _.map(COLUMN_VALS, (columnVal) => _.get(flattenedData, columnVal));
     let insertVals = _.pick(flattenedData, COLUMN_VALS);
-    console.log(insertVals);
     let sql = mysql.format('INSERT INTO images SET ?;', insertVals);
-    console.log("sql: " + sql);
     connection.query(sql, function (error, results, fields) {
       if (error) throw error;
       console.log(results);
-      console.log(fields);
       connection.end();
+      return results.insertId;
     })
   });
-  return "insert success";
 };
