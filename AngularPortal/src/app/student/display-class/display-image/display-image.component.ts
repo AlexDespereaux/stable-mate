@@ -14,6 +14,7 @@ export class DisplayImageComponent implements OnInit {
   imageUrl = 'assets/images/img2.jpg';
   imageName = 'test image';
   rate = 1;
+  // dummy obj
   imageDetails = {
     "filename": "picture.png",
     "description": "apple cell with dye",
@@ -50,7 +51,6 @@ export class DisplayImageComponent implements OnInit {
   filterLegend() {
     this.imageDetails.legend.forEach(
       (attr) => {
-        console.log(attr)
         switch (attr.name.toLowerCase()) {
           case 'black_arrow': this.legendImages.push('assets/legend/black_arrow.png'); break;
           case 'black_radio': this.legendImages.push('assets/legend/black_radio.png'); break;
@@ -65,12 +65,15 @@ export class DisplayImageComponent implements OnInit {
           case 'white_solid_arrow': this.legendImages.push('assets/legend/white_solid_arrow.png'); break;
           case 'white_star': this.legendImages.push('assets/legend/white_star.png'); break;
         }
-        console.log(this.legendImages)
       }
     );
   }
   changeRating(rating) {
     this.rate = rating;
+  }
+  
+  download(){
+
   }
 
 }
