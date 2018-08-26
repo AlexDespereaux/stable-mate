@@ -1,28 +1,28 @@
 <div class="flex-container">
-  <div class="row">
-    <div class="card">
-      <img src="{{imageUrl}}">
-    </div>
-    <div class="col">
-      <div class=" description">
-        <pre style="display:grid"><h1 class="badge badge-secondary">Image description</h1></pre>
-        <pre>Name: {{imageDetails.filename}}</pre>
-        <pre>Description: {{imageDetails.description}}</pre>
-        <pre>Notes: {{imageDetails.notes}}</pre>
-        <pre>Date & Time: {{imageDetails.datetime}}</pre>
-        <pre>Latitude: {{imageDetails.location.latitude}}</pre>
-        <pre>Longitude: {{imageDetails.location.longitude}}</pre>
-        <pre>dFov: {{imageDetails.dFov}}</pre>
-        <pre>PPM: {{imageDetails.ppm}}</pre>
-        <div class="row rating">
-          Rating: <br>
-          <bar-rating [(rate)]="rate" [readOnly]="true"  [max]="6" [theme]="'stars'" [showText]="true" (rateChange)="changeRating($event)" [titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']"></bar-rating>
-        </div>
-      </div>
-    </div>
+  <div class="card">
+    <img src="{{imageUrl}}"> Rating: <br>
+    <bar-rating [(rate)]="rate" [readOnly]="true" [max]="6" [theme]="'stars'" [showText]="true" (rateChange)="changeRating($event)"
+      [titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']"></bar-rating>
   </div>
 
+  <div class="col">
+    <div class=" description">
+      <pre style="display:grid"><h1 class="badge badge-secondary">Image description</h1></pre>
+      <pre>Name: {{imageDetails.filename}}</pre>
+      <pre>Description: {{imageDetails.description}}</pre>
+      <pre>Notes: {{imageDetails.notes}}</pre>
+      <pre>Date & Time: {{imageDetails.datetime}}</pre>
+      <pre>Latitude: {{imageDetails.location.latitude}}</pre>
+      <pre>Longitude: {{imageDetails.location.longitude}}</pre>
+      <pre>dFov: {{imageDetails.dFov}}</pre>
+      <pre>PPM: {{imageDetails.ppm}}</pre>
+    </div>
+  </div>
   <div class="legend">
-    legend
+    <pre style="display:grid"><h1 class="badge badge-secondary">Legend</h1></pre>
+    <pre *ngFor="let attr of imageDetails.legend; let i = index">
+      <img src="{{legendImages[i]}}" alt="attr.text"> 
+      <p class="badge badge-info">{{attr.text}}</p>
+    </pre>
   </div>
 </div>

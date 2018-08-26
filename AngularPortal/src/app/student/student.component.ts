@@ -31,7 +31,7 @@ export class StudentComponent implements OnInit {
       'Class 10']
   };
   studentClass = "";
-  image = 'assets/logo.png';
+  image = 'assets/folder.jpg';
 
 
   constructor(private route: ActivatedRoute, 
