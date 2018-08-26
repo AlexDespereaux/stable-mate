@@ -3,16 +3,6 @@ const _ = require('lodash');
 
 const DATABASE = 'annomate';
 
-// let connection = function(){
-//   return mysql.createConnection({
-//     host: process.env.RDS_HOSTNAME,
-//     user: process.env.RDS_USERNAME,
-//     password: process.env.RDS_PASSWORD,
-//     port: process.env.RDS_PORT,
-//     database: DATABASE
-//   })
-// };
-
 let connection = function() {
   return new Promise((resolve, reject) => {
     let connection = mysql.createConnection({
@@ -31,15 +21,15 @@ let connection = function() {
   });
 };
 
-const COLUMN_VALS = ['filename', 'description', 'notes', 'datetime', 'latitude', 'longitude', 'dFov', 'ppm',
-  'userId'];
+const COLUMN_VALUES = ['filename', 'description', 'notes', 'datetime', 'latitude', 'longitude',
+  'dFov', 'ppm', 'userId'];
 
-const DUMMY_USER_VAL = {'userId': 1};
+const DUMMY_USER_VALUE = {'userId': 1};
 
 exports.insertImageData = function(data, callback){
   connection().then(connection => {
-    let flattenedData = _.merge({}, data, data.location, DUMMY_USER_VAL);
-    let insertVals = _.pick(flattenedData, COLUMN_VALS);
+    let flattenedData = _.merge({}, data, data.location, DUMMY_USER_VALUE);
+    let insertVals = _.pick(flattenedData, COLUMN_VALUES);
     let sql = mysql.format('INSERT INTO images SET ?;', insertVals);
     connection.query(sql, function (error, results, fields) {
       if (error) throw error;

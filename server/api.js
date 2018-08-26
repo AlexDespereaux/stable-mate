@@ -29,7 +29,6 @@ let uploadFromStream = function(s3) {
     Body: pass,
     Bucket: BUCKET,
     Key: 'image' + _.padStart(imageCounter++, 6, '0') + '.png'
-    // Metadata: { "metadata1": "value1", "metadata2": "value2" }
   };
   s3.upload(params, function(err) {
     if (err)
@@ -67,10 +66,6 @@ router.get('/', function(req, res){
   res.send('hello world');
 });
 
-router.post('/image',
-  imageHandler,
-  express.json(),
-  dataHandler
-);
+router.post('/image', imageHandler, express.json(), dataHandler);
 
 module.exports = router;
