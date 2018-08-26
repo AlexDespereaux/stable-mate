@@ -5,7 +5,7 @@
     </div>
     <div class="col">
       <div class="row description">
-        <p>Image description</p>
+          <h3> <span class="badge badge-secondary">Image description</span></h3>
         <p>Name: {{imageDetails.filename}}</p>
         <p>Description: {{imageDetails.description}}</p>
         <p>Notes: {{imageDetails.notes}}</p>
@@ -19,8 +19,9 @@
             <bar-rating 
               [(rate)]="rate" 
               [max]="6" 
-              [theme]="'star'"  
+              [theme]="'stars'"  
               [showText]="true"
+              (rateChange)="changeRating($event)"
               [titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']"
               ></bar-rating>
         </div>

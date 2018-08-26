@@ -40,5 +40,9 @@ export class DisplayImageComponent implements OnInit {
     );
   }
 
+  changeRating(rating){
+    this.rate = rating;
+  }
+
 }
   
