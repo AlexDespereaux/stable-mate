@@ -10,6 +10,9 @@ export class NewUserComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log('NewUserComponent');
   }
+
+
 
 }
