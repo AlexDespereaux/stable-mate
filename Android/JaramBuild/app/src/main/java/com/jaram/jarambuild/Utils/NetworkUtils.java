@@ -1,4 +1,4 @@
-package com.jaram.jarambuild.Utils;
+package com.jaram.jarambuild.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

@@ -1,4 +1,6 @@
-package com.jaram.jarambuild.Utils;
+package com.jaram.jarambuild.utils;
+
+import com.jaram.jarambuild.R;
 
 public class Constants
 {

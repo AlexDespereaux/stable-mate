@@ -1,0 +1,102 @@
+.card {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);
+  box-sizing: border-box;
+  transition: box-shadow .5s;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: 51%;
+  height: auto;
+  margin: 1px;
+  max-width: 60%;
+  float: left;
+  padding: 15px;
+  box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+}
+
+
+.flex-container{
+  box-shadow: 10 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+  border-radius: 4px;
+  box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);
+  box-sizing: border-box;
+  transition: box-shadow .5s;
+margin-top: 50px;
+margin-left: 120px;
+margin-right: 50px;
+max-width: 100%;
+}
+
+
+.legend{
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);
+  box-sizing: border-box;
+  transition: box-shadow .5s;
+  position: relative;
+  width: 49%;
+  height: auto;
+  box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+  margin-left:auto; 
+}
+
+
+
+.rating{
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);
+  box-sizing: border-box;
+  transition: box-shadow .5s;
+  display: flex;
+  flex-direction: row;
+  /* align-items: center; */
+  position: relative;
+  cursor: pointer;
+  width: 50%;
+  height: auto;
+  float: left;
+  box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+  margin-top: 10px;
+  margin-right: 100px;
+  margin-bottom: 100px;
+}
+
+.description{
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);
+  box-sizing: border-box;
+  transition: box-shadow .5s;
+  /* display: flex;
+  flex-direction: row; */
+  /* align-items: center; */
+  position: relative;
+  width: 50%;
+  height: auto;
+  margin: -14px;
+  /* float: left; */
+  box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+  margin-top: 80px;
+  margin-left:auto;
+}
+
+
+
+
+.btn {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: RoyalBlue;
+}

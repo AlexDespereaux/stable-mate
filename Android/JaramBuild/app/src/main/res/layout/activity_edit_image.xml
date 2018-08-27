@@ -4,131 +4,150 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/jaramGray"
+    android:background="@color/black"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:layout_editor_absoluteY="81dp">
 
 
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_end="77dp" />
-
-        <LinearLayout
-            android:id="@+id/linearLayout3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/imgGallery"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/galleryopen"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_gallery"
-                    tools:layout_editor_absoluteY="342dp" />
-
-                <ImageView
-                    android:id="@+id/imgCamera"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/camera"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_camera"
-                    tools:layout_editor_absoluteX="50dp"
-                    tools:layout_editor_absoluteY="342dp" />
-
-                <ImageView
-                    android:id="@+id/imgSave"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/save"
-                    app:srcCompat="@drawable/ic_save"
-                    tools:layout_editor_absoluteX="352dp"
-                    tools:layout_editor_absoluteY="471dp" />
-
-                <TextView
-                    android:id="@+id/txtCurrentTool"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/app_name"
-                    android:textColor="@android:color/white"
-                    tools:layout_editor_absoluteX="161dp"
-                    tools:layout_editor_absoluteY="474dp" />
-
-                <ImageView
-                    android:id="@+id/imgClose"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/close"
-                    app:srcCompat="@drawable/ic_close"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="471dp" />
-
-                <ImageView
-                    android:id="@+id/imgUndo"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/undo"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_undo"
-                    tools:layout_editor_absoluteX="284dp"
-                    tools:layout_editor_absoluteY="342dp" />
-
-                <ImageView
-                    android:id="@+id/imgRedo"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/redo"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_redo"
-                    tools:layout_editor_absoluteX="334dp"
-                    tools:layout_editor_absoluteY="342dp" />
-        </LinearLayout>
-
         <ja.burhanrashid52.photoeditor.PhotoEditorView
+
             android:id="@+id/photoEditorView"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/constraintTools"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+            app:layout_constraintTop_toTopOf="parent"
             app:photo_src="@drawable/got_s">
 
         </ja.burhanrashid52.photoeditor.PhotoEditorView>
 
-        <include
-            android:id="@+id/constraintTools"
-            layout="@layout/layout_tools_paint"
-            android:layout_width="368dp"
+        <HorizontalScrollView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/photoEditorView">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            tools:layout_editor_absoluteX="8dp"
+                            tools:layout_editor_absoluteY="8dp">
+
+                            <Button
+                                android:id="@+id/imgSave"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableTop="@drawable/ic_save"
+                                android:fontFamily="@font/roboto_medium"
+                                android:text="@string/save2"
+                                android:textAllCaps="false"
+                                android:textColor="@android:color/background_light"
+                                android:textSize="18sp" />
+
+                            <Button
+                                android:id="@+id/imgClose"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableTop="@drawable/ic_close"
+                                android:fontFamily="@font/roboto_medium"
+                                android:text="@string/close2"
+                                android:textAllCaps="false"
+                                android:textColor="@android:color/background_light"
+                                android:textSize="18sp" />
+
+                            <Button
+                                android:id="@+id/imgUndo"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableTop="@drawable/ic_undo"
+                                android:fontFamily="@font/roboto_medium"
+                                android:text="@string/undo"
+                                android:textAllCaps="false"
+                                android:textColor="@android:color/background_light"
+                                android:textSize="18sp" />
+
+                            <Button
+                                android:id="@+id/btnEraser"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableTop="@drawable/ic_eraser"
+                                android:fontFamily="@font/roboto_medium"
+                                android:text="@string/erase"
+                                android:textAllCaps="false"
+                                android:textColor="@android:color/background_light"
+                                android:textSize="18sp" />
+
+                            <Button
+                                android:id="@+id/imgText"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableTop="@drawable/ic_text"
+                                android:fontFamily="@font/roboto_medium"
+                                android:text="@string/text"
+                                android:textAllCaps="false"
+                                android:textColor="@android:color/background_light"
+                                android:textSize="18sp" />
+
+                            <Button
+                                android:id="@+id/imgPencil"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableTop="@drawable/ic_brush"
+                                android:fontFamily="@font/roboto_medium"
+                                android:text="@string/draw"
+                                android:textAllCaps="false"
+                                android:textColor="@android:color/background_light"
+                                android:textSize="18sp" />
+
+                            <Button
+                                android:id="@+id/imgSticker"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableTop="@drawable/ic_sticker"
+                                android:fontFamily="@font/roboto_medium"
+                                android:text="@string/symbol"
+                                android:textAllCaps="false"
+                                android:textColor="@android:color/background_light"
+                                android:textSize="18sp" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/txtCurrentTool"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:text="@string/app_name"
+                            android:textColor="@android:color/white" />
+                </LinearLayout>
+        </HorizontalScrollView>
 
 
 </android.support.constraint.ConstraintLayout>

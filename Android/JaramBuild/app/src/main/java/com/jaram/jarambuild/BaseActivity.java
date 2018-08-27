@@ -52,20 +52,6 @@ public class BaseActivity extends AppCompatActivity
         }
     }
 
-    void showLoading(@NonNull String message) {
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage(message);
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.show();
-    }
-
-    void hideLoading() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-        }
-    }
-
     void showSnackbar(@NonNull String message) {
         View view = findViewById(android.R.id.content);
         if (view != null) {
