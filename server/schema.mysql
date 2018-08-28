@@ -1,0 +1,41 @@
+CREATE DATABASE IF NOT EXISTS annomate;
+USE annomate;
+
+DROP TABLE legend;
+DROP TABLE images;
+DROP TABLE users;
+
+CREATE TABLE IF NOT EXISTS users (
+  userId        INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  username      VARCHAR(100) UNIQUE,
+  password      CHAR(60),
+  email         VARCHAR(255) UNIQUE,
+  PRIMARY KEY(userId)
+);
+
+CREATE TABLE IF NOT EXISTS images (
+  imageId       INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  filename      VARCHAR(100) NOT NULL,
+  description   TEXT,
+  notes         TEXT,
+  datetime      INT UNSIGNED NOT NULL,
+  latitude      DECIMAL(20, 10),
+  longitude     DECIMAL(20, 10),
+  dFov          DECIMAL(10, 5),
+  ppm           DECIMAL(10, 5),
+  userId        INT UNSIGNED NOT NULL,
+  PRIMARY KEY(imageId),
+  FOREIGN KEY(userId) REFERENCES users(userId)
+);
+
+CREATE TABLE IF NOT EXISTS legend (
+  legendId      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  imageId       INT UNSIGNED NOT NULL,
+  name          VARCHAR(100) NOT NULL,
+  text          TEXT NOT NULL,
+  PRIMARY KEY(legendId),
+  FOREIGN KEY(imageId) REFERENCES images(imageId)
+);
+
+INSERT INTO users (username, password, email)
+  VALUES ("dummyUser", "not a password", "richard@email.com");
