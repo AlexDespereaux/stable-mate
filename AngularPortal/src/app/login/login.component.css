@@ -5,3 +5,13 @@ html{
     background-size: 100% 100%;
     background-position: top center;
   }
+
+
+  .btn{
+    background-color: #B12B21;
+  }
+
+  .form-control {
+    display: block;
+    width: 52%;
+  }

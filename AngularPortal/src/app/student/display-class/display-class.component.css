@@ -1,5 +1,5 @@
 .card {
-    background-color: #fff;
+  background-color: #B12B21;
     border-radius: 4px;
     box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);
     box-sizing: border-box;
@@ -15,6 +15,10 @@
     margin: 40px;
     padding: 4px;
     box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+}
+
+.btn{
+  background-color: #B12B21;
 }
 
 
