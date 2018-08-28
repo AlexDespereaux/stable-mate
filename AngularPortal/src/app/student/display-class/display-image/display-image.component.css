@@ -28,7 +28,12 @@ margin-left: 120px;
 margin-right: 50px;
 max-width: 100%;
 }
-
+.fa-download{
+  background-color: #B12B21;
+}
+.badge{
+  background-color: #B12B21;
+}
 
 .legend{
   background-color: #fff;
@@ -88,7 +93,7 @@ max-width: 100%;
 
 
 .btn {
-  background-color: DodgerBlue;
+  background-color: #B12B21;
   border: none;
   color: white;
   padding: 12px 30px;
