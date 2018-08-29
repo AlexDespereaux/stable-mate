@@ -12,6 +12,7 @@
   "dependencies": {
     "aws-sdk": "^2.288.0",
     "basic-auth": "^2.0.0",
+    "bcryptjs": "^2.4.3",
     "express": "^4.16.3",
     "lodash": "^4.17.10",
     "mysql": "^2.16.0"

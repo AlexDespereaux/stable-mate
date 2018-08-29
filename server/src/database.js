@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 const DATABASE = 'annomate';
 
@@ -40,18 +41,34 @@ exports.insertImageData = function(data, callback){
   });
 };
 
-const USER_COLUMN_VALUES = ['password','email'];
-
 exports.createUser = function(data) {
   return new Promise((resolve, reject) => {
     connection().then(connection => {
-      let insertVals = _.pick(data, USER_COLUMN_VALUES);
-      let sql = mysql.format('INSERT INTO users SET ?;', insertVals);
-      connection.query(sql, function(err, result) {
-        if (error) reject(error);
-        connection.end();
-        resolve({'userId': result.insertId});
-      })
+      bcrypt.hash(data['password'], 10).then(function(hash) {
+        let insertVals = _.merge({}, { password: hash }, _.pick(data, 'email'));
+        let sql = mysql.format('INSERT INTO users SET ?;', insertVals);
+        connection.query(sql, function(err, result) {
+          connection.end();
+          if (err) reject(err);
+          resolve({'userId': result.insertId});
+        });
+      });
     })
+  });
+};
+
+exports.validateUser = function(credentials) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      let sql = mysql.format('SELECT userId, password FROM users WHERE email = ?', credentials.name);
+      connection.query(sql, function(err, result) {
+        connection.end();
+        if (err) reject(err);
+        bcrypt.compare(credentials.pass, result[0].password).then(function(res) {
+          if (res) resolve(result[0].userId);
+          else reject();
+        });
+      });
+    });
   });
 };
