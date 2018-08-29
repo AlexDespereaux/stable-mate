@@ -66,6 +66,17 @@ router.get('/', function(req, res){
   res.send('hello world');
 });
 
+router.get('/image/:imageId', function(req, res){
+  let s3params = {
+    Bucket: BUCKET,
+    Key: 'image' + _.padStart(req.params.imageId, 6, '0') + '.png'
+  };
+  s3.getObject(s3params, function(err, data) {
+    if (err) res.status(500).send(err + " " + err.stack);
+    else     res.status(200).send(data.Body);
+  });
+});
+
 router.post('/image', imageHandler, express.json(), dataHandler);
 
 module.exports = router;
