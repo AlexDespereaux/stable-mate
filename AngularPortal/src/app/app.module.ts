@@ -21,6 +21,9 @@ import { DisplayClassComponent } from './student/display-class/display-class.com
 import { SortImagesPipe } from './sort-images.pipe';
 import { PagerService } from './pager.service';
 import { BarRatingModule } from "ngx-bar-rating";
+import { StaffClassComponent } from './admin/staff-class/staff-class.component';
+import { StudentClassComponent } from './admin/student-class/student-class.component';
+import { StudentImageComponent } from './admin/student-image/student-image.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,7 +37,10 @@ import { BarRatingModule } from "ngx-bar-rating";
     NewUserComponent,
     StudentComponent,
     FilterStudentClassesPipe,
-    SortImagesPipe
+    SortImagesPipe,
+    StaffClassComponent,
+    StudentClassComponent,
+    StudentImageComponent
   ],
   imports: [
     routing,
