@@ -1,0 +1,36 @@
+.card {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);
+    box-sizing: border-box;
+    transition: box-shadow .5s;
+    display: -moz-groupbox;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    width: 28%;
+    min-width: 150px;
+    height: auto;
+    margin: 30px;
+    padding: 10px;
+    box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+}
+.spaces{
+    margin-left: 200px;
+}
+
+
+.card:hover{
+    opacity: 0.4;
+    transition: background-color 2s ease-out;
+}
+
+.flex-container{
+    padding-left: 5px;
+    margin-left: 200px;
+}
+
+.btn{
+    background-color: #B12B21;
+  }

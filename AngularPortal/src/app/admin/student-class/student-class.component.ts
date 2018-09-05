@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-display-class',
-  templateUrl: './display-class.component.html',
-  styleUrls: ['./display-class.component.css']
+  selector: 'app-student-class',
+  templateUrl: './student-class.component.html',
+  styleUrls: ['./student-class.component.css']
 })
-export class DisplayClassComponent implements OnInit {
+export class StudentClassComponent implements OnInit {
+
   // this will be replaced by a service call to get images of a ceratin class 
   images = [
     {id:1,image:'../assets/images/img1.jpg',filename: 'Image 1'},

@@ -1,18 +1,18 @@
-<br>
-<br>
-
 <div class="flex-container">
+  <form class="form-inline spaces md-form form-sm active-pink active-pink-2">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    <input name="searchClass" class="form-control form-control-sm ml-3 w-50" type="text" placeholder="Search Student" aria-label="Search"
+      [(ngModel)]="student">
+  </form>
   <div class="row">
-    <div class="col-auto" *ngFor="let folder of folders ">
-      <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="{{folder.image}}" alt="Card image cap">
+    <div (click)="redirect(student)" *ngFor="let student of students | filterStudentClasses: student">
+      <div class="card">
+        <img class="card-img-top" src="assets/studentIcon.jpg" alt="Card image" style="width:100%">
         <div class="card-body">
-          <p class="card-text">
-          </p>
-        </div>        
+          <h4 class="card-title">John Doe</h4>
+          <p class="card-text">Student ID: {{student}}</p>
+        </div>
       </div>
-      <label class="btn btn-primary" (click)="redirect()">Student id: {{folder.id}}</label>
-      
     </div>
   </div>
 </div>
