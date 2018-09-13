@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1003238800795",
+    "firebase_url": "https://annomate-64f29.firebaseio.com",
+    "project_id": "annomate-64f29",
+    "storage_bucket": "annomate-64f29.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1003238800795:android:e0da251dfcdc0e56",
+        "android_client_info": {
+          "package_name": "com.jaram.jarambuild"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1003238800795-sv8eb4nolqsa96idno4c9m3ihbre1ile.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jaram.jarambuild",
+            "certificate_hash": "2bbd089b124f19cde24fa3e7b2ea636ad9631474"
+          }
+        },
+        {
+          "client_id": "1003238800795-j6j68fnfdlndhi4etoqnsf341akjj9jb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR4v_FS1jDlKR9ENzJrd2daRiqsaCAKGE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1003238800795-j6j68fnfdlndhi4etoqnsf341akjj9jb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
