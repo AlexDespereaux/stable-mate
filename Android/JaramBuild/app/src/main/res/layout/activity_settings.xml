@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/jaramGray"
+            android:fontFamily="@font/roboto_medium"
+            android:paddingBottom="6dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="6dp"
+            android:text="@string/location"
+            android:textAlignment="textStart"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <Switch
+            android:id="@+id/locSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_medium"
+            android:padding="10dp"
+            android:checked="false"
+            android:switchTextAppearance="@style/TextAppearance.AppCompat"
+            android:text="@string/saved_location_with_image"
+            android:textAppearance="@style/TextAppearance.AppCompat" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/jaramGray"
+            android:fontFamily="@font/roboto_medium"
+            android:paddingBottom="6dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="6dp"
+            android:text="Image Quality"
+            android:textAlignment="textStart"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_medium"
+            android:padding="10dp"
+            android:text="@string/compression_level"
+            android:textAppearance="@style/TextAppearance.AppCompat" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/compLvlTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:ems="10"
+                android:gravity="bottom"
+                android:hint="@string/perc"
+                android:inputType="number"
+                android:maxLength="2"
+                android:numeric="integer"
+                android:padding="10dp" />
+
+            <Button
+                android:id="@+id/applyComp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@color/jaramGray"
+                android:fontFamily="@font/roboto_medium"
+                android:padding="10dp"
+                android:text="Apply"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

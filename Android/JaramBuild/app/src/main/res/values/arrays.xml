@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="units">
+        <item>Nanometre</item>
+        <item>Micron</item>
+        <item>Millimetres</item>
+        <item>Centimeters</item>
+    </string-array>
+
+</resources>
