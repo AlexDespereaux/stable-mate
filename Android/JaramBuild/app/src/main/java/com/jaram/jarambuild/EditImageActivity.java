@@ -65,6 +65,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private StickerBSFragment mStickerBSFragment;
     private String imageFilePath;
     private String editedImageFilePath = "";
+    private String croppedFilePath;
     //log
     private static final String TAG = "EditActivity";
     //list of stickerList index's used in imageviews
@@ -75,6 +76,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     double dFov;
     double pixelsPerMicron;
     int scaleBarColourIndex;
+    double croppedImgPixelPerMicron;
     //image size
     double mvHeight;
     double mvWidth;
@@ -112,30 +114,25 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         mPhotoEditor.setOnPhotoEditorListener(this);
 
-        //Get bitmap uri from intent
+        //Get raw Image from intent
         imageFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("rawPhotoPath");
         Log.d(TAG, "imageFilePath: " + imageFilePath);
+        //Get cropped Image from Intent
+        croppedFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("croppedPhotoPath");
+        Log.d(TAG, "croppedFilePath: " + croppedFilePath);
         //Get dFov from intent
-        dFov = Objects.requireNonNull(getIntent().getExtras()).getDouble("confirmedDFOv");
-        Log.d(TAG, "dFov from intent: " + dFov + " microns");
+        dFov = Objects.requireNonNull(getIntent().getExtras()).getDouble("confirmedDFOv"); // of raw image scaled to a width of imageWidthInCCView
+        Log.d(TAG, "dFov from intent: " + dFov + " microns"); // of raw image scaled to a width of imageWidthInCCView
         //Get Pixels per micron from intent
-        pixelsPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("confirmedPixelsPerMicron");
-        Log.d(TAG, "pixels per micron from intent: " + pixelsPerMicron);
+        pixelsPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("confirmedPixelsPerMicron"); // of raw image scaled to a width of imageWidthInCCView
+        Log.d(TAG, "pixels per micron from intent: " + pixelsPerMicron); // of raw image scaled to a width of imageWidthInCCView
         scaleBarColourIndex = Objects.requireNonNull(getIntent().getExtras()).getInt("scaleBarColourIndex");
         Log.d(TAG, "scaleBarColourIndex from intent: " + scaleBarColourIndex);
+        //Get Pixels per micron of cropped image from intent
+        croppedImgPixelPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("croppedPixelsPerMicron");
 
         //get bitmap
-        Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
-        mPhotoEditorView.getSource().setImageBitmap(BitmapFactory.decodeFile(imageFilePath));
-
-        //flip bitmap if samsung.. ughhhh
-        if (bitmap.getWidth() > bitmap.getHeight())
-        {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(90);
-            matrix.preScale(1, 1);
-            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        }
+        Bitmap bitmap = BitmapFactory.decodeFile(croppedFilePath);
 
         //set bitmap to editor view
         mPhotoEditorView.getSource().setImageBitmap(bitmap);
@@ -474,7 +471,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private void insertSBandText(Bitmap bm, String textColour)
     {
         //variable to store pixel width of scalebar
-        double tempPixels = pixelsPerMicron;
+        double tempPixels = croppedImgPixelPerMicron;
 
         //get optimal scale bar width range in pixels
         double maxSbWidthInDouble = mvWidth / 4; // 1/4 image width

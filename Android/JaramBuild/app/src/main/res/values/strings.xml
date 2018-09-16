@@ -92,6 +92,10 @@
     <string name="clear2">Clear</string>
     <string name="apply2">Apply</string>
     <string name="save">SAVE</string>
+    <string name="crop">crop</string>
+    <string name="crop_and_rotate">Crop and Rotate</string>
+    <string name="rotate">Rotate</string>
+    <string name="select_ratio">Select ratio</string>
 
 
 </resources>

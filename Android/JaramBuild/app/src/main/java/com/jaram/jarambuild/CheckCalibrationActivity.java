@@ -295,16 +295,20 @@ public class CheckCalibrationActivity extends AppCompatActivity
 
                 if ((ocularLens > 0) && (objectiveLens > 0) && (newPPM != 0) && newDFOV != 0)
                 {
-                    Intent intent = new Intent(CheckCalibrationActivity.this, EditImageActivity.class);
+                    int finalWidth = imageholder.getMeasuredWidth();
+                    Intent intent = new Intent(CheckCalibrationActivity.this, CropActivity.class);
                     //add raw file path URI string to intent
                     intent.putExtra("rawPhotoPath", imageFilePath);
+                    Log.d(TAG, "rawPhotoPath: " + imageFilePath);
                     //add scale information to intent
                     intent.putExtra("confirmedPixelsPerMicron", newPPM);
                     intent.putExtra("confirmedDFOv", newDFOV);
                     //add selected int index of colour in scale bar colour array
                     intent.putExtra("scaleBarColourIndex", sBcolorPosition);
                     Log.d(TAG, "scaleBarColourIndex: " + sBcolorPosition);
-                    Log.d(TAG, "rawPhotoPath: " + imageFilePath);
+                    //width in view is used to calc scale
+                    intent.putExtra("imgWidthInCCView", finalWidth);
+                    Log.d(TAG, "imgWidthInCCView: " + finalWidth);
                     //open edit Image Activity
                     startActivity(intent);
                     finish();
