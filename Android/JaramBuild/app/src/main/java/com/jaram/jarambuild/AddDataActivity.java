@@ -238,7 +238,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
-
+/*
     private UploadServiceBroadcastReceiver broadcastReceiver = new UploadServiceBroadcastReceiver() {
         @Override
         public void onProgress(Context context, UploadInfo uploadInfo) {
@@ -263,7 +263,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             // your implementation
         }
     };
-
+*/
     @Subscribe
     public void onImageIdEvent(ImageIdEvent event) //returns ImageId from database upon image save to database
     {

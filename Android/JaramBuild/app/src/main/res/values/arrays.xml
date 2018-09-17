@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="units">
-        <item>Nanometre</item>
-        <item>Micron</item>
+        <item>Nanometres</item>
+        <item>Microns</item>
         <item>Millimetres</item>
         <item>Centimeters</item>
+        <item>Meters</item>
     </string-array>
 
     <string-array name="aspect_ratios">

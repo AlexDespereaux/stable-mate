@@ -38,7 +38,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/clearBtn"
+                android:id="@+id/cancelBtn"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -46,6 +46,21 @@
                 android:layout_weight="1"
                 android:background="@android:color/black"
                 android:drawableTop="@drawable/ic_close"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/close"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/clearBtn"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="1"
+                android:background="@android:color/black"
+                android:drawableTop="@drawable/ic_undo_white_24dp"
                 android:fontFamily="@font/roboto_medium"
                 android:text="@string/clear"
                 android:textAlignment="center"

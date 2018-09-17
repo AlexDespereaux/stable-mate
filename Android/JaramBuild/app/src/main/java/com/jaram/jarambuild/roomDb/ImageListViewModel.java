@@ -20,6 +20,8 @@ public class ImageListViewModel extends AndroidViewModel
 
     private final List<Image> imagesToBeUploadedList;
 
+    private final List<Image> imagesByEmailList;
+
     private AppDatabase appDatabase;
 
     public ImageListViewModel(Application application)
@@ -33,6 +35,8 @@ public class ImageListViewModel extends AndroidViewModel
         imageList = appDatabase.getImageDao().getAllImages();
 
         imagesToBeUploadedList = appDatabase.getImageDao().getAllImagesByUploadId(-1);
+
+        imagesByEmailList = appDatabase.getImageDao().getAllImagesByEmail("-1");
     }
 
     public LiveData<List<Image>> getLiveImageList()
@@ -48,6 +52,11 @@ public class ImageListViewModel extends AndroidViewModel
     public List<Image> getImagesToBeUploadedList()
     {
         return imagesToBeUploadedList;
+    }
+
+    public List<Image> getImagesByEmailList(String email)
+    {
+        return imagesByEmailList;
     }
 
     public void addOneImage(Image image)

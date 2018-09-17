@@ -44,12 +44,13 @@ public class CalibrateActivity extends AppCompatActivity
     //results of calibration
     double dFov;
     double pixPerMic;
-    int ocularLens;
-    int objectiveLens;
+    int ocularLens = 1;
+    int objectiveLens = 1;
     String calibrationId;
 
     //buttons
     Button clearBtn;
+    Button cancelBtn;
     Button okBtn;
 
     //textview
@@ -109,6 +110,7 @@ public class CalibrateActivity extends AppCompatActivity
         //buttons
         okBtn = findViewById(R.id.okBtn);
         clearBtn = findViewById(R.id.clearBtn);
+        cancelBtn = findViewById(R.id.cancelBtn);
 
         //text
         instructTxt = findViewById(R.id.instructTxt);
@@ -138,7 +140,7 @@ public class CalibrateActivity extends AppCompatActivity
                 } else if (drawing.circlePoints.size() > 2 && drawing.circlePoints.size() <= 4)
                 {
                     instructTxt.setBackgroundColor(Color.parseColor("#FFB12B21"));
-                    instructTxt.setText(R.string.dFovInstruct);
+                    instructTxt.setText(R.string.refObjInstruct);
                 }
             }
         });
@@ -157,7 +159,7 @@ public class CalibrateActivity extends AppCompatActivity
                     drawing.nums = 4;
                     objects1 = true;
                     instructTxt.setBackgroundColor(Color.parseColor("#FFB12B21"));
-                    instructTxt.setText(R.string.dFovInstruct);
+                    instructTxt.setText(R.string.refObjInstruct);
                 }
                 if (drawing.circlePoints.size() == 4)
                 {
@@ -177,7 +179,19 @@ public class CalibrateActivity extends AppCompatActivity
                 }
             }
         });
+
+        //cancel onclick
+        cancelBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                showBackPressDialog();
+            }
+        });
     }
+
+
 
     protected void getInfoDialog()
     {
@@ -225,6 +239,8 @@ public class CalibrateActivity extends AppCompatActivity
                         NumberFormatException ex)
                 {
                     Log.d(TAG, "invalid ocular lens input");
+                    //set to default
+                    ocularLens = 1;
                 }
                 //get objective lens details
                 try
@@ -234,6 +250,8 @@ public class CalibrateActivity extends AppCompatActivity
                         NumberFormatException ex)
                 {
                     Log.d(TAG, "invalid objective lens input");
+                    //set to default
+                    objectiveLens = 1;
                 }
 
                 calibrationId = ((EditText) promptsView.findViewById(R.id.settingName_input)).getText().toString().trim();
@@ -312,5 +330,36 @@ public class CalibrateActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+
+        showBackPressDialog();
+    }
+
+    private void showBackPressDialog()
+    {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setMessage("Are you want to exit without saving calibration ?");
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNeutralButton("Discard Calibration", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                finish();
+            }
+        });
+        builder.create().show();
     }
 }
