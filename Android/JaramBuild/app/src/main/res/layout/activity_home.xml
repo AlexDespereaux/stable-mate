@@ -24,7 +24,7 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:contentDescription="@string/applogo"
-            app:srcCompat="@drawable/templogo300" />
+            app:srcCompat="@drawable/my_logo" />
 
         <TextView
             android:layout_width="match_parent"

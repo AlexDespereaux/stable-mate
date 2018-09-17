@@ -44,7 +44,6 @@
     <string name="ok">OK</string>
     <string name="clear">clear</string>
     <string name="please_input_the_reference_length_and_unit">Please input the reference length and unit</string>
-    <string name="magnification">Magnification</string>
     <string name="objective_lens_magnification">Objective lens magnification</string>
     <string name="reference_measurement">reference measurement</string>
     <string name="ocular_lens_magnification">Ocular lens magnification</string>
@@ -60,14 +59,13 @@
     <string name="log_out">Log Out</string>
     <string name="select_scalebar_colour">Select Scalebar colour</string>
     <string name="description">Description</string>
-    <string name="location">Location</string>
     <string name="saved_location_with_image">Saved Location with Image</string>
     <string name="compression_level">Compression Level</string>
     <string name="perc">%</string>
     <string name="instruct">instruct</string>
     <string name="initialinstruct"><![CDATA[Please select your reference measurement & press OK]]></string>
-    <string name="dFovInstruct"><![CDATA[Please select your dFov & press OK]]></string>
-    <string name="threepointinstruct">Please select your last dFov point &amp; press OK</string>
+    <string name="dFovInstruct"><![CDATA[Please select your reference object & press OK]]></string>
+    <string name="threepointinstruct">Please select your last reference object point &amp; press OK</string>
     <string name="onepointinstruct">Please select your last reference point &amp; press OK</string>
     <string name="no_calibrations_saved">No Calibrations Saved!</string>
     <string name="press_continue_return_to_the_home_menu">Press continue return to the Home menu</string>
@@ -86,16 +84,20 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="date_range">Date Range</string>
     <string name="end_date">End Date</string>
-    <string name="text_search">Text Search</string>
     <string name="search_string">Search String</string>
     <string name="start_date2">Start Date</string>
     <string name="clear2">Clear</string>
     <string name="apply2">Apply</string>
-    <string name="save">SAVE</string>
     <string name="crop">crop</string>
-    <string name="crop_and_rotate">Crop and Rotate</string>
-    <string name="rotate">Rotate</string>
     <string name="select_ratio">Select ratio</string>
+    <string name="refObjInstruct"><![CDATA[Please select your reference object & press OK]]></string>
+    <string name="leave_blank_if_not_using_a_microscope">Leave blank if not using a microscope</string>
+    <string name="aspect">Aspect</string>
+    <string name="crop_image">Crop Image</string>
+    <string name="date">Date</string>
+    <string name="location">Location</string>
+    <string name="click_image_to_view_re_annotate">Click image to View/Re-annotate</string>
+    <string name="text_search">Text Search</string>
 
 
 </resources>

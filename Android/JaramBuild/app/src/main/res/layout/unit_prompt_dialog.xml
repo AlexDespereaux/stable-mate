@@ -88,7 +88,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginStart="4dp"
         android:fontFamily="@font/roboto_medium"
-        android:hint="@string/magnification"
+        android:hint="@string/leave_blank_if_not_using_a_microscope"
         android:inputType="numberDecimal"
         android:maxLength="5"
         android:textAppearance="@style/TextAppearance.AppCompat" />
@@ -109,7 +109,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginStart="4dp"
         android:fontFamily="@font/roboto_medium"
-        android:hint="@string/magnification"
+        android:hint="@string/leave_blank_if_not_using_a_microscope"
         android:inputType="numberDecimal"
         android:maxLength="5"
         android:textAppearance="@style/TextAppearance.AppCompat" />

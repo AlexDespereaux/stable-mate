@@ -60,6 +60,7 @@ public class CheckCalibrationActivity extends AppCompatActivity
     //buttons
     Button clearBtn;
     Button okBtn;
+    Button cancelBtn;
 
     //textview
     TextView instructTxt;
@@ -117,6 +118,7 @@ public class CheckCalibrationActivity extends AppCompatActivity
         //buttons
         okBtn = findViewById(R.id.okBtn);
         clearBtn = findViewById(R.id.clearBtn);
+        cancelBtn = findViewById(R.id.cancelBtn);
 
         //text
         instructTxt = findViewById(R.id.instructTxt);
@@ -176,6 +178,16 @@ public class CheckCalibrationActivity extends AppCompatActivity
                 }
             }
         });
+
+        //cancel onclick
+        cancelBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                showBackPressDialog();
+            }
+        });
     }
 
     protected void caliAlertDialog()
@@ -230,6 +242,8 @@ public class CheckCalibrationActivity extends AppCompatActivity
                         NumberFormatException ex)
                 {
                     Log.d(TAG, "invalid ocu lens value");
+                    //set to default
+                    ocularLens = 1;
                 }
                 //get objective lens details
                 try
@@ -239,6 +253,8 @@ public class CheckCalibrationActivity extends AppCompatActivity
                         NumberFormatException ex)
                 {
                     Log.d(TAG, "invalid obj lens value");
+                    //set to default
+                    objectiveLens = 1;
                 }
 
                 //get saved calibration details

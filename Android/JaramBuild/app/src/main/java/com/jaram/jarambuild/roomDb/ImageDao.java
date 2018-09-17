@@ -29,6 +29,13 @@ public interface ImageDao
     @Query("select * from image where uploadId = :uploadId")
     List<Image> getAllImagesByUploadId(int uploadId);
 
+    @Query("select * from image where email = :email")
+    List<Image> getAllImagesByEmail(String email);
+
+    @Query("select * from image " +
+            "where email = :email and title like :searchText")
+    List<Image> getAllImagesByEmailWithFilter(String email, String searchText);
+
     @Query("select * from image")
     List<Image> getAllImages();
 
