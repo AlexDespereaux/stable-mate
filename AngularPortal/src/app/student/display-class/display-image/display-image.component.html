@@ -1,4 +1,4 @@
-<div class="flex-container">
+<div id="contentToConvert" class="flex-container">
   <div class="card">
     <img src="{{imageUrl}}"> Rating: <br>
     <bar-rating [(rate)]="rate" [readOnly]="true" [max]="6" [theme]="'stars'" [showText]="true" (rateChange)="changeRating($event)"
@@ -25,7 +25,7 @@
       <p class="badge badge-info">{{attr.text}}</p>
     </pre>
   </div>
+</div>
 <button (click)="download()" class="btn btn-primary"><i class="fa fa-download"></i> Download</button>
 
-</div>
 
