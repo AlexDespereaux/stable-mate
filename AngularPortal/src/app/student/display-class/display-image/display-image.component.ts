@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { Image } from '../../../_models/image';
 import * as $ from 'jquery';
-import * as jspdf from 'jspdf';  
-import html2canvas from 'html2canvas'; 
+import * as jspdf from 'jspdf';
+import html2canvas from 'html2canvas';
+import domtoimage from 'dom-to-image';
 
 @Component({
   selector: 'app-display-image',
@@ -17,6 +18,7 @@ export class DisplayImageComponent implements OnInit {
   imageUrl = 'assets/images/img2.jpg';
   imageName = 'test image';
   rate = 1;
+  getCanvas;
   // dummy obj
   imageDetails = {
     "filename": "picture.png",
@@ -41,6 +43,7 @@ export class DisplayImageComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
+
     this.route.params.subscribe(
       (params: Params) => {
         this.image.imageId = params.id;
@@ -76,20 +79,53 @@ export class DisplayImageComponent implements OnInit {
   }
 
   download() {
-    var data = document.getElementById('contentToConvert');  
-    html2canvas(data).then(canvas => {  
+
+    var button = document.getElementById("btn-Convert-Html2Image");
+
+    var data = document.getElementById('image');
+    html2canvas(data).then(canvas => {
       // Few necessary setting options  
-      var imgWidth = 208;   
-      var pageHeight = 295;    
-      var imgHeight = canvas.height * imgWidth / canvas.width;  
-      var heightLeft = imgHeight;  
-  
-      const contentDataURL = canvas.toDataURL('image/png')  
+      var imgWidth = 208;
+      var pageHeight = 295;
+      var imgHeight = canvas.height * imgWidth / canvas.width;
+      var heightLeft = imgHeight;
+      const contentDataURL = canvas.toDataURL('image/png');
+      $(button).attr('download', 'page.jpg');
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
-      var position = 0;  
-      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight)  
-      pdf.save('image.pdf'); // Generated PDF   
-    }); 
+      var position = 0;
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+      // pdf.save('image.pdf'); // Generated PDF   
+    });
+
+
+
+
+    var data = document.getElementById('legend');
+    html2canvas(data).then(canvas => {
+      // Few necessary setting options  
+      var imgWidth = 208;
+      var pageHeight = 295;
+      var imgHeight = canvas.height * imgWidth / canvas.width;
+      var heightLeft = imgHeight;
+
+      const contentDataURL = canvas.toDataURL('image/png');
+      contentDataURL.attr('download', 'legend.png');
+
+
+      let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
+      var position = 0;
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+      pdf.save('legened.pdf'); // Generated PDF   
+    });
+
+
+    var a = document.body.appendChild(
+      document.createElement("a")
+    );
+    a.download = "description.txt";
+    a.href = "data:text/html," + document.getElementById("descriptions").textContent;
+    a.innerHTML = "[Download Description]";
+
   }
 
 }
