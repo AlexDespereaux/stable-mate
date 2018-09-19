@@ -65,14 +65,15 @@ let dataHandler = function(req, res) {
 
 let authorise = function(req, res, next) {
   let credentials = auth(req);
-  db.validateUser(credentials).then(() => {
-    next();
-  }).catch(() => {
-    res.status(401)
-      .setHeader('WWW-Authenticate', 'Basic')
-      .end('Access denied');
-    next('router')
-  });
+  if (!!credentials && !!credentials['name'] && !!credentials['pass']) {
+    db.validateUser(credentials).then(() => {
+      next();
+    }).catch(() => {
+      res.status(401).setHeader('WWW-Authenticate', 'Basic').send('Access denied');
+    });
+  } else {
+    res.status(401).setHeader('WWW-Authenticate', 'Basic').send('Access denied');
+  }
 };
 
 router.use(authorise);
