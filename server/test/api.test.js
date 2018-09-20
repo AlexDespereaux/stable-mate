@@ -28,14 +28,6 @@ describe('api', function() {
     // sinonSandbox.restore();
   });
 
-  it('GET /', function(done){
-    request(app)
-      .get('/')
-      .expect('x-powered-by', 'Express')
-      .expect('Content-Type', /html/)
-      .expect(200, done);
-  });
-
   it('POST /image blank/no token', function(done){
     request(app)
       .post('/image')

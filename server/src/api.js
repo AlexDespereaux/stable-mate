@@ -76,7 +76,7 @@ let authorise = function(req, res, next) {
   }
 };
 
-router.use(authorise);
+// router.use(authorise);
 
 router.get('/image/:imageId', function(req, res) {
   let s3params = {
