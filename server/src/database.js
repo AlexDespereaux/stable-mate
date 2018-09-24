@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
+const auth = require('basic-auth');
 
 const DATABASE = 'annomate';
 
@@ -22,22 +23,38 @@ let connection = function() {
   });
 };
 
+let getUserId = function(req) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      let credentials = auth(req);
+      let sql = mysql.format('SELECT userId FROM users WHERE email = ?', credentials['name']);
+      connection.query(sql, function(err, result) {
+        connection.end();
+        if (err) reject(err);
+        console.log(result[0]);
+        resolve(result[0]);
+      });
+    });
+  });
+};
+
 const IMAGE_COLUMN_VALUES = ['filename', 'description', 'notes', 'datetime', 'latitude', 'longitude',
   'dFov', 'ppm', 'userId'];
 
-const DUMMY_USER_VALUE = {'userId': 1};
-
-exports.insertImageData = function(data, callback){
-  connection().then(connection => {
-    let flattenedData = _.merge({}, data, data.location, DUMMY_USER_VALUE);
-    let insertVals = _.pick(flattenedData, IMAGE_COLUMN_VALUES);
-    let sql = mysql.format('INSERT INTO images SET ?;', insertVals);
-    connection.query(sql, function (error, results) {
-      if (error) throw error;
-      console.log(results);
-      connection.end();
-      callback({'imageId':results.insertId});
-    })
+exports.insertImageData = function(req, callback){
+  getUserId(req).then(userId => {
+    connection().then(connection => {
+      let data = req.body;
+      let flattenedData = _.merge({}, data, data.location, userId);
+      let insertVals = _.pick(flattenedData, IMAGE_COLUMN_VALUES);
+      let sql = mysql.format('INSERT INTO images SET ?;', insertVals);
+      connection.query(sql, function (error, results) {
+        if (error) throw error;
+        console.log(results);
+        connection.end();
+        callback({'imageId':results.insertId});
+      })
+    });
   });
 };
 
