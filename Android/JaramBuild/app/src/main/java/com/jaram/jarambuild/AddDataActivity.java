@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -18,7 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,33 +27,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-//json utils
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-//binary creation utils
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-//data
+
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.androidnetworking.interfaces.OkHttpResponseListener;
-import com.androidnetworking.interfaces.UploadProgressListener;
-import com.androidnetworking.utils.Utils;
 import com.jaram.jarambuild.adapters.LegendListAdapter;
 import com.jaram.jarambuild.models.EditModel;
 import com.jaram.jarambuild.roomDb.AppDatabase;
@@ -63,23 +40,31 @@ import com.jaram.jarambuild.roomDb.ImageListViewModel;
 import com.jaram.jarambuild.roomDb.Legend;
 import com.jaram.jarambuild.roomDb.LegendListViewModel;
 import com.jaram.jarambuild.roomDb.User;
-import com.jaram.jarambuild.roomDb.UserListViewModel;
+import com.jaram.jarambuild.uploadService.GenerateUploadRequestService;
 import com.jaram.jarambuild.utils.ImageIdEvent;
 import com.jaram.jarambuild.utils.LegendCreatedEvent;
-import com.jaram.jarambuild.utils.NetworkUtils;
 import com.jaram.jarambuild.utils.TinyDB;
 
-import net.gotev.hostmonitor.HostMonitorConfig;
 import net.gotev.uploadservice.BinaryUploadRequest;
-import net.gotev.uploadservice.ServerResponse;
-import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
-import net.gotev.uploadservice.UploadServiceBroadcastReceiver;
 
-import okhttp3.Response;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.jaram.jarambuild.HomeActivity.REQUEST_PERMISSION;
 import static com.jaram.jarambuild.roomDb.AppDatabase.getDatabase;
+import static java.security.AccessController.getContext;
+
 
 public class AddDataActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -207,6 +192,20 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         {
             Log.d(TAG, "Has internet permission ");
         }
+
+        //home button in action bar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
+        if (toolbar != null) {
+            toolbar.setLogo(R.drawable.my_logo_shadow_96px);
+
+            //Listener for item selection change
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showBackPressDialog();
+                }
+            });
+        }
     }
 
     //**************RECEIVERS & EVENTS**************************************************
@@ -238,32 +237,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
-/*
-    private UploadServiceBroadcastReceiver broadcastReceiver = new UploadServiceBroadcastReceiver() {
-        @Override
-        public void onProgress(Context context, UploadInfo uploadInfo) {
-            // your implementation
-        }
 
-        @Override
-        public void onError(Context context, UploadInfo uploadInfo, ServerResponse serverResponse, Exception exception) {
-            // your implementation
-
-        }
-
-        @Override
-        public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
-            // your implementation
-            Log.d(TAG, "Server response body: "+ serverResponse.getBodyAsString());
-            Log.d(TAG, "Server response: "+ serverResponse.toString());
-        }
-
-        @Override
-        public void onCancelled(Context context, UploadInfo uploadInfo) {
-            // your implementation
-        }
-    };
-*/
     @Subscribe
     public void onImageIdEvent(ImageIdEvent event) //returns ImageId from database upon image save to database
     {
@@ -276,18 +250,24 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     @Subscribe
     public void onLegendCreatedEvent(LegendCreatedEvent event)
     {
-
+        //this method ensures all the legend db entries are created prior to attempting data upload
         Log.d(TAG, "legend created " + event.legendCreated);
-        legendUpLoadCounter++;
+        legendUpLoadCounter++; //checks the no of legend entries sent to database
         Log.d(TAG, "inEL count = " + legendUpLoadCounter + "arr " + LegendListAdapter.editModelArrayList.size());
-        //temp
+        //if the amount of legend objects entered in to room db = the size of the list of legends progress to upload
         if (legendUpLoadCounter == LegendListAdapter.editModelArrayList.size())//check that all legend rows have been added to the database prior to upload
         {
             //for demo
-            uploadBinary(this, editedImgUri);
+            //uploadBinary(this, editedImgUri);
+           Intent mServiceIntent = new Intent();
+            // Starts the JobIntentService
+           GenerateUploadRequestService.enqueueGURSWork(this,mServiceIntent);
+
             //startUpload();
             //Log.d(TAG, "In onLegendcreatedEvent() until upload code is established");
             //for demo only
+
+            Log.d(TAG, "enqueueGURSWork call to JobIntentService");
             returnToHome();
         }
     }

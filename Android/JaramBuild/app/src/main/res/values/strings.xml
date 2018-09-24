@@ -98,6 +98,7 @@
     <string name="location">Location</string>
     <string name="click_image_to_view_re_annotate">Click image to View/Re-annotate</string>
     <string name="text_search">Text Search</string>
+    <string name="galleryheader">Gallery</string>
 
 
 </resources>

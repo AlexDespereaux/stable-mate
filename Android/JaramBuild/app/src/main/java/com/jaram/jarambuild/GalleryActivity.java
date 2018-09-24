@@ -5,15 +5,20 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.jaram.jarambuild.adapters.GalleryListAdapter;
 import com.jaram.jarambuild.models.GalleryModel;
@@ -82,6 +87,19 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         applyBtn.setOnClickListener(this);
 
         initRecycler();
+        //home button in action bar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
+        if (toolbar != null) {
+            toolbar.setLogo(R.drawable.my_logo_shadow_96px);
+
+            //Listener for item selection change
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goHome();
+                }
+            });
+        }
     }
 
     //listener
@@ -140,5 +158,50 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         galleryRecyclerView.setAdapter(galleryListAdapter);
         galleryRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
 
+    }
+
+    public void goHome()
+    {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.bar_menu, menu);
+        return true;
+    }
+
+    //custom menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if (item.getItemId() == R.id.settingsMenuBtn)
+        {
+            Log.d(TAG, "Settings Btn Clicked");
+            //Go to settings activity
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+        } else if (item.getItemId() == R.id.helpMenuBtn)
+        {
+            //TODO Make help activity
+            Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Help Btn Clicked");
+
+        } else if (item.getItemId() == R.id.logoutMenuBtn)
+        {
+            Log.d(TAG, "Logout Btn Clicked");
+            //set logged in user to null
+            tinydb.putString("loggedInAccount", "");
+            //return to Login Page
+            Intent settingsIntent = new Intent(this, MainActivity.class);
+            startActivity(settingsIntent);
+            finish();
+        } else
+        {
+            return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 }
