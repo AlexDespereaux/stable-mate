@@ -9,7 +9,7 @@ const router = express.Router();
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 const BUCKET = 'annomate';
-const TOKEN = '1F8065545D842E0098709630DBDBEB596D4D6194';
+// const TOKEN = '1F8065545D842E0098709630DBDBEB596D4D6194';
 
 let imageCounter = 0;
 
@@ -40,24 +40,19 @@ let uploadFromStream = function(s3) {
 
 let imageHandler = function(req, res, next) {
   printRequestHeaders(req);
-  if (req.get('token') !== TOKEN) {
-    res.status(401).send('Requires security token');
-    next('router')
+  if (req.get('Content-Type') === 'image/png') {
+    console.log('Started upload from: ' + req.ip);
+    req.pipe(uploadFromStream(s3));
+    req.on('end', function() { res.status(200).send('Image upload complete!'); });
   } else {
-    if (req.get('Content-Type') === 'image/png') {
-      console.log('Started upload from: ' + req.ip);
-      req.pipe(uploadFromStream(s3));
-      req.on('end', function() { res.status(200).send('Image upload complete!'); });
-    } else {
-      next();
-    }
+    next();
   }
 };
 
 let dataHandler = function(req, res) {
   const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm', 'legend'];
   if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
-    db.insertImageData(req.body, function(result) { res.status(200).send(result) });
+    db.insertImageData(req, function(result) { res.status(200).send(result) });
   } else {
     res.status(400).send('Missing information or malformed json')
   }
@@ -65,18 +60,20 @@ let dataHandler = function(req, res) {
 
 let authorise = function(req, res, next) {
   let credentials = auth(req);
-  if (!!credentials && !!credentials['name'] && !!credentials['pass']) {
-    db.validateUser(credentials).then(() => {
-      next();
-    }).catch(() => {
-      res.status(401).setHeader('WWW-Authenticate', 'Basic').send('Access denied');
-    });
-  } else {
-    res.status(401).setHeader('WWW-Authenticate', 'Basic').send('Access denied');
-  }
+  db.validateUser(credentials).then(() => {
+    next();
+  }).catch(() => {
+    res.status(401).header('WWW-Authenticate', 'Basic').send('Access denied');
+  });
 };
 
-// router.use(authorise);
+router.post('/user', express.json(), function(req, res) {});
+
+router.use(authorise);
+
+router.get('/user', function(req, res) {
+  res.status(200).send('Authenticated')
+});
 
 router.get('/image/:imageId', function(req, res) {
   let s3params = {
@@ -89,7 +86,6 @@ router.get('/image/:imageId', function(req, res) {
   });
 });
 
-router.post('/user', express.json(), function(req, res) {});
 
 router.post('/image', imageHandler, express.json(), dataHandler);
 
