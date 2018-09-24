@@ -30,6 +30,7 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
     private String TAG = "GalleryAdapter";
     private LayoutInflater inflater;
     public static List<GalleryModel> imageListForGallery;
+    public List<GalleryModel> imageListFiltered;
     CustomGalleryFilter filter;
 
 
@@ -38,6 +39,7 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
 
         inflater = LayoutInflater.from(ctx);
         GalleryListAdapter.imageListForGallery = imageListForGallery;
+        imageListFiltered = imageListForGallery;
     }
 
     @Override

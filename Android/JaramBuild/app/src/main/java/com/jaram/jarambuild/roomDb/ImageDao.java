@@ -29,7 +29,7 @@ public interface ImageDao
     @Query("select * from image where uploadId = :uploadId")
     List<Image> getAllImagesByUploadId(int uploadId);
 
-    @Query("select * from image where email = :email")
+    @Query("select * from image where email = :email order by date desc")
     List<Image> getAllImagesByEmail(String email);
 
     @Query("select * from image " +

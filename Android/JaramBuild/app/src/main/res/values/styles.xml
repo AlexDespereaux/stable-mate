@@ -16,13 +16,4 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="PermissionJaramStyle">
-        <item name="PermissionTitleColor">@color/colorPrimaryDark</item>
-        <item name="PermissionMsgColor">@color/colorPrimary</item>
-        <item name="PermissionItemTextColor">@color/colorAccent</item>
-        <item name="PermissionButtonBackground">@drawable/shape_btn_border_white</item>
-        <item name="PermissionBackround">@drawable/shape_bg_white</item>
-        <item name="PermissionButtonTextColor">@color/colorAccent</item>
-    </style>
-
 </resources>

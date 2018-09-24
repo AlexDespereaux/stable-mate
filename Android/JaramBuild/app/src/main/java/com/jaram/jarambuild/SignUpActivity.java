@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -93,6 +94,19 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         awesomeValidation.addValidation(this, R.id.pWordField, regexPassword, R.string.passworderror);
         awesomeValidation.addValidation(this, R.id.pWordFieldconfirm, R.id.pWordField, R.string.passworderrorconfirm);
 
+        //home button in action bar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
+        if (toolbar != null) {
+            toolbar.setLogo(R.drawable.my_logo_shadow_96px);
+
+            //Listener for item selection change
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goSignIn();
+                }
+            });
+        }
     }
 
     @Override
@@ -200,5 +214,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     {
         AppDatabase.destroyInstance();
         super.onDestroy();
+    }
+
+    public void goSignIn()
+    {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
