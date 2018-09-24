@@ -37,5 +37,8 @@ CREATE TABLE IF NOT EXISTS legend (
   FOREIGN KEY(imageId) REFERENCES images(imageId)
 );
 
-INSERT INTO users (password, email, admin)
-  VALUES ("not a password", "richard@email.com", true);
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$2Bt1cfLDfKxpD7GmuN/TE.4WPqw1lRhPSwpHjSkA7s0f6mursAKZy", "richard", true);
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$Ocqnfky.r6gWd9Q2M9hrvuswbNY1TxPunmvN2ScFSsqQQtx1PDKKq", "marita", true);
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$cUZr5SVr2ptNKM4vNYxVV.eIKH1p9csoKFwAGuOiOpMfY9ouUXbB.", "alex", true);
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$1xt71keywUlzrGlgq1cpbuPuta6WZ7GaTYHk3i/LuToYgP3M2BuvC", "jackson", true);
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$qrjztR8Bwidh1R2dNTFmhecCoxB7nqXi115x.8bNE3peDfxU.Tu42", "anmol", true);
