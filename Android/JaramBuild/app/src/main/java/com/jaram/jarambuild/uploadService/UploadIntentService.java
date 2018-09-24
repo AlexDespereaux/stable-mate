@@ -48,8 +48,11 @@ public class UploadIntentService extends JobIntentService
      */
     static final int JOB_ID = 2000;
     private String TAG = "UploadIntentService";
+    //volley
     private RequestQueue queue;
     static final String REQ_TAG = "UIS";
+    //server upload confirmationnumber to be added to images upload
+    private String serverImageId;
 
     /**
      * Convenience method for enqueuing work in to this service.
@@ -76,6 +79,8 @@ public class UploadIntentService extends JobIntentService
         String ppm = intent.getStringExtra("pixelsPerMicron");
         final String raw_path = intent.getStringExtra("photoPath_raw");
         String edit_path = intent.getStringExtra("photoPath_edited");
+        final String username = intent.getStringExtra("loggedInUser");
+        final String pword = intent.getStringExtra("loggedInUserPWord");
 
         //initialise Android networking for json upload
         AndroidNetworking.initialize(getApplicationContext());
@@ -142,7 +147,28 @@ public class UploadIntentService extends JobIntentService
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "Response: " + response.toString() + "image id :" + imageId);
+                        try
+                        {
+                            serverImageId = response.getString("imageId");
+                            Log.d(TAG, "Server Response: " + response.toString() + ", Local image id :" + imageId +" Server image id: " + serverImageId);
+                            if(Integer.parseInt(serverImageId)> 0)
+                            {
+                                Intent mServiceIntent = new Intent();
+                                mServiceIntent.putExtra("loggedInUser", username);
+                                mServiceIntent.putExtra("loggedInUserPWord", pword);
+                                mServiceIntent.putExtra("serverImageId", serverImageId);
+                                mServiceIntent.putExtra("localImageId", Integer.toString(imageId));
+                                mServiceIntent.putExtra("photoPath_raw", raw_path);
+
+                                // Starts the JobIntentService
+                                UploadRawImgService.enqueueURISWork(getApplicationContext(), mServiceIntent);
+                                Log.d(TAG, "enqueueURISWork call to Raw upload JobIntentService");
+                            }
+                        } catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -150,6 +176,7 @@ public class UploadIntentService extends JobIntentService
                 Log.d(TAG, "Response: " + error.toString() + "image id :" + imageId);
             }
         }){
+            //add Basic Auth header
             @Override
             public Map<String, String> getHeaders()
             {
@@ -157,8 +184,7 @@ public class UploadIntentService extends JobIntentService
                 params.put(
                         "Authorization",
                         String.format("Basic %s", Base64.encodeToString(
-                                //String.format("%s:%s", email, password).getBytes(), Base64.DEFAULT)));  TODO: set to input credentials once user account set up is complete
-                                String.format("%s:%s", "marita", "fitz4321").getBytes(), Base64.DEFAULT)));
+                                String.format("%s:%s", username, pword).getBytes(), Base64.DEFAULT)));
                 params.put("Content-Type", "application/json");
                 return params;
             }

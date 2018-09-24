@@ -820,7 +820,7 @@ public class PhotoEditor implements BrushViewChangeListener
                                 //Original
                                 //drawingCache.compress(Bitmap.CompressFormat.PNG, 100, out);
                                 //Test Compress
-                                drawingCache.compress(Bitmap.CompressFormat.PNG, 60, out);
+                                drawingCache.compress(Bitmap.CompressFormat.PNG, 100, out);
                             }
                             out.flush();
                             out.close();

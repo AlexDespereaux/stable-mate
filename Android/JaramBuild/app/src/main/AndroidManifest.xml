@@ -93,13 +93,18 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".CropActivity"></activity>
 
-        <service android:name=".uploadService.UploadIntentService"
+        <service
+            android:name=".uploadService.UploadIntentService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
         <service
             android:name=".uploadService.GenerateUploadRequestService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".uploadService.UploadRawImgService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
     </application>
 
 </manifest>

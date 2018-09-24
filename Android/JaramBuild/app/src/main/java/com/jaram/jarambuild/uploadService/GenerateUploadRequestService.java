@@ -48,10 +48,10 @@ public class GenerateUploadRequestService extends JobIntentService
         // We have received work to do.  The system or framework is already
         // holding a wake lock for us at this point, so we can just go.
         Log.i("GenerateUploadRS", "Starting work: " + intent);
-
+        //get user details to pass to upload services
+        String username = intent.getStringExtra("loggedInUser");
+        String pword = intent.getStringExtra("loggedInUserPWord");
         //db
-        //legendViewModel = ViewModelProviders.of((FragmentActivity) getApplicationContext()).get(LegendListViewModel.class);
-        //imageViewModel = ViewModelProviders.of((FragmentActivity) getApplicationContext()).get(ImageListViewModel.class);
         db = AppDatabase.getDatabase(getApplicationContext());
         imageViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance((Application) getApplication()).create(ImageListViewModel.class);
 
@@ -76,6 +76,8 @@ public class GenerateUploadRequestService extends JobIntentService
             mServiceIntent.putExtra("pixelsPerMicron", image.getPixelsPerMicron());
             mServiceIntent.putExtra("photoPath_raw", image.getPhotoPath_raw());
             mServiceIntent.putExtra("photoPath_edited", image.getPhotoPath_edited());
+            mServiceIntent.putExtra("loggedInUser", username);
+            mServiceIntent.putExtra("loggedInUserPWord", pword);
 
             // Starts the JobIntentService
             UploadIntentService.enqueueUISWork(this,mServiceIntent);

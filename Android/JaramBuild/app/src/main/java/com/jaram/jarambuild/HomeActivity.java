@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.jaram.jarambuild.uploadService.RequestQueueSingleton;
 import com.jaram.jarambuild.utils.TinyDB;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -27,6 +29,8 @@ import com.karumi.dexter.listener.DexterError;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import net.gotev.uploadservice.UploadService;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +67,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     TinyDB tinydb;
     String loggedInUser;
 
+    //volley
+    private RequestQueue queue;
+    static final String REQ_TAG = "UIS";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -93,6 +101,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         {
             toolbar.setLogo(R.drawable.my_logo_shadow_96px);
         }
+
+        //get queue instance (Home activity has an upload failsafe, where by logging out will cancel ALL uploads!)
+        //only required during development
+        queue = RequestQueueSingleton.getInstance(this.getApplicationContext())
+                .getRequestQueue();
     }
 
     /**
@@ -118,7 +131,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted())
                         {
-                            Log.d(TAG, "All permissions are granted!" );
+                            Log.d(TAG, "All permissions are granted!");
                             permissionsGranted = true;
                         }
 
@@ -210,7 +223,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Help Btn Clicked");
 
-        } else if (item.getItemId() == R.id.logoutMenuBtn)
+        }
+        else if (item.getItemId() == R.id.logoutMenuBtn)
         {
             Log.d(TAG, "Logout Btn Clicked");
             //set logged in user to null
@@ -218,6 +232,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             //return to Login Page
             Intent settingsIntent = new Intent(this, MainActivity.class);
             startActivity(settingsIntent);
+            //stop all uploads
+            UploadService.stopAllUploads();
+            if (queue != null)
+            {
+                queue.cancelAll(REQ_TAG);
+            }
             finish();
         } else
         {
