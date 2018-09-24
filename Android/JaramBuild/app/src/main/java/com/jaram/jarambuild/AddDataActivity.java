@@ -119,6 +119,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     //get logged in user
     TinyDB tinydb;
     String loggedInUser; // email address, which is primary key of user db
+
     //user details
     String userFirstName;
     String userLastName;
@@ -195,13 +196,16 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
         //home button in action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
-        if (toolbar != null) {
+        if (toolbar != null)
+        {
             toolbar.setLogo(R.drawable.my_logo_shadow_96px);
 
             //Listener for item selection change
-            toolbar.setOnClickListener(new View.OnClickListener() {
+            toolbar.setOnClickListener(new View.OnClickListener()
+            {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View v)
+                {
                     showBackPressDialog();
                 }
             });
@@ -257,16 +261,16 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         //if the amount of legend objects entered in to room db = the size of the list of legends progress to upload
         if (legendUpLoadCounter == LegendListAdapter.editModelArrayList.size())//check that all legend rows have been added to the database prior to upload
         {
-            //for demo
-            //uploadBinary(this, editedImgUri);
-           Intent mServiceIntent = new Intent();
+            Intent mServiceIntent = new Intent();
+            //add user to intent
+            //mServiceIntent.putExtra("loggedInUser", loggedInUser);
+            //mServiceIntent.putExtra("loggedInUserPWord", userPword);
+            //TODO: change once user account creation established (above)
+            mServiceIntent.putExtra("loggedInUser", "marita");
+            mServiceIntent.putExtra("loggedInUserPWord", "fitz4321");
+
             // Starts the JobIntentService
-           GenerateUploadRequestService.enqueueGURSWork(this,mServiceIntent);
-
-            //startUpload();
-            //Log.d(TAG, "In onLegendcreatedEvent() until upload code is established");
-            //for demo only
-
+            GenerateUploadRequestService.enqueueGURSWork(this, mServiceIntent);
             Log.d(TAG, "enqueueGURSWork call to JobIntentService");
             returnToHome();
         }
@@ -332,27 +336,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void startUpload() //doesn't start until the legend created event subscriber receives a message that all Legends have been added to the database.
-    {
-        /* stopped for demo
-        int connected = NetworkUtils.getConnectivityStatus(context);
-        if (connected != 0)
-        {
-            imagesToBeUploadedList = dbUploadCheck();
-            Log.e(TAG, "In startUpload - Images to be uploaded = " + imagesToBeUploadedList.size());
-            for (Image image : imagesToBeUploadedList)
-            {
-                Log.i(TAG, "START UP LOAD Image being uploaded = " + image.getImageId());
-                uploadImages(image);
-                //imagesToBeUploadedList.remove(image);
-            }
-        }*/
-
-
-
-    }
-
-
 
     private void uploadImages(Image image) // uploads raw and edited images to s3 bucket then generates matching json bject which is sent to the server
     {
@@ -367,7 +350,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         String raw_img_path_from_db = image.getPhotoPath_raw();
         String edit_img_path_from_db = image.getPhotoPath_edited();
 
-        uploadBinary(this,edit_img_path_from_db);
+        uploadBinary(this, edit_img_path_from_db);
 
         // if both images uploaded
         /*
@@ -378,11 +361,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         }*/
     }
     //**************************helpers***********************************************************************
-
-    private List<Image> dbUploadCheck() //searches database for rows that have not been uploaded
-    {
-        return imageViewModel.getImagesToBeUploadedList();
-    }
 
     private void saveImageToDb()
     {
@@ -412,7 +390,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         ImageView imageView = findViewById(R.id.imageView);
         if (editedImgUri.equals(""))
         {
-            //TODO: add failBitmap
             Toast.makeText(this, "Unable to set imageView", Toast.LENGTH_SHORT).show();
         } else
         {
@@ -542,94 +519,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         startActivity(homeIntent);
     }
 
-    private void createJsonObj(int imageId, int returnedUploadIdFromServer)
-    {
-        //get image data by imageId
-        Image imageDataObject =
-                db.getImageDao().getImageById(imageId);
-
-        //get legend data by imageId
-        List<Legend> listOfLegendsFromDb =
-                db.getLegendDao().getAllLegendsByImageId(imageId);
-
-        //check legend list
-        Log.d(TAG, "listOfLegendsFromDb size" + listOfLegendsFromDb.size());
-
-        //create JSON object
-        JSONObject uploadObj = new JSONObject();
-        JSONObject locationObj = new JSONObject();
-        JSONArray legendArr = new JSONArray();
-        try
-        {
-            uploadObj.put("filename", imageDataObject.getTitle());
-            uploadObj.put("description", imageDataObject.getDescription());
-            uploadObj.put("notes", imageDataObject.getNotes());
-            uploadObj.put("datetime", Double.parseDouble(imageDataObject.getDate()));
-            //put location details in location Object
-            locationObj.put("latitude", Double.parseDouble(imageDataObject.getLatitude()));
-            locationObj.put("longitude", Double.parseDouble(imageDataObject.getLongitude()));
-            //put location object in upload object
-            uploadObj.put("location", locationObj);
-            uploadObj.put("dFov", Double.parseDouble(imageDataObject.getDFov()));
-            uploadObj.put("ppm", Double.parseDouble(imageDataObject.getPixelsPerMicron()));
-            for (Legend legend : listOfLegendsFromDb)
-            {
-                JSONObject singleLegend = new JSONObject();
-                singleLegend.put("name", legend.getSymbol());
-                singleLegend.put("text", legend.getLegendTxt());
-                legendArr.put(singleLegend);
-            }
-            uploadObj.put("Legend", legendArr);
-            uploadObj.put("imageId", returnedUploadIdFromServer);
-            uploadObj.put("rawUrl", "https://s3-ap-southeast-2.amazonaws.com/annomate/raw" + returnedUploadIdFromServer + ".png");
-            uploadObj.put("annotatedUrl", "https://s3-ap-southeast-2.amazonaws.com/annomate/annotated" + returnedUploadIdFromServer + ".png");
-        } catch (JSONException e)
-        {
-            Log.e(TAG, "JSONException: " + e.getMessage());
-        } catch (java.lang.NumberFormatException e)
-        {
-            Log.e(TAG, "NumberFormatException" + e.getMessage());
-            return;
-        }
-        Log.d(TAG, "Created JSON Object");
-        //debug jsonObjPretty
-        try
-        {
-            Log.d(TAG, uploadObj.toString(4));
-        } catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-
-        uploadJsonObj(uploadObj, imageId, returnedUploadIdFromServer);
-    }
-
-    private void uploadJsonObj(JSONObject jsonObject, int imageId, int returnedUploadIdFromServer)
-    {
-        //TODO: insert api endpoint
-        AndroidNetworking.post("https://fierce-cove-29863.herokuapp.com/createUser")
-                .addJSONObjectBody(jsonObject) // posting json
-                .setTag("test")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONArray(new JSONArrayRequestListener()
-                {
-                    @Override
-                    public void onResponse(JSONArray response)
-                    {
-                        // do anything with response
-
-                    }
-
-                    @Override
-                    public void onError(ANError error)
-                    {
-                        // handle error
-
-                    }
-                });
-    }
-
     //************************DIALOGS****************************
 
     @Override
@@ -664,101 +553,5 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         });
         builder.create().show();
     }
-
-
-    //TEST CODE*****************************************************************************************************
-
-    /*
-
-    // works
-    private void saveLegendToDatabase(String symbol, String legendTxt, int imgId)
-    {
-        legendViewModel.addOneLegend(new Legend(symbol, legendTxt, imgId));
-        Log.d(TAG, "Legend saved to dataBase");
-    }
-
-    //works
-    private String convertToBase64(String imagePath)
-    {
-        Bitmap bm = BitmapFactory.decodeFile(imagePath);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.PNG, 75, baos);
-        byte[] byteArrayImage = baos.toByteArray();
-        Log.d(TAG, "Image converted to Base64");
-        return Base64.encodeToString(byteArrayImage, Base64.NO_WRAP);
-    }
-
-    //works
-    private void writeJsonToBinaryFile(Context context, JSONObject uploadObj)
-    {
-        //write binary file
-        try
-        {
-            //note I have had to include a replace backslash as during conversion to JSON escape characters \ are added in every instance there is a /
-            //in the base64 image string(ugh) corrupting the image. Apparently this can be also avoided by putting the base64 in a JSON array inside the object. I'll try that next!
-            //OR we can use multipart upload and I will only replace in the base64 files which don't have a \ in the alphabet choices choices
-            String objString = uploadObj.toString().replace("\\", "");
-
-            File path = context.getFilesDir();
-            //File newFile = new File(path + utcTime + ".dat");  //final code
-            File newFile = new File(path + "testfile" + ".dat");  //for testing only
-            FileOutputStream fos = new FileOutputStream(newFile);
-            fos.write(objString.getBytes());
-            //fos.write(uploadObj.toString().getBytes());  //to use if base64 image no ling requires replace
-            fos.flush();
-            fos.close();
-            Log.d(TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
-            pathName = newFile.getAbsolutePath();
-        } catch (Exception e)
-        {
-            Log.d(TAG, "Unable to save file", e);
-        }
-    }
-
-    //works
-    private void writeJsonToFile(Context context, JSONObject uploadObj)
-    {
-        //write binary file
-        try
-        {
-            //note I have had to include a replace backslash as during conversion to JSON escape characters \ are added in every instance there is a /
-            //in the base64 image string(ugh) corrupting the image. Apparently this can be also avoided by putting the base64 in a JSON array inside the object. I'll try that next!
-            //OR we can use multipart upload and I will only replace in the base64 files which don't have a \ in the alphabet choices choices
-            String objString = uploadObj.toString().replace("\\", "");
-
-            File path = context.getFilesDir();
-            //File newFile = new File(path + utcTime + ".dat");  //final code
-            File newFile = new File(path + "testfile" + ".json");  //for testing only
-            FileOutputStream fos = new FileOutputStream(newFile);
-            fos.write(objString.getBytes());
-            //fos.write(uploadObj.toString().getBytes());  //to use if base64 image no ling requires replace
-            fos.flush();
-            fos.close();
-            Log.d(TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
-            jsonPathName = newFile.getAbsolutePath();
-        } catch (Exception e)
-        {
-            Log.d(TAG, "Unable to save file", e);
-        }
-    }
-
-    //works
-    public void uploadJson(final Context context)
-    {
-        try
-        {
-            String uploadId =
-                    new BinaryUploadRequest(context, "http://192.168.1.108:3000/upload/binary")
-                            .setFileToUpload(pathName)
-                            .addHeader("file-name", new File(jsonPathName).getName())
-                            .setNotificationConfig(new UploadNotificationConfig())
-                            .setMaxRetries(2)
-                            .startUpload();
-            Log.d(TAG, "Binary File uploaded");
-        } catch (Exception exc)
-        {
-            Log.e("AndroidUploadService", exc.getMessage(), exc);
-        }
-    }*/
 }
 
