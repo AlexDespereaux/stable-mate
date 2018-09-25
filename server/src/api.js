@@ -9,7 +9,6 @@ const router = express.Router();
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 const BUCKET = 'annomate';
-// const TOKEN = '1F8065545D842E0098709630DBDBEB596D4D6194';
 
 let imageCounter = 0;
 
@@ -50,12 +49,17 @@ let imageHandler = function(req, res, next) {
 };
 
 let dataHandler = function(req, res) {
-  const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm', 'legend'];
-  if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
-    db.insertImageData(req, function(result) { res.status(200).send(result) });
-  } else {
-    res.status(400).send('Missing information or malformed json')
-  }
+  db.getUserId(req).then(userId => {
+    const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm', 'legend'];
+    if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
+      let data = _.merge(req.body, userId);
+      db.insertImageData(data).then(result => {
+       res.status(200).send(result)
+      }).catch(error => res.status(500).send(error));
+    } else {
+      res.status(400).send('Missing information or malformed json')
+    }
+  }).catch(error => res.status(500).send(error));
 };
 
 let authorise = function(req, res, next) {
@@ -75,7 +79,7 @@ router.get('/user', function(req, res) {
   res.status(200).send('Authenticated')
 });
 
-router.get('/image/:imageId', function(req, res) {
+router.get('/image/:imageId.png', function(req, res) {
   let s3params = {
     Bucket: BUCKET,
     Key: 'image' + _.padStart(req.params.imageId, 6, '0') + '.png'

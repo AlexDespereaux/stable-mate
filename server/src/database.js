@@ -23,7 +23,7 @@ let connection = function() {
   });
 };
 
-let getUserId = function(req) {
+exports.getUserId = function(req) {
   return new Promise((resolve, reject) => {
     connection().then(connection => {
       let credentials = auth(req);
@@ -31,7 +31,6 @@ let getUserId = function(req) {
       connection.query(sql, function(err, result) {
         connection.end();
         if (err) reject(err);
-        console.log(result[0]);
         resolve(result[0]);
       });
     });
@@ -41,19 +40,17 @@ let getUserId = function(req) {
 const IMAGE_COLUMN_VALUES = ['filename', 'description', 'notes', 'datetime', 'latitude', 'longitude',
   'dFov', 'ppm', 'userId'];
 
-exports.insertImageData = function(req, callback){
-  getUserId(req).then(userId => {
+exports.insertImageData = function(data) {
+  return new Promise((resolve, reject) => {
     connection().then(connection => {
-      let data = req.body;
-      let flattenedData = _.merge({}, data, data.location, userId);
+      let flattenedData = _.merge({}, data, data.location);
       let insertVals = _.pick(flattenedData, IMAGE_COLUMN_VALUES);
       let sql = mysql.format('INSERT INTO images SET ?;', insertVals);
       connection.query(sql, function (error, results) {
-        if (error) throw error;
-        console.log(results);
         connection.end();
-        callback({'imageId':results.insertId});
-      })
+        if (error) reject(error);
+        resolve({'imageId':results.insertId});
+      });
     });
   });
 };
@@ -70,7 +67,7 @@ exports.createUser = function(data) {
           resolve({'userId': result.insertId});
         });
       });
-    })
+    });
   });
 };
 
