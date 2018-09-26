@@ -90,14 +90,29 @@ let authorise = function (req, res, next) {
   }
 };
 
+let userType = function (req, res) {
+  let status = 400;
+  let result = '';
+  db.getUserType(req)
+    .then(userType => {
+      status = 200;
+      result = {'userType': userType}
+    })
+    .catch(error => {
+      status = 500;
+      result = error
+    })
+    .then(() => {
+      res.status(status).send(result)
+    });
+};
+
 router.post('/user', express.json(), function (req, res) {
 });
 
 router.use(authorise);
 
-router.get('/user', function (req, res) {
-  res.status(200).send('Authenticated')
-});
+router.get('/user', userType);
 
 router.get('/image/:imageId.png', function (req, res) {
   let s3params = {
