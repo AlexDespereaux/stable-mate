@@ -86,3 +86,29 @@ exports.validateUser = function(credentials) {
     });
   });
 };
+
+let userType = function(x) {
+  switch (x) {
+    case 0:
+      return 'user';
+    case 1:
+      return 'admin';
+    default:
+      return 'unknown';
+  }
+};
+
+
+exports.getUserType = function(req) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      let credentials = auth(req);
+      let sql = mysql.format('SELECT admin FROM users WHERE email = ?', credentials['name']);
+      connection.query(sql, function(err, result) {
+        connection.end();
+        if (err) reject(err);
+        resolve(userType(result[0]['admin']));
+      });
+    });
+  });
+};
