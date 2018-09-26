@@ -64,11 +64,12 @@ let dataHandler = function(req, res) {
 
 let authorise = function(req, res, next) {
   let credentials = auth(req);
-  db.validateUser(credentials).then(() => {
-    next();
-  }).catch(() => {
-    res.status(401).header('WWW-Authenticate', 'Basic').send('Access denied');
-  });
+  if (credentials && credentials['name'] && credentials['pass']) {
+    db.validateUser(credentials).then(() => {
+      next();
+    }).catch((error) => { console.log(error)});
+  }
+  res.status(401).header('WWW-Authenticate', 'Basic').send('Access denied');
 };
 
 router.post('/user', express.json(), function(req, res) {});
