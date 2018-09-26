@@ -7,9 +7,9 @@ DROP TABLE users;
 
 CREATE TABLE IF NOT EXISTS users (
   userId        INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  username      VARCHAR(100) UNIQUE,
   password      CHAR(60),
   email         VARCHAR(255) UNIQUE,
+  admin         BOOLEAN,
   PRIMARY KEY(userId)
 );
 
@@ -37,5 +37,8 @@ CREATE TABLE IF NOT EXISTS legend (
   FOREIGN KEY(imageId) REFERENCES images(imageId)
 );
 
-INSERT INTO users (username, password, email)
-  VALUES ("dummyUser", "not a password", "richard@email.com");
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$2Bt1cfLDfKxpD7GmuN/TE.4WPqw1lRhPSwpHjSkA7s0f6mursAKZy", "richard", true);
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$Ocqnfky.r6gWd9Q2M9hrvuswbNY1TxPunmvN2ScFSsqQQtx1PDKKq", "marita", true);
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$cUZr5SVr2ptNKM4vNYxVV.eIKH1p9csoKFwAGuOiOpMfY9ouUXbB.", "alex", true);
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$1xt71keywUlzrGlgq1cpbuPuta6WZ7GaTYHk3i/LuToYgP3M2BuvC", "jackson", true);
+INSERT INTO users (password, email, admin) VALUES ("$2a$10$qrjztR8Bwidh1R2dNTFmhecCoxB7nqXi115x.8bNE3peDfxU.Tu42", "anmol", true);

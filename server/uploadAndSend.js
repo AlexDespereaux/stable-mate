@@ -49,7 +49,9 @@ _.forEach(filesToArchive, (file) => {
 });
 
 
-archive.directory('dist/', 'dist', {name: 'dist'});
+archive.directory('../AngularPortal/dist/', 'dist', {name: 'dist'});
+
+archive.directory('dist/assets/', 'assets', { name: 'assets'});
 
 archive.directory('.ebextensions/', '.ebextensions', {name: '.ebextensions'});
 
