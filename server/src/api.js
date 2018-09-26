@@ -24,7 +24,6 @@ let printRequestHeaders = function (req) {
 
 let uploadFromStream = function (s3) {
   let pass = new stream.PassThrough();
-
   let params = {
     Body: pass,
     Bucket: BUCKET,
@@ -53,30 +52,27 @@ let imageHandler = function (req, res, next) {
 let dataHandler = function (req, res) {
   let status = 400;
   let result = "";
-  db.getUserId(req)
-    .then(userId => {
-      const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm', 'legend'];
-      if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
+  const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm', 'legend'];
+  if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
+    db.getUserId(req)
+      .then(userId => {
         let data = _.merge(req.body, userId);
-        db.insertImageData(data)
-          .then(imageId => {
-            status = 200;
-            result = imageId;
-          })
-          .catch(error => {
-            status = 500;
-            result = error;
-          });
-      } else {
-        status = (400);
-        result = 'Missing information or malformed json';
-      }
-    })
-    .catch(error => {
-      status = 500;
-      result = error
-    });
-  res.status(status).send(result);
+        return db.insertImageData(data)
+      })
+      .then(imageId => {
+        status = 201;
+        result = imageId;
+      })
+      .catch(error => {
+        status = 500;
+        result = error;
+      })
+      .then(() => {
+        res.status(status).send(result);
+      });
+  } else {
+    res.status(400).send('Missing information or malformed json');
+  }
 };
 
 let authorise = function (req, res, next) {
