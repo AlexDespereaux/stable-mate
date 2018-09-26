@@ -8,6 +8,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class AdminComponent implements OnInit {
 
+  studentClass = "";
 
   image = 'assets/folder.jpg';
   staff = {

@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Params, ActivatedRoute, Router } from '@angular/router';
+import * as $ from 'jquery';
+import * as jspdf from 'jspdf';
+import html2canvas from 'html2canvas';
+import domtoimage from 'dom-to-image';
+import { saveAs } from 'file-saver/FileSaver';
 
 @Component({
   selector: 'app-student-image',
@@ -71,5 +76,60 @@ export class StudentImageComponent implements OnInit {
     console.log('change rating');
     this.rate = rating;
   }
+
+  
+  download() {
+
+
+    // var button = document.getElementById("btn-Convert-Html2Image");
+
+    var data = document.getElementById('image');
+    html2canvas(data).then(canvas => {
+      // Few necessary setting options  
+      var imgWidth = 208;
+      var pageHeight = 295;
+      var imgHeight = canvas.height * imgWidth / canvas.width;
+      var heightLeft = imgHeight;
+      const contentDataURL = canvas.toDataURL('image/png');
+      canvas.toBlob(function (blob) {
+        saveAs(blob, "image.png");
+      });
+      let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
+      var position = 0;
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+      // pdf.save('image.pdf'); // Generated PDF   
+    });
+
+
+
+
+    var data = document.getElementById('legend');
+    html2canvas(data).then(canvas => {
+      // Few necessary setting options  
+      var imgWidth = 208;
+      var pageHeight = 295;
+      var imgHeight = canvas.height * imgWidth / canvas.width;
+      var heightLeft = imgHeight;
+
+      const contentDataURL = canvas.toDataURL('image/png');
+      contentDataURL.attr('download', 'legend.png');
+
+
+      let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
+      var position = 0;
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+      canvas.toBlob(function (blob) {
+        saveAs(blob, "legend.png");
+      });
+      // pdf.save('legened.pdf'); // Generated PDF   
+    });
+
+    const description = document.getElementById("descriptions").textContent;
+    var file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
+    saveAs(file);
+
+
+  }
+
 
 }
