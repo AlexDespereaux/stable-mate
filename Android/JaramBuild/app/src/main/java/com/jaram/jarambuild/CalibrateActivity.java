@@ -1,12 +1,13 @@
 package com.jaram.jarambuild;
 
-import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,14 +20,19 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.jaram.jarambuild.CalibrateUtils.DrawingOnImage;
 import com.jaram.jarambuild.CalibrateUtils.SurfaceImage;
 import com.jaram.jarambuild.roomDb.CaliListByUserViewModel;
 import com.jaram.jarambuild.roomDb.CaliListViewModel;
 import com.jaram.jarambuild.roomDb.Calibration;
 import com.jaram.jarambuild.utils.TinyDB;
+
 import java.util.List;
 import java.util.Objects;
+
+import static com.basgeekball.awesomevalidation.ValidationStyle.BASIC;
 
 public class CalibrateActivity extends AppCompatActivity
 {
@@ -38,12 +44,13 @@ public class CalibrateActivity extends AppCompatActivity
     //results of calibration
     double dFov;
     double pixPerMic;
-    int ocularLens;
-    int objectiveLens;
+    int ocularLens = 1;
+    int objectiveLens = 1;
     String calibrationId;
 
     //buttons
     Button clearBtn;
+    Button cancelBtn;
     Button okBtn;
 
     //textview
@@ -68,7 +75,9 @@ public class CalibrateActivity extends AppCompatActivity
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_calibrate);
 
-        imageholder = (FrameLayout) findViewById(R.id.frame);
+        //TODO: either build custom camera OR retain bitmap in fragment so that bitmap is not lost upon rotation during transition from camera to calibrate activity. https://stackoverflow.com/questions/25570293/image-on-imageview-lost-after-activity-is-destroyed/36360832#36360832
+
+        imageholder = findViewById(R.id.frame);
 
         //get logged in user for db
         tinydb = new TinyDB(this);
@@ -99,8 +108,15 @@ public class CalibrateActivity extends AppCompatActivity
         Log.d(TAG, "added drawingView");
 
         //buttons
-        okBtn = (Button) findViewById(R.id.okBtn);
-        clearBtn = (Button) findViewById(R.id.clearBtn);
+        okBtn = findViewById(R.id.okBtn);
+        clearBtn = findViewById(R.id.clearBtn);
+        cancelBtn = findViewById(R.id.cancelBtn);
+
+        //text
+        instructTxt = findViewById(R.id.instructTxt);
+        //set initial message
+        instructTxt.setBackgroundColor(Color.parseColor("#FFE4690A"));
+        instructTxt.setText(R.string.initialinstruct);
 
         //db
         caliViewModel = ViewModelProviders.of(this).get(CaliListViewModel.class);
@@ -119,13 +135,12 @@ public class CalibrateActivity extends AppCompatActivity
                 }
                 if (drawing.circlePoints.size() > 0 && drawing.circlePoints.size() <= 2)
                 {
-                    Log.d(TAG, "Do This");
+                    instructTxt.setBackgroundColor(Color.parseColor("#FFE4690A"));
+                    instructTxt.setText(R.string.initialinstruct);
                 } else if (drawing.circlePoints.size() > 2 && drawing.circlePoints.size() <= 4)
                 {
-                    Log.d(TAG, "Do This");
-                } else if (drawing.circlePoints.size() > 4 && drawing.circlePoints.size() <= 6)
-                {
-                    Log.d(TAG, "Do This");
+                    instructTxt.setBackgroundColor(Color.parseColor("#FFB12B21"));
+                    instructTxt.setText(R.string.refObjInstruct);
                 }
             }
         });
@@ -142,12 +157,12 @@ public class CalibrateActivity extends AppCompatActivity
                 if (drawing.circlePoints.size() == 2)
                 {
                     drawing.nums = 4;
-                    //objects1 = true;
-                    Log.i("size 2 select  1", "in size 2 sleted 1");
+                    objects1 = true;
+                    instructTxt.setBackgroundColor(Color.parseColor("#FFB12B21"));
+                    instructTxt.setText(R.string.refObjInstruct);
                 }
                 if (drawing.circlePoints.size() == 4)
                 {
-                    Log.i("in ize 4 select  2", "in size 2 sleted 2");
                     objects1 = true;
                 }
                 if (drawing.circlePoints.size() > 3 && objects1)
@@ -155,26 +170,28 @@ public class CalibrateActivity extends AppCompatActivity
                     getInfoDialog();
                 } else if (drawing.circlePoints.size() == 3)
                 {
-                    Toast.makeText(CalibrateActivity.this, "Please draw all dots first", Toast.LENGTH_SHORT).show();
+                    instructTxt.setBackgroundColor(Color.parseColor("#FFB12B21"));
+                    instructTxt.setText(R.string.threepointinstruct);
                 } else if (drawing.circlePoints.size() == 1)
                 {
-                    Toast.makeText(CalibrateActivity.this, "Please draw all dots first", Toast.LENGTH_SHORT).show();
-                }
-
-                if (drawing.circlePoints.size() == 2)
-                {
-                    Log.d(TAG, "Do This");
-                } else if (drawing.circlePoints.size() == 4 && objects1 == false)
-                {
-                    Log.d(TAG, "Do This");
-                } else if (drawing.circlePoints.size() == 4 && objects1 == true)
-                {
-                    Log.d(TAG, "Do This");
+                    instructTxt.setBackgroundColor(Color.parseColor("#FFE4690A"));
+                    instructTxt.setText(R.string.onepointinstruct);
                 }
             }
         });
 
+        //cancel onclick
+        cancelBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                showBackPressDialog();
+            }
+        });
     }
+
+
 
     protected void getInfoDialog()
     {
@@ -187,10 +204,13 @@ public class CalibrateActivity extends AppCompatActivity
 
         alertDialogBuilder.setView(promptsView);
 
+
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int whichButton)
-            {
+            {  //validation
+                AwesomeValidation awesomeValidation = new AwesomeValidation(BASIC);
+                awesomeValidation.addValidation(CalibrateActivity.this, R.id.settingName_input, "/[\\'\\/™€¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾Ņ¿Àā~`\\!@#\\$%\\^&\\*\\(\\)_\\-\\+=\\{\\}\\[\\]\\|;:\"\\<\\>,\\.\\?\\\\\\]/", R.string.nameerror);
                 int inputUnit = ((Spinner) promptsView.findViewById(R.id.input_unit_chooser)).getSelectedItemPosition();
 
                 try
@@ -202,13 +222,13 @@ public class CalibrateActivity extends AppCompatActivity
                     pixPerMic = drawing.calculatePixelsPerMicron(reference, inputUnit);
 
                     //temp toast for debugging
-                    Toast.makeText(CalibrateActivity.this,
-                            "dFOV = " + dFov + " microns"
-                                    + " pixel per micron = " + pixPerMic, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(CalibrateActivity.this,
+                            //"dFOV = " + dFov + " microns"
+                                    //+ " pixel per micron = " + pixPerMic, Toast.LENGTH_LONG).show();
 
                 } catch (NumberFormatException ex)
                 {
-                    Toast.makeText(CalibrateActivity.this, "Please enter valid reference", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Failed to get data from spinner");
                 }
 
                 //get ocular lens details
@@ -218,7 +238,9 @@ public class CalibrateActivity extends AppCompatActivity
                 } catch (
                         NumberFormatException ex)
                 {
-                    Toast.makeText(CalibrateActivity.this, "Please enter valid ocular lens", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "invalid ocular lens input");
+                    //set to default
+                    ocularLens = 1;
                 }
                 //get objective lens details
                 try
@@ -227,20 +249,26 @@ public class CalibrateActivity extends AppCompatActivity
                 } catch (
                         NumberFormatException ex)
                 {
-                    Toast.makeText(CalibrateActivity.this, "Please enter valid objective lens", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "invalid objective lens input");
+                    //set to default
+                    objectiveLens = 1;
                 }
 
                 calibrationId = ((EditText) promptsView.findViewById(R.id.settingName_input)).getText().toString().trim();
 
-                if (calibrationId.equals(""))
+                if (calibrationId.equals("")|| objectiveLens < 1 || ocularLens < 1)
                 {
-                    Toast.makeText(CalibrateActivity.this, "Please enter Calibration Id", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "in valid data");
+                    Toast.makeText(CalibrateActivity.this,"Please enter valid data", Toast.LENGTH_LONG).show();
                 } else
                 {
-                    saveCaliToDatabase(calibrationId, dFov, pixPerMic, ocularLens, objectiveLens);
-                    finish();
-                    Intent homeIntent = new Intent(CalibrateActivity.this, HomeActivity.class);
-                    startActivity(homeIntent);
+                    if(awesomeValidation.validate())
+                    {
+                        saveCaliToDatabase(calibrationId, dFov, pixPerMic, ocularLens, objectiveLens);
+                        finish();
+                        Intent homeIntent = new Intent(CalibrateActivity.this, HomeActivity.class);
+                        startActivity(homeIntent);
+                    }
                 }
             }
         });
@@ -263,9 +291,6 @@ public class CalibrateActivity extends AppCompatActivity
         Log.d(TAG, "Calibration data prior to insert: " + calibrationId + " " + String.valueOf(dFov) + " " + String.valueOf(pixPerMic) + " " + objectiveLens + " " + ocularLens + " " + loggedInUser);
         caliViewModel.addOneCalibration(new Calibration(calibrationId, String.valueOf(dFov), String.valueOf(pixPerMic), objectiveLens, ocularLens, loggedInUser));
         Log.d(TAG, "Calibration saved to dataBase");
-        //debugging
-        //getOneUserCaliListFromDb();
-        //getAllCalibrationsFromDb();
     }
 
     //for debugging
@@ -305,5 +330,36 @@ public class CalibrateActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+
+        showBackPressDialog();
+    }
+
+    private void showBackPressDialog()
+    {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setMessage("Are you want to exit without saving calibration ?");
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNeutralButton("Discard Calibration", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                finish();
+            }
+        });
+        builder.create().show();
     }
 }

@@ -83,7 +83,7 @@ public class FileUtils
         return f.getAbsolutePath();
     }
 
-    public static long getFolderSize(File file) throws Exception
+    public static long getFolderSize(File file)
     {
         long size = 0;
         try

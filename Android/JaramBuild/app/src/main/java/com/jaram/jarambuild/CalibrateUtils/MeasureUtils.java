@@ -7,18 +7,14 @@ public class MeasureUtils
     {
     }
 
-    //Meter conversions - to be used if required (Leaving them out at the moment as too many options on the app makes use fiddly)
+
+
+
+    //Metric measurement conversions
     public static double millimetersToMeters(double measurement)
     {
         return measurement * 0.001;
     }
-
-    public static double metersToMillimeters(double measurement)
-    {
-        return measurement * 1000;
-    }
-
-    //Metric measurement conversions
 
     public static double millimetersToCentimeters(double measurement)
     {
@@ -33,6 +29,11 @@ public class MeasureUtils
     public static double millimetersToNanometers(double measurement)
     {
         return measurement * 1000000;
+    }
+
+    public static double metersToMillimeters(double measurement)
+    {
+        return measurement * 1000;
     }
 
     public static double centimetersToMillimeters(double measurement)

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
 
     <TextView
-        android:id="@+id/heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"
@@ -27,7 +27,6 @@
         android:layout_margin="4dp"></Spinner>
 
     <TextView
-        android:id="@+id/heading2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"
@@ -43,7 +42,6 @@
         android:typeface="normal" />
 
     <TextView
-        android:id="@+id/ocularlbl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -60,12 +58,12 @@
         android:layout_marginEnd="4dp"
         android:layout_marginStart="4dp"
         android:fontFamily="@font/roboto_medium"
-        android:hint="@string/magnification"
+        android:hint="@string/leave_blank_if_not_using_a_microscope"
         android:inputType="numberDecimal"
+        android:maxLength="5"
         android:textAppearance="@style/TextAppearance.AppCompat" />
 
     <TextView
-        android:id="@+id/objectivelbl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_medium"
@@ -81,12 +79,12 @@
         android:layout_marginEnd="4dp"
         android:layout_marginStart="4dp"
         android:fontFamily="@font/roboto_medium"
-        android:hint="@string/magnification"
+        android:hint="@string/leave_blank_if_not_using_a_microscope"
         android:inputType="numberDecimal"
+        android:maxLength="5"
         android:textAppearance="@style/TextAppearance.AppCompat" />
 
     <TextView
-        android:id="@+id/heading3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"

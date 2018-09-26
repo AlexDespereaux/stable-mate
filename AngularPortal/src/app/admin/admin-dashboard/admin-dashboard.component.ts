@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -7,32 +7,21 @@ import { Router } from '@angular/router';
   styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
+  student = '';
+  students = [
+    '12483975',
+    '45142115',
+    '51487669',
+    '15436789'
+  ];
 
-  folders = [];
-  imagesUrl = [ ];
-  constructor(private router: Router) { }
+  image = 'assets/studentIcon.jpg'
+  constructor(private router: Router, private route: ActivatedRoute,) { }
 
   ngOnInit() {
-    this.folders = [
-    {
-      id: '12483975',
-      image: '../../assets/images/img1.JPG'
-    },
-    {
-      id: '45142115',
-      image: '../../assets/images/img2.JPG'
-    },
-    {
-      id: '51487669',
-      image: '../../assets/images/img3.JPG',
-    },
-    {
-      id: '15436789',
-      image: '../../assets/images/img4.JPG'
-    }];
   }
 
-  redirect() {
-    this.router.navigate(['./dashboard']);
+  redirect(student) {
+    this.router.navigate(['student', student], {relativeTo: this.route});
   }
 }

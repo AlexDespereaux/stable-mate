@@ -3,9 +3,12 @@ package ja.burhanrashid52.photoeditor;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -111,14 +114,20 @@ public class PhotoEditor implements BrushViewChangeListener
 
     }
 
-    public void addSBImage(Bitmap desiredImage)
+    public void addSBImage(Bitmap desiredImage, String result, String textColour)
     {
         final View imageRootView = getLayout(ViewType.IMAGESB);
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
+        final TextView text = imageRootView.findViewById(R.id.scaleTextView);
 
         imageView.setImageBitmap(desiredImage);
+        //style text
+        text.setText(result);
+        text.setGravity(Gravity.CENTER);
+        text.setTextColor(Color.parseColor(textColour));
+        text.setTypeface(null, Typeface.BOLD);
         MultiTouchListener multiTouchListener = getMultiTouchListenerNSND();
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl()
         {
@@ -766,7 +775,6 @@ public class PhotoEditor implements BrushViewChangeListener
         }.execute();
     }
 
-
     /**
      * Save the edited image on given path
      *
@@ -776,6 +784,7 @@ public class PhotoEditor implements BrushViewChangeListener
      */
     @SuppressLint("StaticFieldLeak")
     @RequiresPermission(allOf = {Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    //public void saveAsFile(@NonNull final String imagePath, @NonNull final OnSaveListener onSaveListener)
     public void saveAsFile(@NonNull final String imagePath, @NonNull final OnSaveListener onSaveListener)
     {
         Log.d(TAG, "Image Path: " + imagePath);
@@ -811,7 +820,7 @@ public class PhotoEditor implements BrushViewChangeListener
                                 //Original
                                 //drawingCache.compress(Bitmap.CompressFormat.PNG, 100, out);
                                 //Test Compress
-                                drawingCache.compress(Bitmap.CompressFormat.PNG, 80, out);
+                                drawingCache.compress(Bitmap.CompressFormat.PNG, 100, out);
                             }
                             out.flush();
                             out.close();

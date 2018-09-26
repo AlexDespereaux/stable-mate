@@ -1,6 +1,8 @@
 package com.jaram.jarambuild.CalibrateUtils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,6 +14,9 @@ import android.view.SurfaceView;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.jaram.jarambuild.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,19 +27,16 @@ public class DrawingOnImage extends SurfaceView {
     public List<Point> circlePoints;
     private Context context;
     private ViewGroup mainLayout;
-    //private HashMap<Point,Integer> mCircles;
     private SparseArray<Point> mCirclePointer;
     public int nums;
 
 
-    private static int REFERENCE_POINT_COLOR = Color.YELLOW;
+    private static int REFERENCE_POINT_COLOR = Color.parseColor("#FFFF861F");
     private static int MEASURE_POINT_COLOR = Color.RED;
-    private static int MEASURE_POINT_COLOR2 = Color.BLUE;
 
     public DrawingOnImage(Context context, int num) {
         super(context);
         nums = num;
-        // mCircles = new HashMap<Point,Integer>();
         mCirclePointer = new SparseArray<Point>();
         this.context = context;
         paint.setColor(Color.RED);
@@ -45,8 +47,6 @@ public class DrawingOnImage extends SurfaceView {
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
     }
 
-
-
     @Override
     protected void onDraw(Canvas canvas){
         int size = circlePoints.size();
@@ -54,14 +54,11 @@ public class DrawingOnImage extends SurfaceView {
             if(i < 2){
                 paint.setColor(REFERENCE_POINT_COLOR);
             }
-            else if (i>1 && i<4) {
+            else {
                 paint.setColor(MEASURE_POINT_COLOR);
             }
-            else{
-                paint.setColor(MEASURE_POINT_COLOR2);
-            }
             Point p = circlePoints.get(i);
-            canvas.drawCircle(p.x, p.y, 60, paint);
+            canvas.drawCircle(p.x, p.y, 40, paint);
 
             if(i == 1){
                 canvas.drawLine(circlePoints.get(0).x, circlePoints.get(0).y, circlePoints.get(1).x, circlePoints.get(1).y, paint);
@@ -177,13 +174,9 @@ public class DrawingOnImage extends SurfaceView {
         if (circlePoints.size() <= 2){
             circlePoints.remove(circlePoints.size()-1);
             nums=2;
-        } else if (2 < circlePoints.size() & circlePoints.size() <= 4 ){
+        } else{
             circlePoints.remove(circlePoints.size()-1);
             nums=4;
-        }
-        else if (4 < circlePoints.size() & circlePoints.size() <= 6 ){
-            circlePoints.remove(circlePoints.size()-1);
-            nums=6;
         }
         invalidate();
     }
@@ -211,5 +204,13 @@ public class DrawingOnImage extends SurfaceView {
             return -1;
         }
         return MathUtils.computePixelPerMicron(circlePoints, reference, inputUnitIndex);
+    }
+
+    public double calculateCalidFovinPixels(){
+        if(circlePoints.size() != 2 ){
+            Toast.makeText(context, "Select points for desired object", Toast.LENGTH_SHORT).show();
+            return -1;
+        }
+        return MathUtils.computeCheckCaliDistance(circlePoints);
     }
 }

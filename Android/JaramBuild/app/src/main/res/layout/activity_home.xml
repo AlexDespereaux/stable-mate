@@ -7,7 +7,6 @@
     tools:context=".HomeActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -17,7 +16,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView2"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
@@ -26,14 +24,13 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:contentDescription="@string/applogo"
-            app:srcCompat="@drawable/templogo300" />
+            app:srcCompat="@drawable/my_logo" />
 
         <TextView
-            android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:background="?attr/colorPrimary"
+            android:background="@color/jaramOrange"
             android:fontFamily="@font/roboto_medium"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
@@ -44,7 +41,6 @@
             android:textSize="18sp" />
 
         <TableLayout
-            android:id="@+id/tableLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"

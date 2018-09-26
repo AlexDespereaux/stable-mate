@@ -42,7 +42,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linearLayout4"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="8dp"
@@ -53,7 +52,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
 
                 <TextView
-                    android:id="@+id/heading2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
@@ -80,20 +78,19 @@
                     android:textAppearance="@style/TextAppearance.AppCompat" />
 
                 <EditText
-                    android:id="@+id/subjectInput"
+                    android:id="@+id/descInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:ems="10"
                     android:fontFamily="@font/roboto_medium"
-                    android:hint="@string/subject"
+                    android:hint="@string/description"
                     android:inputType="textPersonName"
-                    android:textAppearance="@style/TextAppearance.AppCompat"
-                    android:textColor="@color/white" />
+                    android:textAppearance="@style/TextAppearance.AppCompat" />
 
                 <EditText
-                    android:id="@+id/descInput"
+                    android:id="@+id/notesInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginBottom="8dp"

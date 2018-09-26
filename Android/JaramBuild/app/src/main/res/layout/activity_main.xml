@@ -7,7 +7,6 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -17,7 +16,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView3"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
@@ -25,15 +23,14 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/templogo300"
+            app:srcCompat="@drawable/my_logo"
             android:contentDescription="@string/applogo" />
 
         <TextView
-            android:id="@+id/welcomeTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/jaramOrange"
             android:fontFamily="@font/roboto_medium"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
@@ -41,7 +38,7 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/white"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/emailField"
@@ -52,7 +49,8 @@
             android:ems="10"
             android:fontFamily="@font/roboto_medium"
             android:hint="@string/login_email"
-            android:inputType="textPersonName"
+            android:inputType="textEmailAddress"
+            android:maxLength="254"
             android:textSize="14sp" />
 
         <EditText
@@ -64,7 +62,8 @@
             android:ems="10"
             android:fontFamily="@font/roboto_medium"
             android:hint="@string/password"
-            android:inputType="textPersonName"
+            android:inputType="textPassword"
+            android:maxLength="20"
             android:textSize="14sp" />
 
         <TableLayout
@@ -85,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_done_white_48dp"
+                    android:drawableTop="@drawable/ic_done_white_48dp_debug"
                     android:fontFamily="@font/roboto_medium"
                     android:text="@string/login"
                     android:textAlignment="center"

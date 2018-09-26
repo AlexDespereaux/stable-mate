@@ -1,15 +1,23 @@
 package com.jaram.jarambuild;
 
+import android.Manifest;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,52 +28,69 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//upload utils
-import net.gotev.uploadservice.BinaryUploadRequest;
-import net.gotev.uploadservice.MultipartUploadRequest;
-import net.gotev.uploadservice.UploadNotificationConfig;
-//json utils
-import org.json.JSONException;
-import org.json.JSONObject;
-//binary creation utils
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-//shared prefs
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.jaram.jarambuild.adapters.LegendListAdapter;
 import com.jaram.jarambuild.models.EditModel;
+import com.jaram.jarambuild.roomDb.AppDatabase;
+import com.jaram.jarambuild.roomDb.Image;
+import com.jaram.jarambuild.roomDb.ImageListViewModel;
+import com.jaram.jarambuild.roomDb.Legend;
+import com.jaram.jarambuild.roomDb.LegendListViewModel;
+import com.jaram.jarambuild.roomDb.User;
+import com.jaram.jarambuild.uploadService.GenerateUploadRequestService;
+import com.jaram.jarambuild.utils.ImageIdEvent;
+import com.jaram.jarambuild.utils.LegendCreatedEvent;
 import com.jaram.jarambuild.utils.TinyDB;
+
+import net.gotev.uploadservice.BinaryUploadRequest;
+import net.gotev.uploadservice.UploadNotificationConfig;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import static com.jaram.jarambuild.HomeActivity.REQUEST_PERMISSION;
+import static com.jaram.jarambuild.roomDb.AppDatabase.getDatabase;
+import static java.security.AccessController.getContext;
+
 
 public class AddDataActivity extends AppCompatActivity implements View.OnClickListener
 {
     //set log name
     private String TAG = "AddData";
 
+    //layout
     private EditText imgTitleInput;
-    private EditText subjectInput;
-    private EditText descInput;
+    private EditText descriptionInput;
+    private EditText notesInput;
     private TextView legendHeading;
 
-    //JSON data variables
+    //variables
     private String imgTitle;
-    private String subject;
-    private String desc;
+    private String description;
+    private String notes;
     private String editedImgUri;
     private String rawImgUri;
-    private String userName;
-    private String userPassword;
-    private String studentNo;
-    private JSONObject uploadObj;
-    private String utcTime;
     private String pathName;
     private String jsonPathName;
-
-    //Shared Prefs
-    TinyDB tinydb;
+    private String fusedLocationLong;
+    private String fusedLocationLat;
+    private Double dFov;
+    private Double pixelsPerMicron;
+    private int uploadId = -1;
+    List<Image> imagesToBeUploadedList;
 
     //List of sticker images (drawable resource files)
     int[] stickerList;
@@ -81,6 +106,25 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     //check if there are legend rows to discern if the heading should be displayed
     private boolean isLegend = false;
 
+    //counter to check number of legends saved to database = total legends in image (reset each image upload)
+    int legendUpLoadCounter = 0;
+    int imageIdFromEvent;
+
+    //db
+    private LegendListViewModel legendViewModel;
+    private ImageListViewModel imageViewModel;
+    Context context;
+    private AppDatabase db;
+
+    //get logged in user
+    TinyDB tinydb;
+    String loggedInUser; // email address, which is primary key of user db
+
+    //user details
+    String userFirstName;
+    String userLastName;
+    String userPword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -91,7 +135,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         genLegend();
 
         //Recycler View
-        legendRecyclerView = (RecyclerView) findViewById(R.id.legendRecycler);
+        legendRecyclerView = findViewById(R.id.legendRecycler);
         legendRecyclerView.setNestedScrollingEnabled(false);
         editModelArrayList = populateList();
         legendListAdapter = new LegendListAdapter(this, editModelArrayList);
@@ -108,8 +152,8 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
         //text fields
         imgTitleInput = findViewById(R.id.imgTitleInput);
-        subjectInput = findViewById(R.id.subjectInput);
-        descInput = findViewById(R.id.descInput);
+        descriptionInput = findViewById(R.id.descInput);
+        notesInput = findViewById(R.id.notesInput);
 
         //register listeners
         saveBtn.setOnClickListener(this);
@@ -117,9 +161,119 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
         //Get raw image from intent
         rawImgUri = getIntent().getStringExtra("rawImageUri");
-        //Get bitmap from EditImageActivity and add to image view
+        //Get edited bitmap from EditImageActivity and add to image view
         editedImgUri = getIntent().getStringExtra("editedImageUri");
+        //get edited image dfov & pixels per micron from intent
+        dFov = Objects.requireNonNull(getIntent().getExtras()).getDouble("dFov");
+        pixelsPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("pixelsPerMicron");
+
+        //set image in view
         setImageView();
+
+        //db
+        legendViewModel = ViewModelProviders.of(this).get(LegendListViewModel.class);
+        imageViewModel = ViewModelProviders.of(this).get(ImageListViewModel.class);
+        db = AppDatabase.getDatabase(getApplicationContext());
+
+        //get logged in user for db
+        tinydb = new TinyDB(this);
+        loggedInUser = tinydb.getString("loggedInAccount");
+        Log.d(TAG, "loggedInUser: " + loggedInUser);
+
+        //uploading
+        AndroidNetworking.initialize(getApplicationContext());
+
+        //check internet permissions
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) !=
+                PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, REQUEST_PERMISSION);
+            Log.d(TAG, "Requesting Permissions ");
+        } else
+        {
+            Log.d(TAG, "Has internet permission ");
+        }
+
+        //home button in action bar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
+        if (toolbar != null)
+        {
+            toolbar.setLogo(R.drawable.my_logo_shadow_96px);
+
+            //Listener for item selection change
+            toolbar.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    showBackPressDialog();
+                }
+            });
+        }
+    }
+
+    //**************RECEIVERS & EVENTS**************************************************
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_PERMISSION && grantResults.length > 0)
+        {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                Toast.makeText(this, "Thanks for granting Permission", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop()
+    {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe
+    public void onImageIdEvent(ImageIdEvent event) //returns ImageId from database upon image save to database
+    {
+        legendUpLoadCounter = 0;
+        Log.d(TAG, "Image ID from ImageIdEvent " + event.imageIdMessage);
+        imageIdFromEvent = (int) event.imageIdMessage;
+        saveLegendToDb(imageIdFromEvent);
+    }
+
+    @Subscribe
+    public void onLegendCreatedEvent(LegendCreatedEvent event)
+    {
+        //this method ensures all the legend db entries are created prior to attempting data upload
+        Log.d(TAG, "legend created " + event.legendCreated);
+        legendUpLoadCounter++; //checks the no of legend entries sent to database
+        Log.d(TAG, "inEL count = " + legendUpLoadCounter + "arr " + LegendListAdapter.editModelArrayList.size());
+        //if the amount of legend objects entered in to room db = the size of the list of legends progress to upload
+        if (legendUpLoadCounter == LegendListAdapter.editModelArrayList.size())//check that all legend rows have been added to the database prior to upload
+        {
+            Intent mServiceIntent = new Intent();
+            //add user to intent
+            //mServiceIntent.putExtra("loggedInUser", loggedInUser);
+            //mServiceIntent.putExtra("loggedInUserPWord", userPword);
+            //TODO: change once user account creation established (above)
+            mServiceIntent.putExtra("loggedInUser", "marita");
+            mServiceIntent.putExtra("loggedInUserPWord", "fitz4321");
+
+            // Starts the JobIntentService
+            GenerateUploadRequestService.enqueueGURSWork(this, mServiceIntent);
+            Log.d(TAG, "enqueueGURSWork call to JobIntentService");
+            returnToHome();
+        }
     }
 
     @Override
@@ -133,22 +287,19 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if(item.getItemId()== R.id.settingsMenuBtn)
+        if (item.getItemId() == R.id.settingsMenuBtn)
         {
             Log.d(TAG, "Settings Btn Clicked");
             //Go to settings activity
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
-        }
-        else if(item.getItemId()== R.id.helpMenuBtn)
+        } else if (item.getItemId() == R.id.helpMenuBtn)
         {
             //TODO Make help activity
             Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Help Btn Clicked");
 
-        }
-
-        else if(item.getItemId()== R.id.logoutMenuBtn)
+        } else if (item.getItemId() == R.id.logoutMenuBtn)
         {
             Log.d(TAG, "Logout Btn Clicked");
             //set logged in user to null
@@ -157,8 +308,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             Intent settingsIntent = new Intent(this, MainActivity.class);
             startActivity(settingsIntent);
             finish();
-        }
-        else
+        } else
         {
             return super.onOptionsItemSelected(item);
         }
@@ -171,23 +321,67 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId())
         {
             case R.id.saveBtn:
-                // Binary upload
-                //uploadToCloudBinary(v);
-
-                //JSON upload
-                //uploadToCloudJson(v);
-
-                //Test Upload
-                //uploadTest(getApplicationContext());
+                //get text data from fields (not legend list)
+                getTexts();
+                //get User Details for upload
+                getUserDetails();
+                getLocation();
+                //Save Image in database
+                saveImageToDb();
                 break;
             case R.id.cancelBtn:
-                //Return to home activity
-                Intent cancelIntent = new Intent(this, HomeActivity.class);
-                startActivity(cancelIntent);
+                showBackPressDialog();
                 //TODO delete generated files
-                Log.e(TAG, "Returned to home");
-                finish();
                 break;
+        }
+    }
+
+
+    private void uploadImages(Image image) // uploads raw and edited images to s3 bucket then generates matching json bject which is sent to the server
+    {
+        //id is the image id that is waiting to be uploaded
+        int returnedUploadIdRaw = -1;
+        int returnedUploadIdEdit = -1;
+
+        //for testing
+        returnedUploadIdRaw = 80214;
+        returnedUploadIdEdit = 80214;
+
+        String raw_img_path_from_db = image.getPhotoPath_raw();
+        String edit_img_path_from_db = image.getPhotoPath_edited();
+
+        uploadBinary(this, edit_img_path_from_db);
+
+        // if both images uploaded
+        /*
+        if (returnedUploadIdRaw != -1 && returnedUploadIdEdit != -1)//if first image upload was a success
+        {
+            //create JSON obect with returned upload id and upload it
+            createJsonObj(id, returnedUploadIdEdit);
+        }*/
+    }
+    //**************************helpers***********************************************************************
+
+    private void saveImageToDb()
+    {
+        imageViewModel.addOneImage(new Image(imgTitle, description, notes, getUnixEpochTime(), fusedLocationLong, fusedLocationLat, Double.toString(dFov), Double.toString(pixelsPerMicron), uploadId, rawImgUri, editedImgUri, loggedInUser));
+        Log.d(TAG, "Image saved to dataBase");
+    }
+
+    private void saveLegendToDb(int imageId) // after the image paths and data have been added to database image Id is returned and used as the foreign key in the legend rows
+    {
+        String legendText;
+        String stickerImgName;
+        String[] stickerListNamesArr = com.jaram.jarambuild.utils.StickerConstants.getStickerListPaths();
+        for (int i = 0; i < LegendListAdapter.editModelArrayList.size(); i++)
+        {
+
+            legendText = LegendListAdapter.editModelArrayList.get(i).getEditTextValue();
+            stickerImgName = stickerListNamesArr[LegendListAdapter.editModelArrayList.get(i).getStickerIndex()];
+            context = getApplicationContext();
+            //saveLegendToDatabase(stickerImgName, legendText, imageId);
+            legendViewModel.addOneLegend(new Legend(stickerImgName, legendText, imageId));
+            Log.d(TAG, "Legend saved to dataBase");
         }
     }
 
@@ -196,16 +390,28 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         ImageView imageView = findViewById(R.id.imageView);
         if (editedImgUri.equals(""))
         {
-            //TODO: add failBitmap
             Toast.makeText(this, "Unable to set imageView", Toast.LENGTH_SHORT).show();
         } else
         {
-            //TODO: scale image for display if required-> https://github.com/codepath/android_guides/wiki/Working-with-the-ImageView
-            //Bitmap scaledImg = JBitmapScaler.scaleToFitWidth(BitmapFactory.decodeFile(editedImgUri), 400);
-            //imageView.setImageBitmap(scaledImg);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(editedImgUri, bmOptions);
             imageView.setImageBitmap(bitmap);
+        }
+    }
+
+    private void getLocation()
+    {
+        //default value = false
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean saveLocation = settings.getBoolean("LocationSwitch", false);
+        if (saveLocation)
+        {
+            Log.d(TAG, "Location saved");
+        } else
+        {
+            //deliberately invalid valid values are lat +90 to -90 long +180 to -180
+            fusedLocationLong = "181";
+            fusedLocationLat = "181";
         }
     }
 
@@ -213,34 +419,32 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     {
         //get data as strings from image input fields
         imgTitle = imgTitleInput.getText().toString().trim();
-        subject = subjectInput.getText().toString().trim();
-        desc = descInput.getText().toString().trim();
+        description = descriptionInput.getText().toString().trim();
+        notes = notesInput.getText().toString().trim();
     }
 
     private void getUserDetails()
     {
-        userName = "test";
-        userPassword = "pass";
-        studentNo = "12345678";
-        //TODO: get data from shared preferences once login & signup set
+        User user =
+                getDatabase(this)
+                        .getUserDao()
+                        .getUserbyId(loggedInUser);
+        if (user != null)
+        {
+            Log.d(TAG, "User exists " + user.toString());
+            userFirstName = user.getPWord();
+            userLastName = user.getFirstName();
+            userPword = user.getLastName();
+        } else
+        {
+            Log.d(TAG, "user does not exist");
+        }
     }
 
-    private String convertToBase64(String imagePath)
+    public String getUnixEpochTime()
     {
-        //TODO make quality settings user controlled in settings
-        Bitmap bm = BitmapFactory.decodeFile(imagePath);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.PNG, 75, baos);
-        byte[] byteArrayImage = baos.toByteArray();
-        Log.d(TAG, "Image converted to Base64");
-        return Base64.encodeToString(byteArrayImage, Base64.NO_WRAP);
-    }
-
-    public void getUTCTime(View view)
-    {
-        //TODO: make date UTC
-        //long time = getTime();
-        utcTime = "123456";
+        Date dateObj = new Date();
+        return Long.toString(dateObj.getTime());
     }
 
     public void genLegend()
@@ -257,20 +461,12 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         hs.addAll(sliList);
         sliList.clear();
         sliList.addAll(hs);
-
-        //For Debugging
-        /*
-        Iterator itr = sliList.iterator();
-        while (itr.hasNext())
-        {
-            Log.d(TAG, "iterated array list " + itr.next());
-        }*/
     }
 
     private ArrayList<EditModel> populateList()
     {
         ArrayList<EditModel> list = new ArrayList<>();
-        for (int a = 0; a <sliList.size(); a++)
+        for (int a = 0; a < sliList.size(); a++)
         {
             isLegend = true;
             String sLindex = sliList.get(a);
@@ -289,206 +485,73 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private void setLegendHeadingVis()
     {
         //if there is no legend symbols to collect data for, hide the legend section heading
-        if(!isLegend)
+        if (!isLegend)
         {
             legendHeading.setVisibility(View.GONE);
         }
     }
 
+    //************************UPLOAD IMAGE****************************
 
-
-
-
-    //UPLOAD TEST CODE*****************************************************************************************************
-
-
-    private void uploadToCloudBinary(View v)
-    {
-        getUTCTime(v);
-        createJsonObj(getApplicationContext());
-        uploadBinary(getApplicationContext());
-    }
-
-    private void uploadToCloudJson(View v)
-    {
-        getUTCTime(v);
-        createJsonObj(getApplicationContext());
-        uploadJson(getApplicationContext());
-    }
-
-    private void createJsonObj(Context context)
-    {
-        //get user data from shared prefs
-        getUserDetails();
-        //get data input by user into this activity
-        getTexts();
-        //convert image from image path to Base64 string
-        String editedImgBase64 = convertToBase64(editedImgUri);
-        //create JSON object
-        uploadObj = new JSONObject();
-        try
-        {
-            uploadObj.put("user", userName);
-            uploadObj.put("password", userPassword);
-            uploadObj.put("studentNo", studentNo);
-            uploadObj.put("editedImage64", editedImgBase64);
-            uploadObj.put("imgTitle", imgTitle);
-            uploadObj.put("subject", subject);
-            uploadObj.put("description", desc);
-
-        } catch (JSONException e)
-        {
-            Log.e(TAG, "JSONException: " + e.getMessage());
-        } catch (java.lang.NumberFormatException e)
-        {
-            Log.e(TAG, "NumberFormatException" + e.getMessage());
-            return;
-        }
-
-        //write JSON Object to string and save in file
-        if (uploadObj != null)
-        {
-            Log.d(TAG, "Created JSON Object");
-            writeJsonToBinaryFile(context, uploadObj);
-            writeJsonToFile(context, uploadObj);
-        } else
-        {
-            Log.d(TAG, "JSON Object is null, Upload failed");
-        }
-    }
-
-    private void writeJsonToBinaryFile(Context context, JSONObject uploadObj)
-    {
-        //write binary file
-        try
-        {
-            //note I have had to include a replace backslash as during conversion to JSON escape characters \ are added in every instance there is a /
-            //in the base64 image string(ugh) corrupting the image. Apparently this can be also avoided by putting the base64 in a JSON array inside the object. I'll try that next!
-            //OR we can use multipart upload and I will only replace in the base64 files which don't have a \ in the alphabet choices choices
-            String objString = uploadObj.toString().replace("\\", "");
-
-            File path = context.getFilesDir();
-            //File newFile = new File(path + utcTime + ".dat");  //final code
-            File newFile = new File(path + "testfile" + ".dat");  //for testing only
-            FileOutputStream fos = new FileOutputStream(newFile);
-            fos.write(objString.getBytes());
-            //fos.write(uploadObj.toString().getBytes());  //to use if base64 image no ling requires replace
-            fos.flush();
-            fos.close();
-            Log.d(TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
-            pathName = newFile.getAbsolutePath();
-        } catch (Exception e)
-        {
-            Log.d(TAG, "Unable to save file", e);
-        }
-    }
-
-    private void writeJsonToFile(Context context, JSONObject uploadObj)
-    {
-        //write binary file
-        try
-        {
-            //note I have had to include a replace backslash as during conversion to JSON escape characters \ are added in every instance there is a /
-            //in the base64 image string(ugh) corrupting the image. Apparently this can be also avoided by putting the base64 in a JSON array inside the object. I'll try that next!
-            //OR we can use multipart upload and I will only replace in the base64 files which don't have a \ in the alphabet choices choices
-            String objString = uploadObj.toString().replace("\\", "");
-
-            File path = context.getFilesDir();
-            //File newFile = new File(path + utcTime + ".dat");  //final code
-            File newFile = new File(path + "testfile" + ".json");  //for testing only
-            FileOutputStream fos = new FileOutputStream(newFile);
-            fos.write(objString.getBytes());
-            //fos.write(uploadObj.toString().getBytes());  //to use if base64 image no ling requires replace
-            fos.flush();
-            fos.close();
-            Log.d(TAG, "File " + newFile.getName() + " is saved successfully at " + newFile.getAbsolutePath());
-            jsonPathName = newFile.getAbsolutePath();
-        } catch (Exception e)
-        {
-            Log.d(TAG, "Unable to save file", e);
-        }
-    }
-
-    public void uploadJson(final Context context)
+    public void uploadBinary(final Context context, String path)
     {
         try
         {
             String uploadId =
-                    new BinaryUploadRequest(context, "http://192.168.1.108:3000/upload/binary")
-                            .setFileToUpload(pathName)
-                            .addHeader("file-name", new File(jsonPathName).getName())
+                    new BinaryUploadRequest(this, "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image")
+                            .setFileToUpload(path)
+                            //.setFileToUpload(editedImgUri)
+                            .addHeader("token", "1F8065545D842E0098709630DBDBEB596D4D6194")
+                            .addHeader("Content-Type", "image/png")
                             .setNotificationConfig(new UploadNotificationConfig())
-                            .setMaxRetries(2)
+                            .setMaxRetries(4)
                             .startUpload();
             Log.d(TAG, "Binary File uploaded");
         } catch (Exception exc)
         {
             Log.e("AndroidUploadService", exc.getMessage(), exc);
         }
-
-        //TODO: check sucessful upload & delete system image files & Obj upon confirm
-        //TODO: save binary files to database and load from database in loop IF wifi access available. Otherwise wait for broadcast RX msg
     }
 
-    //TODO Just added for testing
-    public void uploadTestBinary(final Context context)
+    private void returnToHome()
     {
-        try
-        {
-            String uploadId =
-                    new BinaryUploadRequest(context, "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image")
-                            .setFileToUpload(rawImgUri)
-                            .addHeader("token", "1F8065545D842E0098709630DBDBEB596D4D6194")
-                            .setNotificationConfig(new UploadNotificationConfig())
-                            .setMaxRetries(2)
-                            .startUpload();
-            Log.d(TAG, "Binary File uploaded " + rawImgUri);
-        } catch (Exception exc)
-        {
-            Log.e("AndroidUploadService", exc.getMessage(), exc);
-        }
+        Intent homeIntent = new Intent(this, HomeActivity.class);
+        startActivity(homeIntent);
     }
 
-    public void uploadTest(final Context context) {
-        try {
-            String uploadId =
-                    new MultipartUploadRequest(context, "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image")
-                            // starting from 3.1+, you can also use content:// URI string instead of absolute file
-                            .addFileToUpload(editedImgUri, "raw_img")
-                            .addHeader("token", "1F8065545D842E0098709630DBDBEB596D4D6194")
-                            .addHeader("content", "png")
-                            .setNotificationConfig(new UploadNotificationConfig())
-                            .setMaxRetries(2)
-                            .startUpload();
-        } catch (Exception exc) {
-            Log.e("AndroidUploadService", exc.getMessage(), exc);
-        }
-    }
+    //************************DIALOGS****************************
 
-
-    public void uploadBinary(final Context context)
+    @Override
+    public void onBackPressed()
     {
-        try
-        {
-            String uploadId =
-                    new BinaryUploadRequest(context, "http://192.168.1.108:3000/upload/binary")
-                            .setFileToUpload(pathName)
-                            .addHeader("file-name", new File(pathName).getName())
-                            .setNotificationConfig(new UploadNotificationConfig())
-                            .setMaxRetries(2)
-                            .startUpload();
-            Log.d(TAG, "Binary File uploaded");
-        } catch (Exception exc)
-        {
-            Log.e("AndroidUploadService", exc.getMessage(), exc);
-        }
 
-        //TODO: check sucessful upload & delete system image files & Obj upon confirm
-        //TODO: save binary files to database and load from database in loop IF wifi access available. Otherwise wait for broadcast RX msg
+        showBackPressDialog();
+        // Otherwise defer to system default behavior.
+        //super.onBackPressed();
     }
 
+    private void showBackPressDialog()
+    {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setMessage("Are you want to exit without saving image ?");
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+            }
+        });
 
-
-
+        builder.setNeutralButton("Discard Image", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                finish();
+            }
+        });
+        builder.create().show();
+    }
 }
 

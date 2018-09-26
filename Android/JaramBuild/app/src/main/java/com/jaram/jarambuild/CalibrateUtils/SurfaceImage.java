@@ -31,10 +31,6 @@ public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        /*
-        int newWidth = canvas.getHeight() * icon.getWidth() / icon.getHeight();
-        icon = Bitmap.createScaledBitmap(icon, newWidth, canvas.getHeight(), false);
-        Log.d(TAG, "in onDraw");  */
 
         //Get screen size
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
@@ -44,6 +40,13 @@ public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback 
         // Determine the constrained dimension, which determines both dimensions.
         int width;
         int height;
+        if (bitmap.getWidth() > bitmap.getHeight()) //flip in the case its a samsung.. le sigh
+        {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            matrix.preScale(1, 1);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        }
         float widthRatio = (float)bitmap.getWidth() / maxWidth;
         float heightRatio = (float)bitmap.getHeight() / maxHeight;
         // Width constrained.
@@ -56,7 +59,6 @@ public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback 
             height = maxHeight;
             width = (int)(((float)height / bitmap.getHeight()) * bitmap.getWidth());
         }
-        Bitmap scaledBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
         float ratioX = (float)width / bitmap.getWidth();
         float ratioY = (float)height / bitmap.getHeight();
@@ -68,10 +70,6 @@ public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback 
         //canvas = new Canvas(scaledBitmap);
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-/*
-        int cx = (canvas.getWidth() - icon.getWidth()) / 2;
-        int cy = (canvas.getHeight() - icon.getHeight()) / 2;
-        canvas.drawBitmap(icon, cx, cy, paint);  */
     }
 
     @Override
@@ -95,9 +93,7 @@ public class SurfaceImage extends SurfaceView implements SurfaceHolder.Callback 
             }
         }
     }
-
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
     }
 }
-

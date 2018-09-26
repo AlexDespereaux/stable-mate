@@ -1,41 +1,40 @@
 package com.jaram.jarambuild;
 
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+
 import com.jaram.jarambuild.imageUtils.PropertiesBSFragment;
 import com.jaram.jarambuild.imageUtils.StickerBSFragment;
 import com.jaram.jarambuild.imageUtils.TextEditorDialogFragment;
 import com.jaram.jarambuild.utils.AddStickerEvent;
 import com.jaram.jarambuild.utils.TinyDB;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
+
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
@@ -57,12 +56,21 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private StickerBSFragment mStickerBSFragment;
     private String imageFilePath;
     private String editedImageFilePath = "";
+    private String croppedFilePath;
     //log
     private static final String TAG = "EditActivity";
     //list of stickerList index's used in imageviews
     private ArrayList<String> sliList;
     //shared preferances
     TinyDB tinydb;
+    //scalebar
+    double dFov;
+    double pixelsPerMicron;
+    int scaleBarColourIndex;
+    double croppedImgPixelPerMicron;
+    //image size
+    double mvHeight;
+    double mvWidth;
 
     public static void launch(Context context, ArrayList<String> imagesPath)
     {
@@ -97,11 +105,28 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         mPhotoEditor.setOnPhotoEditorListener(this);
 
-        //Get bitmap uri from intent
+        //Get raw Image from intent
         imageFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("rawPhotoPath");
         Log.d(TAG, "imageFilePath: " + imageFilePath);
+        //Get cropped Image from Intent
+        croppedFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("croppedPhotoPath");
+        Log.d(TAG, "croppedFilePath: " + croppedFilePath);
+        //Get dFov from intent
+        dFov = Objects.requireNonNull(getIntent().getExtras()).getDouble("confirmedDFOv"); // of raw image scaled to a width of imageWidthInCCView
+        Log.d(TAG, "dFov from intent: " + dFov + " microns"); // of raw image scaled to a width of imageWidthInCCView
+        //Get Pixels per micron from intent
+        pixelsPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("confirmedPixelsPerMicron"); // of raw image scaled to a width of imageWidthInCCView
+        Log.d(TAG, "pixels per micron from intent: " + pixelsPerMicron); // of raw image scaled to a width of imageWidthInCCView
+        scaleBarColourIndex = Objects.requireNonNull(getIntent().getExtras()).getInt("scaleBarColourIndex");
+        Log.d(TAG, "scaleBarColourIndex from intent: " + scaleBarColourIndex);
+        //Get Pixels per micron of cropped image from intent
+        croppedImgPixelPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("croppedPixelsPerMicron");
+
+        //get bitmap
+        Bitmap bitmap = BitmapFactory.decodeFile(croppedFilePath);
+
         //set bitmap to editor view
-        mPhotoEditorView.getSource().setImageBitmap(BitmapFactory.decodeFile(imageFilePath));
+        mPhotoEditorView.getSource().setImageBitmap(bitmap);
 
         //hide action bar
         android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
@@ -114,20 +139,24 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         //instantiate sliList
         sliList = new ArrayList<String>();
 
-        //show Calibration check dialog
-        //TODO: Settings check for calibration reminder
-        if (true)
-        {
-            //show calibration reminder
-            showCaliRemindDialog();
-        } else
-        {
-            //show scale bar colour dialog
-            createSBColourDialog();
-        }
-
         //shared preferences helper
         tinydb = new TinyDB(this);
+
+        //listener for image size
+        mPhotoEditorView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
+        {
+            @Override
+            public void onGlobalLayout()
+            {
+                mPhotoEditorView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mvHeight = mPhotoEditorView.getHeight(); //height is ready
+                mvWidth = mPhotoEditorView.getWidth(); //width is ready
+                Log.d(TAG, "mviewHeight:" + mvHeight + " " + "mviewWidth:" + mvWidth);
+
+                //insert scalebar
+                selectSBColour(scaleBarColourIndex);
+            }
+        });
     }
 
 
@@ -147,6 +176,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         Button imgText;
         Button imgSticker;
         Button imgSave;
+
         Button imgClose;
 
         mPhotoEditorView = findViewById(R.id.photoEditorView);
@@ -212,7 +242,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         //the notSticker place holder must be added into the array list so that in the instance the last view
         //added was not an image, it will be removed from the arraylist in the onRemoveListener, otherwise ONLY
         // image views would be removed from arraylist. Which would be unfortunate hehe..
-        if(!viewType.equals(ViewType.IMAGE))
+        if (!viewType.equals(ViewType.IMAGE))
         {
             sliList.add("notSticker");
             Log.d(TAG, "Non image view descriptor added to arraylist");
@@ -224,9 +254,9 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     {
         Log.d(TAG, "onRemoveViewListener() called with: numberOfAddedViews = [" + numberOfAddedViews + "]");
         //removes last added view string in arraylist
-        if(sliList.size() > 0)
+        if (sliList.size() > 0)
         {
-            sliList.remove(sliList.size()-1);
+            sliList.remove(sliList.size() - 1);
             Log.d(TAG, "View removed from arraylist");
         }
     }
@@ -242,6 +272,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     {
         Log.d(TAG, "onStopViewChangeListener() called with: viewType = [" + viewType + "]");
     }
+
 
     @Override
     public void onClick(View view)
@@ -296,7 +327,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     {
         //add sticker Index List to shared pref - not using intent (extras) as I want to ensure list is available should users
         //use back key.
-        tinydb.putListString("stickerIndexAL", sliList );
+        tinydb.putListString("stickerIndexAL", sliList);
         Log.d(TAG, "sliList added to SP");
 
         if (requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
@@ -316,6 +347,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         Intent intent = new Intent(EditImageActivity.this, AddDataActivity.class);
                         intent.putExtra("editedImageUri", editedImageFilePath);
                         intent.putExtra("rawImageUri", imageFilePath);
+                        intent.putExtra("dFov", dFov);
+                        intent.putExtra("pixelsPerMicron", pixelsPerMicron);
                         startActivity(intent);
                         finish();
                     }
@@ -329,34 +362,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             } catch (IOException e)
             {
                 e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (resultCode == RESULT_OK)
-        {
-            switch (requestCode)
-            {
-                case CAMERA_REQUEST:
-                    mPhotoEditor.clearAllViews();
-                    Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    mPhotoEditorView.getSource().setImageBitmap(photo);
-                    break;
-                case PICK_REQUEST:
-                    try
-                    {
-                        mPhotoEditor.clearAllViews();
-                        Uri uri = data.getData();
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                        mPhotoEditorView.getSource().setImageBitmap(bitmap);
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    break;
             }
         }
     }
@@ -426,64 +431,103 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         builder.create().show();
     }
 
-    // this dialog lets the user choose the colour of the scale bar
-    private void createSBColourDialog()
-    {
-        AlertDialog.Builder sBColourDialog = new AlertDialog.Builder(this);
-
-        sBColourDialog.setTitle("Set Scale Bar Colour")
-                .setItems(R.array.sbcolour, new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int pos)
-                    {
-                        selectSBColour(pos);
-                    }
-                });
-        sBColourDialog.show();
-    }
-
     private void selectSBColour(int pos)
     {
         Bitmap bm;
+        String colour;
         //choose bitmap colour (using position in sbcolour string array)
         switch (pos)
         {
-            case 0: //grey
+            case 0:
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.scalegrey);
-                insertSBandText(bm);
+                colour = "#858585";
+                insertSBandText(bm, colour);
                 Log.d(TAG, "Grey Scale Bar colour selected");
                 break;
             case 1:
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.scaleblack);
-                insertSBandText(bm);
+                colour = "#000000";
+                insertSBandText(bm, colour);
                 Log.d(TAG, "Black Scale Bar colour selected");
                 break;
             case 2:
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.scalewhite);
-                insertSBandText(bm);
+                colour = "#ffffff";
+                insertSBandText(bm, colour);
                 Log.d(TAG, "White Scale Bar colour selected");
                 break;
         }
     }
 
-    private void insertSBandText(Bitmap bm)
+    private void insertSBandText(Bitmap bm, String textColour)
     {
-        //size of image in view
-        double vHeight = mPhotoEditorView.getHeight();
-        double vWidth = mPhotoEditorView.getWidth();
-        Log.d(TAG, "viewHeight:" + vHeight + " " + "viewWidth:" + vWidth);
-        //size of actual image
-        double mvHeight = mPhotoEditorView.getMeasuredHeight();
-        double mvWidth = mPhotoEditorView.getMeasuredWidth();
-        Log.d(TAG, "mviewHeight:" + mvHeight + " " + "mviewWidth:" + mvWidth);
+        //variable to store pixel width of scalebar
+        double tempPixels = croppedImgPixelPerMicron;
 
-        //scale to desired width etc  TODO: use calibration data here
-        int h = 30; // height in pixels
-        int w = 150; // width in pixels
+        //get optimal scale bar width range in pixels
+        double maxSbWidthInDouble = mvWidth / 4; // 1/4 image width
+        double minSbWidthInDouble = mvWidth / 6; // 1/6 image width
+
+        //get scale bar height (1/40 image height)
+        double sbHeightInDouble = mvHeight / 40;
+        Log.d(TAG, "Max sbW: " + maxSbWidthInDouble + " Min sbW: " + minSbWidthInDouble);
+        Log.d(TAG, "Max sbH: " + sbHeightInDouble);
+
+        //round to int
+        int maxSbWidth = (int) Math.round(maxSbWidthInDouble);
+        int minSbWidth = (int) Math.round(minSbWidthInDouble);
+        int h = (int) Math.round(sbHeightInDouble);
+
+        //calculate scale bar width
+        double resultSbSizeinMicrons = 1;
+        while (tempPixels < minSbWidth)
+        {
+            //calculate the value of the scale bar
+            resultSbSizeinMicrons *= 2;
+            tempPixels *= 2;
+            Log.d(TAG, " < loop temp pix: " + tempPixels);
+        }
+
+        while (tempPixels > maxSbWidth)
+        {
+            //calculate the value of the scale bar
+            resultSbSizeinMicrons /= 2;
+            tempPixels /= 2;
+            Log.d(TAG, " > loop temp pix: " + tempPixels);
+        }
+        int w = (int) Math.round(tempPixels);
+
+        //set scale bar text
+        /*
+        String unit = "microns";
+       if( (resultSbSizeinMicrons < 0 ) && (resultSbSizeinMicrons < 0 ) ) //centimeters
+       {
+
+       }
+       else if((resultSbSizeinMicrons > 1000) && (resultSbSizeinMicrons < )) // millimeters
+       {
+
+       }
+       else if() // microns
+       {
+
+       }
+       else if() //nano
+       {
+
+       }
+       else
+       {
+
+       }*/
+
+        String resultPrintString = "  " + Double.toString(resultSbSizeinMicrons) + " microns  ";
+        Log.d(TAG, "Scale Bar width = " + w + " Scale bar height = " + h);
+
         Bitmap scaled = Bitmap.createScaledBitmap(bm, w, h, true); // Make sure w and h are in the correct order
         //insert bitmap
-        mPhotoEditor.addSBImage(scaled);
-        Log.d(TAG, "Scale Bar inserted");
+        mPhotoEditor.addSBImage(scaled, resultPrintString, textColour);
+        Log.d(TAG, "Scale Bar inserted, value = " + resultPrintString);
     }
 
     private void showCaliRemindDialog()
@@ -497,7 +541,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             {
                 Log.d(TAG, "User confirms app calibrated");
                 //show scale dialog
-                createSBColourDialog();
+                //createSBColourDialog();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -517,16 +561,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             {
                 Log.d(TAG, "User cancels image edit");
                 //TODO implement file deletion (see fileUtils class)
-                //deleting captured image by filepath
-                /*
-                if (deleteFile(imageFilePath))
-                {
-                    Log.d(TAG, "File deleted");
-                } else
-                {
-                    Log.d(TAG, "File not deleted");
-                }*/
-
                 finish();
             }
         });
@@ -544,5 +578,37 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         editedImageFilePath = image.getAbsolutePath();
 
         return image;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        showBackPressDialog();
+        // Otherwise defer to system default behavior.
+        //super.onBackPressed();
+    }
+
+    private void showBackPressDialog()
+    {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setMessage("Are you want to exit without saving image ?");
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNeutralButton("Discard Image", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                finish();
+            }
+        });
+        builder.create().show();
     }
 }

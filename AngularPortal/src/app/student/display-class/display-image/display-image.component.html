@@ -1,11 +1,11 @@
-<div class="flex-container">
-  <div class="card">
+<div id="contentToConvert" class="flex-container">
+  <div id="image" class="card">
     <img src="{{imageUrl}}"> Rating: <br>
     <bar-rating [(rate)]="rate" [readOnly]="true" [max]="6" [theme]="'stars'" [showText]="true" (rateChange)="changeRating($event)"
       [titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']"></bar-rating>
   </div>
 
-  <div class="col">
+  <div id="descriptions"class="col">
     <div class=" description">
       <pre style="display:grid"><h1 class="badge badge-secondary">Image description</h1></pre>
       <pre>Name: {{imageDetails.filename}}</pre>
@@ -18,14 +18,14 @@
       <pre>PPM: {{imageDetails.ppm}}</pre>
     </div>
   </div>
-  <div class="legend">
+  <div id="legend" class="legend">
     <pre style="display:grid"><h1 class="badge badge-secondary">Legend</h1></pre>
     <pre *ngFor="let attr of imageDetails.legend; let i = index">
       <img src="{{legendImages[i]}}" alt="attr.text"> 
       <p class="badge badge-info">{{attr.text}}</p>
     </pre>
   </div>
-<button (click)="download()"class="btn"><i class="fa fa-download"></i> Download</button>
-
 </div>
+<button id="btn-Convert-Html2Image" (click)="download()" class="btn btn-primary"><i class="fa fa-download"></i> Download</button>
 
+<canvas id="pdf-canvas" width="400"></canvas>

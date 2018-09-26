@@ -70,8 +70,8 @@ public class LegendListAdapter extends RecyclerView.Adapter<LegendListAdapter.My
         {
             super(itemView);
 
-            editText = (EditText) itemView.findViewById(R.id.editTextDescription);
-            legendImage = (ImageView) itemView.findViewById(R.id.stickerLegend);
+            editText = itemView.findViewById(R.id.editTextDescription);
+            legendImage = itemView.findViewById(R.id.stickerLegend);
 
             editText.addTextChangedListener(new TextWatcher()
             {

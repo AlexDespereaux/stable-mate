@@ -4,16 +4,37 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONArrayRequestListener;
+import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.jaram.jarambuild.roomDb.AppDatabase;
 import com.jaram.jarambuild.roomDb.User;
 import com.jaram.jarambuild.utils.NetworkUtils;
 import com.jaram.jarambuild.utils.TinyDB;
+
+import org.json.JSONArray;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.basgeekball.awesomevalidation.ValidationStyle.BASIC;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -30,6 +51,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String pWord;
     private boolean validInput = false;
 
+    //validation
+    AwesomeValidation awesomeValidation;
+
     //logging
     private String TAG = "MainAct";
 
@@ -38,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //login status - if !null user is logged in
     private String loggedInAccount;
+    private RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,6 +78,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         emailField = findViewById(R.id.emailField);
         pWordField = findViewById(R.id.pWordField);
 
+        //validation
+        awesomeValidation = new AwesomeValidation(BASIC);
+        AwesomeValidation.disableAutoFocusOnFirstFailure();
+        awesomeValidation.addValidation(this, R.id.emailField, Patterns.EMAIL_ADDRESS, R.string.emailerror);
+        String regexPassword = "(?=.*?[A-Z])(?=.*?[0-9]).{8,}";
+        awesomeValidation.addValidation(this, R.id.pWordField, regexPassword, R.string.passworderror);
+
         //register listeners
         loginBtn.setOnClickListener(this);
         goToSignUpBtn.setOnClickListener(this);
@@ -62,6 +94,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //check if logged in & skip to home screen
         loggedInCheck();
+
+        //home button in action bar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
+        if (toolbar != null)
+        {
+            toolbar.setLogo(R.drawable.my_logo_shadow_96px);
+        }
+        //instantiate request queue
+        queue = Volley.newRequestQueue(this);
     }
 
     @Override
@@ -71,8 +112,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             case R.id.loginBtn:
                 //validate input
-                validInput = getUserInput();
-                login(validInput);
+                if (awesomeValidation.validate())
+                {
+                    getUserInput();
+                    login();
+                }
                 break;
             case R.id.goToSignUpBtn:
                 //Go to signup activity
@@ -82,50 +126,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void login(boolean validInput)
+    private void login()
     {
-        if (validInput && checkAccount(email, pWord))
+        if (checkAccount(email, pWord))
         {
             if (NetworkUtils.isNetworkConnected(this))
             {
-                //TODO: login to server
+                String url = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/user";
+
+                // Request a string response from the provided URL.
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>()
+                        {
+                            @Override
+                            public void onResponse(String response)
+                            {
+                                Log.d(TAG, "Response:" + response);
+                                if(response.equalsIgnoreCase("Authenticated"))
+                                {
+                                    goHome();
+                                    Log.d(TAG, "server check successful open Home activity");
+                                }
+                            }
+                        }, new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        Log.d(TAG, "Response:" + error);
+                    }
+                })
+                {
+                    //custom header for basic auth
+                    @Override
+                    public Map<String, String> getHeaders()
+                    {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put(
+                                "Authorization",
+                                String.format("Basic %s", Base64.encodeToString(
+                                        //String.format("%s:%s", email, password).getBytes(), Base64.DEFAULT)));  TODO: set to input credentials once user account set up is complete
+                                        String.format("%s:%s", "marita", "fitz4321").getBytes(), Base64.DEFAULT)));
+                        return params;
+                    }
+                };
+                // Add the request to the RequestQueue.
+                queue.add(stringRequest);
             }
-            //go to home menu
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
         } else
         {
             Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private boolean getUserInput()
+    private void getUserInput()
     {
-        boolean validInput = false;
-        //TODO add input validation
         //get data from login fields
         email = emailField.getText().toString().trim();
         pWord = pWordField.getText().toString().trim();
-        if (pWord.equals("") || email.equals(""))
-        {
-            validInput = false;
-            Log.d(TAG, "valid input - false");
-        }
-        else
-        {
-            validInput = true;
-            Log.d(TAG, "valid input - true:" + " email:" + email + " pword:" + pWord);
-        }
-        return validInput;
     }
 
     private void loggedInCheck()
     {
         if (tinydb.getString("loggedInAccount") != "")
         {
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
+            goHome();
         }
+    }
+
+    private void goHome()
+    {
+        //go to home menu
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 
     private boolean checkAccount(String email, String pWord)
@@ -136,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (userToCheck != null)
         {
             //Log.d(TAG, "email from field: " + email + "pword from field" + pWord);
-            if (userToCheck.getEmail().equals(email)&& userToCheck.getPWord().equals(pWord))
+            if (userToCheck.getEmail().equals(email) && userToCheck.getPWord().equals(pWord))
             {
                 Log.d(TAG, "here");
 
