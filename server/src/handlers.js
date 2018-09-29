@@ -9,7 +9,7 @@ const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 const BUCKET = 'annomate';
 
-exports.printRequest = function (req) {
+exports.printRequest = function (req, res, next) {
   console.log('\nReceived headers');
   console.log(Date());
   console.log('----------------');
@@ -17,9 +17,10 @@ exports.printRequest = function (req) {
     console.log(key + ': ' + req.headers[key]);
   }
   console.log('');
+  next();
 };
 
-let uploadFromStream = function (s3) {
+let uploadFromStream = function () {
   let pass = new stream.PassThrough();
   let params = {
     Body: pass,
@@ -36,7 +37,7 @@ let uploadFromStream = function (s3) {
 exports.imageUpload = function (req, res, next) {
   if (req.get('Content-Type') === 'image/png') {
     console.log('Started upload from: ' + req.ip);
-    req.pipe(uploadFromStream(s3));
+    req.pipe(uploadFromStream());
     req.on('end', function () {
       res.status(200).send('Image upload complete!');
     });
@@ -52,7 +53,7 @@ exports.dataHandler = function (req, res) {
   if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
     db.getUserId(req)
       .then(userId => {
-        let data = _.merge(req.body, userId);
+        let data = _.set(req.body, 'userId', userId);
         return db.insertImageData(data)
       })
       .then(imageId => {

@@ -31,7 +31,7 @@ exports.getUserId = function(req) {
       connection.query(sql, function(err, result) {
         connection.end();
         if (err) reject(err);
-        resolve(result[0]);
+        resolve(result[0]['userId']);
       });
     });
   });
