@@ -43,6 +43,7 @@ import com.jaram.jarambuild.roomDb.User;
 import com.jaram.jarambuild.uploadService.GenerateUploadRequestService;
 import com.jaram.jarambuild.utils.ImageIdEvent;
 import com.jaram.jarambuild.utils.LegendCreatedEvent;
+import com.jaram.jarambuild.utils.NetworkUtils;
 import com.jaram.jarambuild.utils.TinyDB;
 
 import net.gotev.uploadservice.BinaryUploadRequest;
@@ -83,14 +84,11 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private String notes;
     private String editedImgUri;
     private String rawImgUri;
-    private String pathName;
-    private String jsonPathName;
     private String fusedLocationLong;
     private String fusedLocationLat;
     private Double dFov;
     private Double pixelsPerMicron;
     private int uploadId = -1;
-    List<Image> imagesToBeUploadedList;
 
     //List of sticker images (drawable resource files)
     int[] stickerList;
@@ -181,7 +179,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         Log.d(TAG, "loggedInUser: " + loggedInUser);
 
         //uploading
-        AndroidNetworking.initialize(getApplicationContext());
+        //AndroidNetworking.initialize(getApplicationContext());
 
         //check internet permissions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) !=
@@ -261,18 +259,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         //if the amount of legend objects entered in to room db = the size of the list of legends progress to upload
         if (legendUpLoadCounter == LegendListAdapter.editModelArrayList.size())//check that all legend rows have been added to the database prior to upload
         {
-            Intent mServiceIntent = new Intent();
-            //add user to intent
-            //mServiceIntent.putExtra("loggedInUser", loggedInUser);
-            //mServiceIntent.putExtra("loggedInUserPWord", userPword);
-            //TODO: change once user account creation established (above)
-            mServiceIntent.putExtra("loggedInUser", "marita");
-            mServiceIntent.putExtra("loggedInUserPWord", "fitz4321");
-
-            // Starts the JobIntentService
-            GenerateUploadRequestService.enqueueGURSWork(this, mServiceIntent);
-            Log.d(TAG, "enqueueGURSWork call to JobIntentService");
-            returnToHome();
+            startUpload();
         }
     }
 
@@ -336,30 +323,31 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-
-    private void uploadImages(Image image) // uploads raw and edited images to s3 bucket then generates matching json bject which is sent to the server
+    private void startUpload()
     {
-        //id is the image id that is waiting to be uploaded
-        int returnedUploadIdRaw = -1;
-        int returnedUploadIdEdit = -1;
-
-        //for testing
-        returnedUploadIdRaw = 80214;
-        returnedUploadIdEdit = 80214;
-
-        String raw_img_path_from_db = image.getPhotoPath_raw();
-        String edit_img_path_from_db = image.getPhotoPath_edited();
-
-        uploadBinary(this, edit_img_path_from_db);
-
-        // if both images uploaded
-        /*
-        if (returnedUploadIdRaw != -1 && returnedUploadIdEdit != -1)//if first image upload was a success
+        if(NetworkUtils.isNetworkConnected(this))
         {
-            //create JSON obect with returned upload id and upload it
-            createJsonObj(id, returnedUploadIdEdit);
-        }*/
+            Intent mServiceIntent = new Intent();
+            //add user to intent
+            //mServiceIntent.putExtra("loggedInUser", loggedInUser);
+            //mServiceIntent.putExtra("loggedInUserPWord", userPword);
+            //TODO: change once user account creation established (above)
+            mServiceIntent.putExtra("loggedInUser", "marita");
+            mServiceIntent.putExtra("loggedInUserPWord", "fitz4321");
+
+            // Starts the JobIntentService
+            GenerateUploadRequestService.enqueueGURSWork(this, mServiceIntent);
+            Log.d(TAG, "enqueueGURSWork call to JobIntentService");
+            returnToHome();
+        }
+        else
+        {
+            //TODO: Add server check - https://github.com/gotev/android-host-monitor
+            Toast.makeText(this, "No network available, images will upload when connection resumed", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Upload cancelled no network");
+        }
     }
+
     //**************************helpers***********************************************************************
 
     private void saveImageToDb()
@@ -382,6 +370,10 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             //saveLegendToDatabase(stickerImgName, legendText, imageId);
             legendViewModel.addOneLegend(new Legend(stickerImgName, legendText, imageId));
             Log.d(TAG, "Legend saved to dataBase");
+        }
+        if (LegendListAdapter.editModelArrayList.size() == 0) // start the upload in the case that there is no legend
+        {
+            startUpload();
         }
     }
 
@@ -488,28 +480,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         if (!isLegend)
         {
             legendHeading.setVisibility(View.GONE);
-        }
-    }
-
-    //************************UPLOAD IMAGE****************************
-
-    public void uploadBinary(final Context context, String path)
-    {
-        try
-        {
-            String uploadId =
-                    new BinaryUploadRequest(this, "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image")
-                            .setFileToUpload(path)
-                            //.setFileToUpload(editedImgUri)
-                            .addHeader("token", "1F8065545D842E0098709630DBDBEB596D4D6194")
-                            .addHeader("Content-Type", "image/png")
-                            .setNotificationConfig(new UploadNotificationConfig())
-                            .setMaxRetries(4)
-                            .startUpload();
-            Log.d(TAG, "Binary File uploaded");
-        } catch (Exception exc)
-        {
-            Log.e("AndroidUploadService", exc.getMessage(), exc);
         }
     }
 

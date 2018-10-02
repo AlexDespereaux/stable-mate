@@ -8,38 +8,41 @@ import android.support.v4.app.JobIntentService;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.jaram.jarambuild.roomDb.AppDatabase;
+
 import net.gotev.uploadservice.BinaryUploadRequest;
 import net.gotev.uploadservice.ServerResponse;
 import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
-import net.gotev.uploadservice.UploadServiceBroadcastReceiver;
 import net.gotev.uploadservice.UploadServiceSingleBroadcastReceiver;
 import net.gotev.uploadservice.UploadStatusDelegate;
 
-public class UploadRawImgService extends JobIntentService implements UploadStatusDelegate
+public class UploadEditImgService extends JobIntentService implements UploadStatusDelegate
 {
-    String TAG = "RawUpload";
-    static final int JOB_ID = 3000;
+    String TAG = "editUpload";
+    static final int JOB_ID = 4000;
+    private AppDatabase db;
+
     private UploadServiceSingleBroadcastReceiver uploadReceiver;
 
     /**
      * Convenience method for enqueuing work in to this service.
      */
-    public static void enqueueURISWork(Context context, Intent work)
+    public static void enqueueUEISWork(Context context, Intent work)
     {
-        enqueueWork(context, UploadRawImgService.class, JOB_ID, work);
+        enqueueWork(context, UploadEditImgService.class, JOB_ID, work);
     }
 
     @Override
     protected void onHandleWork(@NonNull Intent intent)
     {
+        db = AppDatabase.getDatabase(getApplicationContext());
         //register upload status listener
         uploadReceiver = new UploadServiceSingleBroadcastReceiver(this);
         uploadReceiver.register(this);
         //get data from intent
-        String raw_path = intent.getStringExtra("photoPath_raw");
         String edit_path = intent.getStringExtra("photoPath_edit");
-        Log.d(TAG, "Raw path: " + raw_path);
+        Log.d(TAG, "Edit path: " + edit_path);
         String username = intent.getStringExtra("loggedInUser");
         String pword = intent.getStringExtra("loggedInUserPWord");
         String serverImgId = intent.getStringExtra("serverImageId");
@@ -51,39 +54,28 @@ public class UploadRawImgService extends JobIntentService implements UploadStatu
             String uploadId =
                     new BinaryUploadRequest(this, "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image")
                             .setBasicAuth(username, pword)
-                            .setFileToUpload(raw_path)
+                            .setFileToUpload(edit_path)
                             .addHeader("Content-Type", "image/png")
                             .addHeader("imageId", serverImgId)
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(4)
                             .startUpload();
-            Log.d(TAG, "Binary File upload started");
+            Log.d(TAG, "Edit Binary File upload started");
         } catch (Exception exc)
         {
             Log.e("AndroidUploadService", exc.getMessage(), exc);
         }
 
-        //start edited image upload intent TODO Move to onCompleted
-        if(Integer.parseInt(serverImgId)> 0)
-        {
-            Intent mServiceIntent = new Intent();
-            mServiceIntent.putExtra("loggedInUser", username);
-            mServiceIntent.putExtra("loggedInUserPWord", pword);
-            mServiceIntent.putExtra("serverImageId", serverImgId);
-            mServiceIntent.putExtra("localImageId", localImgId);
-            mServiceIntent.putExtra("photoPath_edit", edit_path);
-
-            // Starts the JobIntentService
-            UploadEditImgService.enqueueUEISWork(getApplicationContext(), mServiceIntent);
-            Log.d(TAG, "enqueueUEISWork call to Edit upload JobIntentService");
-        }
+        //edit upload status
+        db.getImageDao().updateUploadId(Integer.parseInt(serverImgId), Integer.parseInt(localImgId));
+        Log.d(TAG, "Database updated image id:" + localImgId + ", new upload id: " + serverImgId);
     }
+
     @Override
     public void onDestroy()
     {
         super.onDestroy();
         uploadReceiver.unregister(this);
-        toast("All work complete");
     }
 
     final Handler mHandler = new Handler();
@@ -96,7 +88,7 @@ public class UploadRawImgService extends JobIntentService implements UploadStatu
             @Override
             public void run()
             {
-                Toast.makeText(UploadRawImgService.this, text, Toast.LENGTH_SHORT).show();
+                Toast.makeText(UploadEditImgService.this, text, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -104,24 +96,24 @@ public class UploadRawImgService extends JobIntentService implements UploadStatu
     @Override
     public void onProgress(Context context, UploadInfo uploadInfo)
     {
-        Log.d(TAG, "Raw File upload in progress");
+        Log.d(TAG, "Edit File upload in progress");
     }
 
     @Override
     public void onError(Context context, UploadInfo uploadInfo, ServerResponse serverResponse, Exception exception)
     {
-        Log.d(TAG, "Raw File upload error");
+        Log.d(TAG, "Edit File upload error");
     }
 
     @Override
     public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse)
     {
-        Log.d(TAG, "Raw File upload complete");
+        Log.d(TAG, "Edit File upload complete");
     }
 
     @Override
     public void onCancelled(Context context, UploadInfo uploadInfo)
     {
-        Log.d(TAG, "Raw File upload cancelled");
+        Log.d(TAG, "Edit File upload cancelled");
     }
 }

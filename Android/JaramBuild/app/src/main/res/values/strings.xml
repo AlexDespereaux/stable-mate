@@ -99,6 +99,17 @@
     <string name="click_image_to_view_re_annotate">Click image to View/Re-annotate</string>
     <string name="text_search">Text Search</string>
     <string name="galleryheader">Gallery</string>
+    <string name="please_select_an_annotation_option">Please select an Annotation option</string>
+    <string name="functxtsymbol">Insert Symbol Mode</string>
+    <string name="functxtundo">Undo Mode</string>
+    <string name="functxttext">Insert Text Mode</string>
+    <string name="funtxtdraw">Erase Drawing Mode</string>
+    <string name="functxtdrawmode">Drawing Mode</string>
+    <string name="image_notes">Image Notes</string>
+    <string name="image_description">Image Description</string>
+    <string name="image_location">Image Location</string>
+    <string name="image_date">Image Date</string>
+    <string name="re_annotate">RE-ANNOTATE</string>
 
 
 </resources>
