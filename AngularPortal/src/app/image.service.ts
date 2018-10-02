@@ -1,30 +1,35 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
+
 import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { RequestOptions } from '@angular/http';
 
 @Injectable()
 export class ImageService {
 
-  private endPoint = "http://localhost:3000";
+  private endPoint = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api";
 
 
   constructor(private http: HttpClient) { }
 
-  getImages() {
-    // return Observable.create((observer: Subscriber<any>) => {
-    //   observer.next(this.images);
-    //   observer.complete();
-    // });
-    // this.http.get(this.endPoint + "/imageList").subscribe(
+  authenticate(username: string, password: string) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic' + btoa(`${username}:${password}`)
+      })
+    };
+    console.log(btoa(`${username}:${password}`));
+    return this.http.get(`${this.endPoint}/user`, httpOptions);
+  }
 
-    //   (result) => {
-    //     // return an observable list of images 
-    //     console.log(result)
-    //   },
-    //   (err) =>{
-    //     console.log(err)
-    //   }
-    // );
+  getClasses(id) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    return this.http.get(`${this.endPoint}/user/${id}`, httpOptions);
   }
 }

@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StudentComponent } from "../student/student.component";
 import { AdminComponent } from "../admin/admin.component";
+import { ImageService } from '../image.service';
 
 
 @Component({ 
@@ -19,7 +20,8 @@ export class LoginComponent implements OnInit {
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
-        private router: Router) { }
+        private router: Router,
+        private imageService: ImageService) { }
 
     ngOnInit() {
         this.loginForm = this.formBuilder.group({
@@ -42,17 +44,21 @@ export class LoginComponent implements OnInit {
 
     verify() {
         //send request to the server to verify depending on type of auth and than redirect them to appropriate page
-        let user: String = this.loginForm.get('username').value;
+        let user: string = this.loginForm.get('username').value;
         let id = user.replace(/[^0-9]/g, '');
+        let password: string = this.loginForm.get('password').value;
 
-        if (!id) {
-            // in further development can be replaced by any alerting library.
-            alert('enter a valide ID');
-            return;
-        }
-
-        (user.includes('students')) ? this.redirect('student', id) :
-            (user.includes('staff')) ? this.redirect('admin', id) : this.redirect('', id);
+        // if (!id) {
+        //     // in further development can be replaced by any alerting library.
+        //     alert('enter a valide ID');
+        //     return;
+        //    }
+           this.imageService.authenticate(user,password).subscribe(
+               res => console.log(res),
+               err => console.log(err)
+           );
+        // (user.includes('students')) ? this.redirect('student', id) :
+        //     (user.includes('admin')) ? this.redirect('admin', id) : this.redirect('', id);
     }
 }
 
