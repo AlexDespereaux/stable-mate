@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.jaram.jarambuild.imageUtils.PropertiesBSFragment;
 import com.jaram.jarambuild.imageUtils.StickerBSFragment;
@@ -71,6 +73,9 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     //image size
     double mvHeight;
     double mvWidth;
+
+    //function text
+    private TextView functionText;
 
     public static void launch(Context context, ArrayList<String> imagesPath)
     {
@@ -135,6 +140,9 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             myActionBar.hide();
             Log.d(TAG, "ActionBar Hidden");
         }
+
+        //function text
+        functionText = findViewById(R.id.functionText);
 
         //instantiate sliList
         sliList = new ArrayList<String>();
@@ -282,9 +290,11 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             case R.id.imgPencil:
                 mPhotoEditor.setBrushDrawingMode(true);
                 mPropertiesBSFragment.show(getSupportFragmentManager(), mPropertiesBSFragment.getTag());
+                functionText.setText(R.string.functxtdrawmode);
                 break;
             case R.id.btnEraser:
                 mPhotoEditor.brushEraser();
+                functionText.setText(R.string.funtxtdraw);
                 break;
             case R.id.imgText:
                 TextEditorDialogFragment textEditorDialogFragment = TextEditorDialogFragment.show(this);
@@ -296,10 +306,12 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         mPhotoEditor.addText(inputText, colorCode);
                     }
                 });
+                functionText.setText(R.string.functxttext);
                 break;
 
             case R.id.imgUndo:
                 mPhotoEditor.undo();
+                functionText.setText(R.string.functxtundo);
                 break;
 
             case R.id.imgSave:
@@ -318,6 +330,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
             case R.id.imgSticker:
                 mStickerBSFragment.show(getSupportFragmentManager(), mStickerBSFragment.getTag());
+                functionText.setText(R.string.functxtsymbol);
                 break;
         }
     }

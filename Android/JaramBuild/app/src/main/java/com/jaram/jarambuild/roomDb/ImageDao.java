@@ -50,4 +50,7 @@ public interface ImageDao
 
     @Query("DELETE FROM Image")
     void deleteAll();
+
+    @Query("UPDATE image SET uploadId = :uploadId WHERE imageId = :imageId")
+    void updateUploadId(int uploadId, int imageId);
 }

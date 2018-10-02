@@ -91,12 +91,12 @@
             android:name=".CheckCalibrationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".CropActivity"></activity>
+        <activity android:name=".CropActivity" />
 
         <service
             android:name=".uploadService.UploadIntentService"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".uploadService.GenerateUploadRequestService"
             android:exported="false"
@@ -104,7 +104,13 @@
         <service
             android:name=".uploadService.UploadRawImgService"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".uploadService.UploadEditImgService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity android:name=".ViewActivity"></activity>
     </application>
 
 </manifest>
