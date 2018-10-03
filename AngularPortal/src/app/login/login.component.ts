@@ -6,7 +6,7 @@ import { AdminComponent } from "../admin/admin.component";
 import { ImageService } from '../image.service';
 
 
-@Component({ 
+@Component({
     templateUrl: 'login.component.html',
     selector: 'app-login',
     styleUrls: ['login.component.css']
@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
 
     redirect(userType: string, userId: string) {
         switch (userType) {
-            case 'student': console.log('going to student');this.router.navigate(['student', userId]); break;
+            case 'student': console.log('going to student'); this.router.navigate(['student', userId]); break;
             case 'admin': this.router.navigate(['admin-dashboard', userId]); break;
             default: this.router.navigate(['',]); break;
         }
@@ -48,17 +48,17 @@ export class LoginComponent implements OnInit {
         let id = user.replace(/[^0-9]/g, '');
         let password: string = this.loginForm.get('password').value;
 
-        // if (!id) {
-        //     // in further development can be replaced by any alerting library.
-        //     alert('enter a valide ID');
-        //     return;
-        //    }
-           this.imageService.authenticate(user,password).subscribe(
-               res => console.log(res),
-               err => console.log(err)
-           );
-        // (user.includes('students')) ? this.redirect('student', id) :
-        //     (user.includes('admin')) ? this.redirect('admin', id) : this.redirect('', id);
+        this.imageService.authenticate(user, password).subscribe(
+            res => {
+                id = user;
+                user = res['userType'];
+                
+                console.log(id, user, res);
+            },
+            err => console.log(err)
+        );
+        (user.includes('students')) ? this.redirect('student', id) :
+            (user.includes('admin')) ? this.redirect('admin', id) : this.redirect('', id);
     }
 }
 

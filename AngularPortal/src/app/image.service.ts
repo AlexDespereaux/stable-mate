@@ -30,6 +30,6 @@ export class ImageService {
         'Content-Type': 'application/json'
       })
     };
-    return this.http.get(`${this.endPoint}/user/${id}`, httpOptions);
+    return this.http.get(`${this.endPoint}/image`, httpOptions);
   }
 }
