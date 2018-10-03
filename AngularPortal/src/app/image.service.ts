@@ -17,7 +17,7 @@ export class ImageService {
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': 'Basic' + btoa(`${username}:${password}`)
+        'Authorization': 'Basic ' + btoa(`${username}:${password}`)
       })
     };
     console.log(btoa(`${username}:${password}`));

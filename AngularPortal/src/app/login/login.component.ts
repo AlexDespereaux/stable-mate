@@ -52,13 +52,13 @@ export class LoginComponent implements OnInit {
             res => {
                 id = user;
                 user = res['userType'];
-                
+
+                (user == 'user') ? this.redirect('student', id) :
+                    (user == 'admin') ? this.redirect('admin', id) : this.redirect('', id);
                 console.log(id, user, res);
             },
             err => console.log(err)
         );
-        (user.includes('students')) ? this.redirect('student', id) :
-            (user.includes('admin')) ? this.redirect('admin', id) : this.redirect('', id);
     }
 }
 
