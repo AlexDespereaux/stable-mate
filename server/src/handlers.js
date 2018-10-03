@@ -114,3 +114,15 @@ exports.imageDownload = function (req, res) {
     else res.status(200).set('Content-Type', 'image/png').send(data.Body);
   });
 };
+
+exports.imageList = function (req, res) {
+  let userPromises = [db.getUserType(req), db.getUserId(req)];
+  Promise.all(userPromises)
+    .then(userInfo => {
+      return db.getImageIdList({'userType':userInfo[0],'userId':userInfo[1]});
+    })
+    .then(imageList => {
+      res.status(200).send(imageList);
+    })
+    .catch(error => res.status(400).send(error));
+};
