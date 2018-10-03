@@ -122,7 +122,7 @@ exports.imageList = function (req, res) {
       return db.getImageIdList({'userType':userInfo[0],'userId':userInfo[1]});
     })
     .then(imageList => {
-      res.status(200).send(imageList);
+      res.status(200).send(imageList.map(imageIdObj => imageIdObj['imageId']));
     })
     .catch(error => res.status(400).send(error));
 };
