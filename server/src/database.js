@@ -64,7 +64,7 @@ exports.createUser = function(data) {
         connection.query(sql, function(err, result) {
           connection.end();
           if (err) reject(err);
-          resolve({'userId': result.insertId});
+          resolve(result.insertId);
         });
       });
     });
