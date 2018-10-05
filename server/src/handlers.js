@@ -20,30 +20,24 @@ exports.printRequest = function (req, res, next) {
   next();
 };
 
-let uploadFromStream = function () {
-  let pass = new stream.PassThrough();
-  let params = {
-    Body: pass,
-    Bucket: BUCKET,
-    Key: 'image' + _.padStart(imageCounter++, 6, '0') + '.png'
-  };
-  s3.upload(params, function (err) {
-    if (err)
-      console.log(err, err.stack); // an error occurred
-  });
-  return pass;
-};
-
-exports.imageUpload = function (req, res, next) {
-  if (req.get('Content-Type') === 'image/png') {
-    console.log('Started upload from: ' + req.ip);
-    req.pipe(uploadFromStream());
-    req.on('end', function () {
-      res.status(200).send('Image upload complete!');
+exports.imageUpload = function (req, res) {
+  console.log('Started upload from: ' + req.ip);
+  req.pipe(function () {
+    let pass = new stream.PassThrough();
+    let params = {
+      Body: pass,
+      Bucket: BUCKET,
+      Key: req.params.type + req.params.imageId + '.png'
+    };
+    s3.upload(params, function (err) {
+      if (err)
+        console.log(err, err.stack); // an error occurred
     });
-  } else {
-    next();
-  }
+    return pass;
+  });
+  req.on('end', function () {
+    res.status(200).send('Image upload complete!');
+  });
 };
 
 exports.dataHandler = function (req, res) {
@@ -119,10 +113,11 @@ exports.imageList = function (req, res) {
   let userPromises = [db.getUserType(req), db.getUserId(req)];
   Promise.all(userPromises)
     .then(userInfo => {
-      return db.getImageIdList({'userType':userInfo[0],'userId':userInfo[1]});
+      return db.getImageIdList({'userType': userInfo[0], 'userId': userInfo[1]});
     })
     .then(imageList => {
       res.status(200).send(imageList.map(imageIdObj => imageIdObj['imageId']));
     })
     .catch(error => res.status(400).send(error));
 };
+
