@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +21,10 @@ import android.widget.Spinner;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.Objects;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 import static com.jaram.jarambuild.utils.FileUtils.saveBitmap;
 
@@ -46,6 +51,8 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
     double pixelsPerMicron;
     int scaleBarColourIndex;
 
+    //quickstart
+    private static final String SHOWCASE_ID = "crop_act";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -158,6 +165,14 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         cropImageView.setAspectRatio(3, 4);
         cropImageView.setFixedAspectRatio(true);
         cropImageView.setShowProgressBar(true);
+
+        //start Quickstart
+        cancelBtn.post(new Runnable() {
+            @Override
+            public void run() {
+                presentQuickstartSequence();
+            }
+        });
     }
 
     @Override
@@ -305,7 +320,55 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         builder.create().show();
-
     }
+    private void presentQuickstartSequence() {
 
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+                //Toast.makeText(itemView.getContext(), "Item #" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(cancelBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Exits image cropping and returns you to home screen")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(cropBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Crops the image and progresses to Annotation screen")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(ratioBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Opens a dialog to let you choose desired image aspect (ie square or rectangle)")
+                        .withRectangleShape()
+                        .build()
+        );
+        sequence.start();
+    }
 }
