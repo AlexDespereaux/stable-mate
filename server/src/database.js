@@ -59,7 +59,7 @@ exports.createUser = function(data) {
   return new Promise((resolve, reject) => {
     connection().then(connection => {
       bcrypt.hash(data['password'], 10).then(function(hash) {
-        let insertVals = _.merge({}, { password: hash }, _.pick(data, 'email'));
+        let insertVals = _.merge({}, { password: hash }, _.pick(data, ['email', 'admin']));
         let sql = mysql.format('INSERT INTO users SET ?;', insertVals);
         connection.query(sql, function(err, result) {
           connection.end();
@@ -132,5 +132,18 @@ exports.getImageIdList = function(userInfo) {
         });
       })
       .catch(error => reject(error));
+  });
+};
+
+exports.getImageData = function(imageId) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      let sql = mysql.format('SELECT * FROM images WHERE imageId = ?;', imageId);
+      connection.query(sql, function (error, results) {
+        connection.end();
+        if (error) reject(error);
+        resolve(results[0]);
+      });
+    });
   });
 };

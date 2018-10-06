@@ -101,7 +101,7 @@ exports.userType = function (req, res) {
 exports.imageDownload = function (req, res) {
   let s3params = {
     Bucket: BUCKET,
-    Key: 'image' + _.padStart(req.params.imageId, 6, '0') + '.png'
+    Key: req.params.type + req.params.imageId + '.png'
   };
   s3.getObject(s3params, function (err, data) {
     if (err) res.status(500).send(err + " " + err.stack);
@@ -121,3 +121,19 @@ exports.imageList = function (req, res) {
     .catch(error => res.status(400).send(error));
 };
 
+let userAdmin = function (userType) {
+  return new Promise((resolve) => resolve(userType === 'admin'));
+};
+
+exports.createAccount = function (req, res) {
+    db.getUserType(req)
+      .then(userType => { console.log(userType); return userAdmin(userType) })
+      .then(userAdmin => { if (userAdmin) { return db.createUser(req.body) } else { throw 'Not an admin' }})
+      .then(userId => {console.log(userId); res.status(200).send(userId)})
+      .catch(error => res.status(401).send(error));
+};
+
+exports.getImageData = function(req, res) {
+  db.getImageData(req.params.imageId)
+    .then(result => res.status(200).send(result));
+};
