@@ -73,6 +73,18 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
         convertedDate = sdf.format(new Date(Long.parseLong(epochDateString)));
 
         holder.dateTV.setText("Date: " + convertedDate);
+
+        String longitudeIn = imageListForGallery.get(position).getLongitude();
+        String latitudeIn = imageListForGallery.get(position).getLatitude();
+        if(Double.parseDouble(longitudeIn)  == (double)181)
+        {
+            holder.locationTV.setText("Location: N/A");
+        }
+        else
+        {
+            holder.locationTV.setText("Location: " + longitudeIn +"," + latitudeIn);
+        }
+
         //get img data
         Bitmap bitmap = decodeSampledBitmapFromFilePath(imageListForGallery.get(position).getPhotoPath_edited(), 100, 100);
         holder.imgPreview.setImageBitmap(bitmap);
@@ -111,6 +123,7 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
             titleTV = itemView.findViewById(R.id.titleTv);
             descTV = itemView.findViewById(R.id.descTv);
             dateTV = itemView.findViewById(R.id.dateTv);
+            locationTV = itemView.findViewById(R.id.locationTv);
             imgPreview = itemView.findViewById(R.id.imgPreview);
 
             imgPreview.setOnClickListener(new View.OnClickListener()

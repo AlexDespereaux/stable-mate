@@ -6,9 +6,10 @@ buildscript {
 
         maven {
             url 'https://maven.fabric.io/public'
-        }
+            }
         google()
         jcenter()
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0'

@@ -1,15 +1,19 @@
 package com.jaram.jarambuild;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -29,6 +33,10 @@ import com.jaram.jarambuild.utils.TinyDB;
 
 import java.util.List;
 import java.util.Objects;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 import static com.basgeekball.awesomevalidation.ValidationStyle.BASIC;
 
@@ -74,6 +82,9 @@ public class CheckCalibrationActivity extends AppCompatActivity
 
     //data to pass to edit activity
     int sBcolorPosition;
+
+    //quickstart
+    private static final String SHOWCASE_ID = "cali_check_act";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -166,9 +177,6 @@ public class CheckCalibrationActivity extends AppCompatActivity
                         getInfoDialog();
                         //get distance between 2 selected points in pixels
                         distBetweenCaliPointsInPix = drawing.calculateCalidFovinPixels();
-                    } else
-                    {
-                        caliAlertDialog();
                     }
                 }
                 if (drawing.circlePoints.size() == 1)
@@ -188,27 +196,16 @@ public class CheckCalibrationActivity extends AppCompatActivity
                 showBackPressDialog();
             }
         });
-    }
 
-    protected void caliAlertDialog()
-    {
-        LayoutInflater li = LayoutInflater.from(CheckCalibrationActivity.this);
-
-        @SuppressLint("InflateParams") final View caliEmptyAlert = li.inflate(R.layout.calibration_empty_dialog, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CheckCalibrationActivity.this);
-        alertDialogBuilder.setView(caliEmptyAlert);
-        alertDialogBuilder.setPositiveButton("Continue", new DialogInterface.OnClickListener()
-        {
-            public void onClick(DialogInterface dialog, int whichButton)
-            {
-                Intent intent = new Intent(CheckCalibrationActivity.this,HomeActivity.class);
-                startActivity(intent);
-                finish();
+        //start Quickstart
+        cancelBtn.post(new Runnable() {
+            @Override
+            public void run() {
+                presentQuickstartSequence();
             }
         });
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
     }
+
 
     protected void getInfoDialog()
     {
@@ -311,6 +308,7 @@ public class CheckCalibrationActivity extends AppCompatActivity
 
                 if ((ocularLens > 0) && (objectiveLens > 0) && (newPPM != 0) && newDFOV != 0)
                 {
+                    //TODO add saved DFov & SavedPPM to intent for upload with images, simply as if downloaded and reannotated non cropped PPM is required.
                     int finalWidth = imageholder.getMeasuredWidth();
                     Intent intent = new Intent(CheckCalibrationActivity.this, CropActivity.class);
                     //add raw file path URI string to intent
@@ -354,6 +352,7 @@ public class CheckCalibrationActivity extends AppCompatActivity
 
         spinner.setAdapter(adapter);
     }
+
 
     private List<Calibration> getOneUserCaliListFromDb()
     {
@@ -406,5 +405,67 @@ public class CheckCalibrationActivity extends AppCompatActivity
             }
         });
         builder.create().show();
+    }
+
+    private void presentQuickstartSequence() {
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+                //Toast.makeText(itemView.getContext(), "Item #" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(cancelBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6E4690A"))
+                        .setContentText("Cancels calibration check")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(clearBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6E4690A"))
+                        .setContentText("Removes the last calibration check point you have created")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(okBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6E4690A"))
+                        .setContentText("Press OK to confirm you are ready to submit your reference object selection")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(instructTxt)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Instructions to guide you through calibration creation")
+                        .withRectangleShape()
+                        .build()
+        );
+        sequence.start();
     }
 }

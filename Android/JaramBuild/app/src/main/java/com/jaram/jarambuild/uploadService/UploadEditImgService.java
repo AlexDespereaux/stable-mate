@@ -48,11 +48,13 @@ public class UploadEditImgService extends JobIntentService implements UploadStat
         String serverImgId = intent.getStringExtra("serverImageId");
         String localImgId = intent.getStringExtra("localImageId");
 
+        String uploadUrl = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image/edit/" + serverImgId;
+
         //start upload
         try
         {
             String uploadId =
-                    new BinaryUploadRequest(this, "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image")
+                    new BinaryUploadRequest(this, uploadUrl)
                             .setBasicAuth(username, pword)
                             .setFileToUpload(edit_path)
                             .addHeader("Content-Type", "image/png")

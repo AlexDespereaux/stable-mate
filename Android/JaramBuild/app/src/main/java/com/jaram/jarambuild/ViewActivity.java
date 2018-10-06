@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,8 @@ import com.jaram.jarambuild.roomDb.AppDatabase;
 import com.jaram.jarambuild.roomDb.ImageListViewModel;
 import com.jaram.jarambuild.roomDb.LegendListViewModel;
 import com.jaram.jarambuild.utils.TinyDB;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
 public class ViewActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -62,6 +66,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
     private String link;
     private String linkAddress;
     private String convertedDate;
+    //quickstart
+    private static final String SHOWCASE_ID = "view_act";
+    private ScrollView viewScroller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -82,6 +89,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         dateDisplay = findViewById(R.id.dateDisplay);
         dateDisplay.setText("Image Date: " + convertedDate);
         locationDisplay = findViewById(R.id.locationDisplay);
+        viewScroller = findViewById(R.id.viewScroller);
         if(longitude == "181")
         {
             locationDisplay.setVisibility(View.GONE);
@@ -115,6 +123,15 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         loggedInUser = tinydb.getString("loggedInAccount");
         Log.d(TAG, "loggedInUser: " + loggedInUser);
 
+        //set position for first view
+        double viewed = tinydb.getDouble("viewQuickstartShown", 0.0);
+        if(viewed == 0.0)
+        {
+            tinydb.putDouble("viewQuickstartShown", 1.0);
+            focusOnView();
+            Log.d(TAG, "scrolled down ");
+        }
+
         //home button in action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
         if (toolbar != null)
@@ -131,6 +148,29 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         }
+
+        startQuickstart();
+    }
+
+    //set focus to bottom of the scroll view
+    private void focusOnView(){
+        viewScroller.post(new Runnable() {
+            @Override
+            public void run() {
+                viewScroller.fullScroll(View.FOCUS_DOWN);
+            }
+        });
+    }
+
+    private void startQuickstart()
+    {
+        //start Quickstart
+        editBtn.post(new Runnable() {
+            @Override
+            public void run() {
+                presentQuickStart();
+            }
+        });
     }
 
     private void getDataFromIntent()
@@ -251,5 +291,19 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         display.getSize(size);
         int width = size.x;
         return width;
+    }
+
+    private void presentQuickStart()
+    {
+        new MaterialShowcaseView.Builder(this)
+                .setTarget(editBtn)
+                .setDismissText("GOT IT")
+                .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                .setMaskColour(Color.parseColor("#E6E4690A"))
+                .setContentText("Click to crop and annotate original image")
+                .setDelay(500) // optional but starting animations immediately in onCreate can make them choppy
+                .singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
+                .withRectangleShape()
+                .show();
     }
 }

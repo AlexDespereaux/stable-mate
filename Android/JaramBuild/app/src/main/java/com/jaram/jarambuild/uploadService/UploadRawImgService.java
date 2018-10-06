@@ -45,11 +45,13 @@ public class UploadRawImgService extends JobIntentService implements UploadStatu
         String serverImgId = intent.getStringExtra("serverImageId");
         String localImgId = intent.getStringExtra("localImageId");
 
+        String uploadUrl = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image/raw/" + serverImgId;
+
         //start upload
         try
         {
             String uploadId =
-                    new BinaryUploadRequest(this, "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image")
+                    new BinaryUploadRequest(this, uploadUrl)
                             .setBasicAuth(username, pword)
                             .setFileToUpload(raw_path)
                             .addHeader("Content-Type", "image/png")

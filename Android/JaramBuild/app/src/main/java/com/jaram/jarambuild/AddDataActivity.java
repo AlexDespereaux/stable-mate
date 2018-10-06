@@ -1,6 +1,7 @@
 package com.jaram.jarambuild;
 
 import android.Manifest;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -22,9 +24,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +46,7 @@ import com.jaram.jarambuild.roomDb.Legend;
 import com.jaram.jarambuild.roomDb.LegendListViewModel;
 import com.jaram.jarambuild.roomDb.User;
 import com.jaram.jarambuild.uploadService.GenerateUploadRequestService;
+import com.jaram.jarambuild.utils.GPSTracker;
 import com.jaram.jarambuild.utils.ImageIdEvent;
 import com.jaram.jarambuild.utils.LegendCreatedEvent;
 import com.jaram.jarambuild.utils.NetworkUtils;
@@ -61,6 +67,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 import static com.jaram.jarambuild.HomeActivity.REQUEST_PERMISSION;
 import static com.jaram.jarambuild.roomDb.AppDatabase.getDatabase;
@@ -105,8 +115,8 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private boolean isLegend = false;
 
     //counter to check number of legends saved to database = total legends in image (reset each image upload)
-    int legendUpLoadCounter = 0;
-    int imageIdFromEvent;
+    private int legendUpLoadCounter = 0;
+    private int imageIdFromEvent;
 
     //db
     private LegendListViewModel legendViewModel;
@@ -115,13 +125,21 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private AppDatabase db;
 
     //get logged in user
-    TinyDB tinydb;
-    String loggedInUser; // email address, which is primary key of user db
+    private TinyDB tinydb;
+    private String loggedInUser; // email address, which is primary key of user db
 
     //user details
-    String userFirstName;
-    String userLastName;
-    String userPword;
+    private String userFirstName;
+    private String userLastName;
+    private String userPword;
+
+    //quickstart
+    private static final String SHOWCASE_ID = "add_data_act";
+    private ScrollView addDataScrollView;
+    private LinearLayout imageDetailsLinearView;
+
+    //location
+    private GPSTracker gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -131,6 +149,12 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
         //generate Legend Input
         genLegend();
+
+        //linear layout
+        imageDetailsLinearView = findViewById(R.id.imgDetailInputs);
+
+        //scrollview
+        addDataScrollView = findViewById(R.id.addDataScroller);
 
         //Recycler View
         legendRecyclerView = findViewById(R.id.legendRecycler);
@@ -178,9 +202,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         loggedInUser = tinydb.getString("loggedInAccount");
         Log.d(TAG, "loggedInUser: " + loggedInUser);
 
-        //uploading
-        //AndroidNetworking.initialize(getApplicationContext());
-
         //check internet permissions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) !=
                 PackageManager.PERMISSION_GRANTED)
@@ -208,7 +229,45 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
                 }
             });
         }
+
+        //set position for first view
+        double viewed = tinydb.getDouble("addDataQuickstartShown", 0.0);
+        if(viewed == 0.0)
+        {
+            tinydb.putDouble("addDataQuickstartShown", 1.0);
+            focusOnView();
+            Log.d(TAG, "scrolled down ");
+        }
+
+        //start Quickstart
+        imageDetailsLinearView.post(new Runnable() {
+            @Override
+            public void run() {
+                if(!isLegend) // if there is no legend show the quickstart without the legend
+                {
+                    presentQuickstartSequence();
+                }
+                else
+                {
+                    presentQuickstartSequenceLegend();
+                }
+            }
+        });
+
+        getLocation();
     }
+
+    //set focus to bottom of the scroll view
+    private void focusOnView(){
+        addDataScrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                //addDataScrollView.scrollTo(0, addDataScrollView.getBottom());
+                addDataScrollView.fullScroll(View.FOCUS_DOWN);
+            }
+        });
+    }
+
 
     //**************RECEIVERS & EVENTS**************************************************
 
@@ -312,7 +371,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
                 getTexts();
                 //get User Details for upload
                 getUserDetails();
-                getLocation();
                 //Save Image in database
                 saveImageToDb();
                 break;
@@ -329,11 +387,8 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         {
             Intent mServiceIntent = new Intent();
             //add user to intent
-            //mServiceIntent.putExtra("loggedInUser", loggedInUser);
-            //mServiceIntent.putExtra("loggedInUserPWord", userPword);
-            //TODO: change once user account creation established (above)
-            mServiceIntent.putExtra("loggedInUser", "marita");
-            mServiceIntent.putExtra("loggedInUserPWord", "fitz4321");
+            mServiceIntent.putExtra("loggedInUser", loggedInUser);
+            mServiceIntent.putExtra("loggedInUserPWord", userPword);
 
             // Starts the JobIntentService
             GenerateUploadRequestService.enqueueGURSWork(this, mServiceIntent);
@@ -345,6 +400,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             //TODO: Add server check - https://github.com/gotev/android-host-monitor
             Toast.makeText(this, "No network available, images will upload when connection resumed", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Upload cancelled no network");
+            returnToHome();
         }
     }
 
@@ -398,6 +454,20 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         boolean saveLocation = settings.getBoolean("LocationSwitch", false);
         if (saveLocation)
         {
+            gps = new GPSTracker(AddDataActivity.this);
+            if(gps.canGetLocation())
+            {
+                fusedLocationLat = Double.toString(gps.getLatitude());
+                fusedLocationLong = Double.toString(gps.getLongitude());
+
+                // \n is for new line
+                Log.d(TAG,"Your Location is - \nLat: " + fusedLocationLong + "\nLong: " + fusedLocationLat);
+            } else {
+                // Can't get location.
+                // GPS or network is not enabled.
+                // Ask user to enable GPS/network in settings.
+                Log.d(TAG, "Location error, not saved");
+            }
             Log.d(TAG, "Location saved");
         } else
         {
@@ -426,7 +496,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             Log.d(TAG, "User exists " + user.toString());
             userFirstName = user.getPWord();
             userLastName = user.getFirstName();
-            userPword = user.getLastName();
+            userPword = user.getPWord();
         } else
         {
             Log.d(TAG, "user does not exist");
@@ -489,6 +559,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         startActivity(homeIntent);
     }
 
+
     //************************DIALOGS****************************
 
     @Override
@@ -522,6 +593,76 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         builder.create().show();
+    }
+
+    private void presentQuickstartSequence() {
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+                //Toast.makeText(itemView.getContext(), "Item #" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(imageDetailsLinearView)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Add image data to be uploaded to the cloud")
+                        .withRectangleShape()
+                        .build()
+        );
+        sequence.start();
+    }
+
+    //version to show if legend present
+    private void presentQuickstartSequenceLegend() {
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+                //Toast.makeText(itemView.getContext(), "Item #" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(imageDetailsLinearView)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Add image data to be uploaded to the cloud")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(legendRecyclerView)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Add legend definitions to be uploaded to the cloud")
+                        .withRectangleShape()
+                        .build()
+        );
+        sequence.start();
     }
 }
 

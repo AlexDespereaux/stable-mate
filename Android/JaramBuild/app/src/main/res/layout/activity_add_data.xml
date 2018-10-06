@@ -7,8 +7,11 @@
     tools:context=".AddDataActivity">
 
     <ScrollView
+        android:id="@+id/addDataScroller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:paddingBottom="4dp"
         android:scrollbarStyle="outsideOverlay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,53 +59,60 @@
                     android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
                     android:fontFamily="@font/roboto_medium"
-                    android:paddingBottom="8dp"
                     android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/add_image_details"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 
-                <EditText
-                    android:id="@+id/imgTitleInput"
+                <LinearLayout
+                    android:id="@+id/imgDetailInputs"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:ems="10"
-                    android:fontFamily="@font/roboto_medium"
-                    android:hint="@string/image_title"
-                    android:inputType="textPersonName"
-                    android:textAppearance="@style/TextAppearance.AppCompat" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/descInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:ems="10"
-                    android:fontFamily="@font/roboto_medium"
-                    android:hint="@string/description"
-                    android:inputType="textPersonName"
-                    android:textAppearance="@style/TextAppearance.AppCompat" />
+                    <EditText
+                        android:id="@+id/imgTitleInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:ems="10"
+                        android:fontFamily="@font/roboto_medium"
+                        android:hint="@string/image_title"
+                        android:inputType="textPersonName"
+                        android:textAppearance="@style/TextAppearance.AppCompat" />
 
-                <EditText
-                    android:id="@+id/notesInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:ems="10"
-                    android:fontFamily="@font/roboto_medium"
-                    android:hint="@string/notes"
-                    android:inputType="textMultiLine"
-                    android:textAppearance="@style/TextAppearance.AppCompat"
-                    tools:layout_editor_absoluteX="73dp"
-                    tools:layout_editor_absoluteY="97dp" />
+                    <EditText
+                        android:id="@+id/descInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:ems="10"
+                        android:fontFamily="@font/roboto_medium"
+                        android:hint="@string/description"
+                        android:inputType="textPersonName"
+                        android:textAppearance="@style/TextAppearance.AppCompat" />
+
+                    <EditText
+                        android:id="@+id/notesInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:ems="10"
+                        android:fontFamily="@font/roboto_medium"
+                        android:hint="@string/notes"
+                        android:inputType="textMultiLine"
+                        android:textAppearance="@style/TextAppearance.AppCompat"
+                        tools:layout_editor_absoluteX="73dp"
+                        tools:layout_editor_absoluteY="97dp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -116,8 +126,8 @@
                         android:layout_marginBottom="4dp"
                         android:background="@color/colorPrimary"
                         android:fontFamily="@font/roboto_medium"
-                        android:paddingBottom="8dp"
                         android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
                         android:text="@string/add_legend_definitions"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.AppCompat"
@@ -133,9 +143,9 @@
                 <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp">
 
                     <TableRow
                         android:layout_width="match_parent"

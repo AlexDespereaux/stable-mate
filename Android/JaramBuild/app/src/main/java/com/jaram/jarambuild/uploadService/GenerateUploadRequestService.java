@@ -51,6 +51,8 @@ public class GenerateUploadRequestService extends JobIntentService
         //get user details to pass to upload services
         String username = intent.getStringExtra("loggedInUser");
         String pword = intent.getStringExtra("loggedInUserPWord");
+        Log.d(TAG, "username & pword " + username + " / " + pword);
+
         //db
         db = AppDatabase.getDatabase(getApplicationContext());
         imageViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance((Application) getApplication()).create(ImageListViewModel.class);
