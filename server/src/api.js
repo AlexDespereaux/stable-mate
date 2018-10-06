@@ -14,9 +14,9 @@ router.get('/user', handlers.userType);
 
 router.post('/image/:type/:imageId', handlers.imageUpload);
 
-router.get('/image/:imageId', handlers.getImageData);
-
 router.get('/image/:type/:imageId', handlers.imageDownload);
+
+router.get('/image/:imageId', handlers.getImageData);
 
 router.get('/image', handlers.imageList);
 

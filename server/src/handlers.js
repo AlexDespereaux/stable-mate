@@ -20,7 +20,7 @@ exports.printRequest = function (req, res, next) {
   next();
 };
 
-exports.imageUpload = function (req, res) {
+exports.imageUpload = function (req, res, next) {
   console.log('Started upload from: ' + req.ip);
   req.pipe(function () {
     let pass = new stream.PassThrough();
@@ -38,6 +38,7 @@ exports.imageUpload = function (req, res) {
   req.on('end', function () {
     res.status(200).send('Image upload complete!');
   });
+  next('router');
 };
 
 exports.dataHandler = function (req, res) {
@@ -87,7 +88,7 @@ exports.userType = function (req, res) {
   db.getUserType(req)
     .then(userType => {
       status = 200;
-      result = {'userType': userType}
+      result = { 'userType': userType }
     })
     .catch(error => {
       status = 500;
@@ -103,8 +104,8 @@ exports.imageDownload = function (req, res) {
     Bucket: BUCKET,
     Key: req.params.type + req.params.imageId + '.png'
   };
-  s3.getObject(s3params, function (err, data) {
-    if (err) res.status(500).send(err + " " + err.stack);
+  s3.getObject(s3params, function (error, data) {
+    if (error) res.status(404).send(error);
     else res.status(200).set('Content-Type', 'image/png').send(data.Body);
   });
 };
