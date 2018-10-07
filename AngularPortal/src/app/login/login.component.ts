@@ -43,22 +43,22 @@ export class LoginComponent implements OnInit {
 
 
     verify() {
+        this.redirect('student', 'id');
         //send request to the server to verify depending on type of auth and than redirect them to appropriate page
-        let user: string = this.loginForm.get('username').value;
-        let id = user.replace(/[^0-9]/g, '');
-        let password: string = this.loginForm.get('password').value;
+        // let user: string = this.loginForm.get('username').value;
+        // let id = user.replace(/[^0-9]/g, '');
+        // let password: string = this.loginForm.get('password').value;
 
-        this.imageService.authenticate(user, password).subscribe(
-            res => {
-                id = user;
-                user = res['userType'];
+        // this.imageService.authenticate(user, password).subscribe(
+        //     res => {
+        //         id = user;
+        //         user = res['userType'];
 
-                (user == 'user') ? this.redirect('student', id) :
-                    (user == 'admin') ? this.redirect('admin', id) : this.redirect('', id);
-                console.log(id, user, res);
-            },
-            err => alert('Invalid username or password')
-        );
+        //         (user == 'user') ? this.redirect('student', id) :
+        //             (user == 'admin') ? this.redirect('admin', id) : this.redirect('', id);
+        //     },
+        //     err => alert('Invalid username or password')
+        // );
     }
 }
 
