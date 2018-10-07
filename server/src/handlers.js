@@ -50,16 +50,16 @@ exports.uploadImageData = function (req, res) {
     db.getUserId(req)
       .then(userId => {
         let imageData = _.merge({},_.set(req.body, 'userId', userId), req.body['location']);
-        let legendArrayItem = function(obj) {
-          return [userId, obj['name'], obj['text']]
-        };
-        let legendData = _.map(req.body['legend'], legendArrayItem);
-        let userPromises = [db.insertImageData(imageData), db.insertLegendData(legendData) ];
-        return Promise.all(userPromises);
+        return db.insertImageData(imageData);
       })
-      .then(insertResults => {
+      .then(insertResult => {
+        let legendArrayItem = function(imageId) {
+          return (obj) => [imageId, obj['name'], obj['text']]
+        };
+        let legendData = [_.map(req.body['legend'], legendArrayItem(insertResult['imageId']))];
         status = 201;
-        result = insertResults[0];
+        result = insertResult;
+        return db.insertLegendData(legendData);
       })
       .catch(error => {
         status = 500;
