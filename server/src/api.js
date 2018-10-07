@@ -20,6 +20,6 @@ router.get('/image/:imageId', handlers.getImageData);
 
 router.get('/image', handlers.imageList);
 
-router.post('/image', express.json(), handlers.dataHandler);
+router.post('/image', express.json(), handlers.uploadImageData);
 
 module.exports = router;

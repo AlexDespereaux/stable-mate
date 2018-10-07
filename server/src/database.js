@@ -43,13 +43,26 @@ const IMAGE_COLUMN_VALUES = ['filename', 'description', 'notes', 'datetime', 'la
 exports.insertImageData = function(data) {
   return new Promise((resolve, reject) => {
     connection().then(connection => {
-      let flattenedData = _.merge({}, data, data.location);
-      let insertVals = _.pick(flattenedData, IMAGE_COLUMN_VALUES);
+      let insertVals = _.pick(data, IMAGE_COLUMN_VALUES);
       let sql = mysql.format('INSERT INTO images SET ?;', insertVals);
       connection.query(sql, function (error, results) {
         connection.end();
         if (error) reject(error);
         resolve({'imageId':results.insertId});
+      });
+    });
+  });
+};
+
+exports.insertLegendData = function(legendItems) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      // legendItems = [[[176, 'a', 'apple'], [176, 'b', 'bee'], [176, 'c', 'cow']]];
+      let sql = mysql.format('INSERT INTO legend (imageId, name, text) VALUES ?', legendItems);
+      connection.query(sql, function(err, result) {
+        connection.end();
+        if (err) reject(err);
+        resolve(result);
       });
     });
   });

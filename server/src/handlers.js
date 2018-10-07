@@ -20,40 +20,46 @@ exports.printRequest = function (req, res, next) {
   next();
 };
 
-exports.imageUpload = function (req, res, next) {
-  console.log('Started upload from: ' + req.ip);
-  req.pipe(function () {
+exports.imageUpload = function (req, res) {
+  let filename = req.params.type + req.params.imageId + '.png';
+  console.log(filename + ' upload starting');
+  let upload = function () {
     let pass = new stream.PassThrough();
     let params = {
       Body: pass,
       Bucket: BUCKET,
-      Key: req.params.type + req.params.imageId + '.png'
+      Key: filename
     };
     s3.upload(params, function (err) {
-      if (err)
-        console.log(err, err.stack); // an error occurred
+      if (err) console.log(err, err.stack); // an error occurred
     });
     return pass;
-  });
+  };
   req.on('end', function () {
-    res.status(200).send('Image upload complete!');
+    res.status(201).send(filename);
+    console.log(filename + ' upload success');
   });
-  next('router');
+  req.pipe(upload());
 };
 
-exports.dataHandler = function (req, res) {
+exports.uploadImageData = function (req, res) {
   let status = 400;
   let result = "";
   const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm', 'legend'];
   if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
     db.getUserId(req)
       .then(userId => {
-        let data = _.set(req.body, 'userId', userId);
-        return db.insertImageData(data)
+        let imageData = _.merge({},_.set(req.body, 'userId', userId), req.body['location']);
+        let legendArrayItem = function(obj) {
+          return [userId, obj['name'], obj['text']]
+        };
+        let legendData = _.map(req.body['legend'], legendArrayItem);
+        let userPromises = [db.insertImageData(imageData), db.insertLegendData(legendData) ];
+        return Promise.all(userPromises);
       })
-      .then(imageId => {
+      .then(insertResults => {
         status = 201;
-        result = imageId;
+        result = insertResults[0];
       })
       .catch(error => {
         status = 500;
@@ -136,5 +142,7 @@ exports.createAccount = function (req, res) {
 
 exports.getImageData = function(req, res) {
   db.getImageData(req.params.imageId)
-    .then(result => res.status(200).send(result));
+    .then(result => res.status(200).send(result))
+    .catch(error => res.status(400).send(error));
 };
+
