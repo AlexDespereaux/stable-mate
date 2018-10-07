@@ -31,7 +31,7 @@ exports.getUserId = function(req) {
       connection.query(sql, function(err, result) {
         connection.end();
         if (err) reject(err);
-        resolve(result[0]);
+        resolve(result[0]['userId']);
       });
     });
   });
@@ -43,8 +43,7 @@ const IMAGE_COLUMN_VALUES = ['filename', 'description', 'notes', 'datetime', 'la
 exports.insertImageData = function(data) {
   return new Promise((resolve, reject) => {
     connection().then(connection => {
-      let flattenedData = _.merge({}, data, data.location);
-      let insertVals = _.pick(flattenedData, IMAGE_COLUMN_VALUES);
+      let insertVals = _.pick(data, IMAGE_COLUMN_VALUES);
       let sql = mysql.format('INSERT INTO images SET ?;', insertVals);
       connection.query(sql, function (error, results) {
         connection.end();
@@ -55,16 +54,29 @@ exports.insertImageData = function(data) {
   });
 };
 
+exports.insertLegendData = function(legendItems) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      let sql = mysql.format('INSERT INTO legend (imageId, name, text) VALUES ?', legendItems);
+      connection.query(sql, function(err, result) {
+        connection.end();
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  });
+};
+
 exports.createUser = function(data) {
   return new Promise((resolve, reject) => {
     connection().then(connection => {
       bcrypt.hash(data['password'], 10).then(function(hash) {
-        let insertVals = _.merge({}, { password: hash }, _.pick(data, 'email'));
+        let insertVals = _.merge({}, { password: hash }, _.pick(data, ['email', 'admin']));
         let sql = mysql.format('INSERT INTO users SET ?;', insertVals);
         connection.query(sql, function(err, result) {
           connection.end();
           if (err) reject(err);
-          resolve({'userId': result.insertId});
+          resolve(result.insertId);
         });
       });
     });
@@ -84,5 +96,79 @@ exports.validateUser = function(credentials) {
         });
       });
     });
+  });
+};
+
+let userType = function(x) {
+  switch (x) {
+    case 0:
+      return 'user';
+    case 1:
+      return 'admin';
+    default:
+      return 'unknown';
+  }
+};
+
+
+exports.getUserType = function(req) {
+  return new Promise((resolve, reject) => {
+    connection()
+      .then(connection => {
+        let credentials = auth(req);
+        let sql = mysql.format('SELECT admin FROM users WHERE email = ?', credentials['name']);
+        connection.query(sql, function(err, result) {
+          connection.end();
+          if (err) reject(err);
+          resolve(userType(result[0]['admin']));
+        });
+      })
+      .catch(error => reject(error));
+  });
+};
+
+exports.getImageIdList = function(userInfo) {
+  return new Promise((resolve, reject) => {
+    connection()
+      .then(connection => {
+        let sql = "";
+        if (userInfo['userType'] === 'admin') {
+          sql = mysql.format('SELECT imageId FROM images');
+        } else {
+          sql = mysql.format('SELECT imageId FROM images WHERE userId = ?', userInfo['userId']);
+        }
+        connection.query(sql, function(err, result) {
+          connection.end();
+          if (err) reject(err);
+          resolve(result);
+        });
+      })
+      .catch(error => reject(error));
+  });
+};
+
+exports.getImageData = function(imageId) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      let sql = mysql.format('SELECT * FROM images WHERE imageId = ?;', imageId);
+      connection.query(sql, function (error, results) {
+        connection.end();
+        if (error) reject(error);
+        resolve(results[0]);
+      });
+    });
+  });
+};
+
+exports.getLegendData = function(imageId) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      let sql = mysql.format('SELECT name, text FROM legend WHERE imageId = ?', imageId);
+      connection.query(sql, function (error, results) {
+        connection.end();
+        if (error) reject(error);
+        resolve(results);
+      });
+    })
   });
 };

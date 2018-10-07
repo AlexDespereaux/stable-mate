@@ -42,3 +42,15 @@ INSERT INTO users (password, email, admin) VALUES ("$2a$10$Ocqnfky.r6gWd9Q2M9hrv
 INSERT INTO users (password, email, admin) VALUES ("$2a$10$cUZr5SVr2ptNKM4vNYxVV.eIKH1p9csoKFwAGuOiOpMfY9ouUXbB.", "alex", true);
 INSERT INTO users (password, email, admin) VALUES ("$2a$10$1xt71keywUlzrGlgq1cpbuPuta6WZ7GaTYHk3i/LuToYgP3M2BuvC", "jackson", true);
 INSERT INTO users (password, email, admin) VALUES ("$2a$10$qrjztR8Bwidh1R2dNTFmhecCoxB7nqXi115x.8bNE3peDfxU.Tu42", "anmol", true);
+
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$YTv1eFSNBqjQtf6t2Sol2eaBjvpcs0tGFEIrrkVm5BApPyUcC1Hji", "oliver@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$dqXy2ATdqLgM68LnLRuzSOKxWHx6uJbUVJuKoW0xJRIQRXITB43Ie", "william@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$D9B1u5Vl6aM2NRPOcXpbB.m8c5h/dNyYw1X56bjy/kyjWLT8IMW42", "jack@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$Ur254EzDaiJFBiuoJyG4yecY.jwLhrptJcdylekp7AdhNxmHmNkea", "noah@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$ZfHEWWviU5JB1jTYW0AVPuZrRgu61TS5LtnjtLtPG0i4IEeNVc9we", "james@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$xfWpw9/2DdDEFbopp72OfO8fDXf3hzE87i9rPdxJVAe8GgdOtbLH2", "thomas@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$xCu.6/8R9C61FYWcmKXRluuZIxQl5U9gqdcqt6x9pzosxQ8rcNciG", "ethan@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$844vDM.cv929y0HRVTyMrux8xHwkZ8HRTSsnThZd4LNI23W/N70qK", "lucas@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$BG/605CWu/qDRYWj90B/UuH5.UCpahelxUAyhL4uWYUtHoMyzh29u", "jackson@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$DbKSIz0cbOm.gUlIgM6bj.7faHagGRbcFzEs11ioKn49Kk0LU9a6O", "lachlan@test.com", false);
+INSERT INTO users (password, email, admin) VALUES ("$2b$12$ZQAxLnVQmjYBWVvbE8oD1.QjvO4sJhZCKg9ZcOa.59W4pkbOf2ibi", "richard@test.com", false);

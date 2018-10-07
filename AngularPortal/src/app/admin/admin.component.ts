@@ -23,22 +23,28 @@ export class AdminComponent implements OnInit {
       'Class 8',
       'Class 9',
       'Class 10']
-  }
+  };
+  adminId;
+
   constructor(private route: ActivatedRoute,
     private router: Router) { }
 
   ngOnInit() {
     this.route.params.subscribe(
       params => {
-        this.staff.id = params.id;
+        this.adminId = params.id;
       },
       (err) => {
         console.log('Something went wrong');
       });
+    // need to get teachers  classes
+    // this.imageService.getClasses(this.adminId).subscribe(
+    // (classes) => this.staff.classes = classes;
+    // );
   }
 
   redirect(subject) {
-    this.router.navigate(['class', subject], {relativeTo: this.route});
+    this.router.navigate(['class', subject], { relativeTo: this.route });
   }
 
 }

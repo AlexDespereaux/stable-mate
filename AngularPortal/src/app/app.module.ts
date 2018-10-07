@@ -9,6 +9,7 @@ import { RegisterComponent } from './register/register.component';
 import { AdminComponent } from './admin/admin.component';
 import { NewUserComponent } from './new-user/new-user.component';
 import { ImageService } from "./image.service";
+import { HttpModule } from '@angular/http';
 
 import { routing } from './app.routing';
 import { ReactiveFormsModule, FormsModule } from '../../node_modules/@angular/forms';
@@ -21,6 +22,7 @@ import { DisplayClassComponent } from './student/display-class/display-class.com
 import { SortImagesPipe } from './sort-images.pipe';
 import { PagerService } from './pager.service';
 import { BarRatingModule } from "ngx-bar-rating";
+import { HttpClientModule } from '@angular/common/http';
 import { StaffClassComponent } from './admin/staff-class/staff-class.component';
 import { StudentClassComponent } from './admin/student-class/student-class.component';
 import { StudentImageComponent } from './admin/student-image/student-image.component';
@@ -46,6 +48,7 @@ import { StudentImageComponent } from './admin/student-image/student-image.compo
     routing,
     BrowserModule,
     FormsModule,
+    HttpClientModule,
     ReactiveFormsModule,
     BarRatingModule],
   providers: [ImageService, PagerService],
