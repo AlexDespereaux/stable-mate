@@ -7,15 +7,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jaram.jarambuild.imageUtils.PropertiesBSFragment;
 import com.jaram.jarambuild.imageUtils.StickerBSFragment;
@@ -39,6 +44,9 @@ import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import ja.burhanrashid52.photoeditor.ViewType;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 public class EditImageActivity extends BaseActivity implements OnPhotoEditorListener,
         View.OnClickListener,
@@ -62,15 +70,31 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     //list of stickerList index's used in imageviews
     private ArrayList<String> sliList;
     //shared preferances
-    TinyDB tinydb;
+    private TinyDB tinydb;
     //scalebar
-    double dFov;
-    double pixelsPerMicron;
-    int scaleBarColourIndex;
-    double croppedImgPixelPerMicron;
+    private double dFov;
+    private double pixelsPerMicron;
+    private int scaleBarColourIndex;
+    private double croppedImgPixelPerMicron;
     //image size
-    double mvHeight;
-    double mvWidth;
+    private double mvHeight;
+    private double mvWidth;
+    //scroll view
+    private HorizontalScrollView menuScroller;
+    //buttons
+    private Button imgPencil;
+    private Button imgEraser;
+    private Button imgUndo;
+    private Button imgText;
+    private Button imgSticker;
+    private Button imgSave;
+    private Button imgClose;
+
+    //quickstart
+    private static final String SHOWCASE_ID = "edit_img_act";
+
+    //function text
+    private TextView functionText;
 
     public static void launch(Context context, ArrayList<String> imagesPath)
     {
@@ -98,6 +122,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mStickerBSFragment = new StickerBSFragment();
         mStickerBSFragment.setStickerListener(this);
         mPropertiesBSFragment.setPropertiesChangeListener(this);
+
+        menuScroller = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
 
         mPhotoEditor = new PhotoEditor.Builder(this, mPhotoEditorView)
                 .setPinchTextScalable(true) // set flag to make text scalable when pinch
@@ -136,6 +162,9 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             Log.d(TAG, "ActionBar Hidden");
         }
 
+        //function text
+        functionText = findViewById(R.id.functionText);
+
         //instantiate sliList
         sliList = new ArrayList<String>();
 
@@ -157,6 +186,14 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                 selectSBColour(scaleBarColourIndex);
             }
         });
+
+        //start Quickstart
+        imgSave.post(new Runnable() {
+            @Override
+            public void run() {
+                presentQuickstartSequence();
+            }
+        });
     }
 
 
@@ -170,15 +207,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
     private void initViews()
     {
-        Button imgPencil;
-        Button imgEraser;
-        Button imgUndo;
-        Button imgText;
-        Button imgSticker;
-        Button imgSave;
-
-        Button imgClose;
-
         mPhotoEditorView = findViewById(R.id.photoEditorView);
 
         imgSticker = findViewById(R.id.imgSticker);
@@ -282,9 +310,11 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             case R.id.imgPencil:
                 mPhotoEditor.setBrushDrawingMode(true);
                 mPropertiesBSFragment.show(getSupportFragmentManager(), mPropertiesBSFragment.getTag());
+                functionText.setText(R.string.functxtdrawmode);
                 break;
             case R.id.btnEraser:
                 mPhotoEditor.brushEraser();
+                functionText.setText(R.string.funtxtdraw);
                 break;
             case R.id.imgText:
                 TextEditorDialogFragment textEditorDialogFragment = TextEditorDialogFragment.show(this);
@@ -296,10 +326,12 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         mPhotoEditor.addText(inputText, colorCode);
                     }
                 });
+                functionText.setText(R.string.functxttext);
                 break;
 
             case R.id.imgUndo:
                 mPhotoEditor.undo();
+                functionText.setText(R.string.functxtundo);
                 break;
 
             case R.id.imgSave:
@@ -318,6 +350,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
             case R.id.imgSticker:
                 mStickerBSFragment.show(getSupportFragmentManager(), mStickerBSFragment.getTag());
+                functionText.setText(R.string.functxtsymbol);
                 break;
         }
     }
@@ -581,7 +614,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
 
         showBackPressDialog();
         // Otherwise defer to system default behavior.
@@ -611,4 +645,33 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         });
         builder.create().show();
     }
+
+    private void presentQuickstartSequence() {
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(menuScroller)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6E4690A"))
+                        .setContentText(" EDIT MENU, select; \n SAVE to progress to the upload page \n SYMBOL to add a symbol to your image \n TEXT add text to the image \n DRAW to stylus draw on image \n ERASE to erase drawn lines \n UNDO to undo your last action \n CLOSE to discard your image")
+                        .withRectangleShape()
+                        .build()
+        );
+        sequence.start();
+    }
+
 }

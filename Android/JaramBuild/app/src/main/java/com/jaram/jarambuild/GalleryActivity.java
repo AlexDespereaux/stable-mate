@@ -2,10 +2,6 @@ package com.jaram.jarambuild;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.jaram.jarambuild.adapters.GalleryListAdapter;
@@ -86,7 +81,10 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         clearBtn.setOnClickListener(this);
         applyBtn.setOnClickListener(this);
 
+
+        galleryRecyclerView = findViewById(R.id.galleryRecycler);
         initRecycler();
+
         //home button in action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
         if (toolbar != null) {
@@ -152,7 +150,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
     public void initRecycler()
     {
         //Recycler View
-        galleryRecyclerView = findViewById(R.id.galleryRecycler);
+        //galleryRecyclerView = findViewById(R.id.galleryRecycler);
         galleryModelArrayList = populateGalleryList();
         galleryListAdapter = new GalleryListAdapter(this, galleryModelArrayList);
         galleryRecyclerView.setAdapter(galleryListAdapter);

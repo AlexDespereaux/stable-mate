@@ -1,7 +1,11 @@
 package com.jaram.jarambuild;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.support.annotation.ColorRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +30,7 @@ import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.jaram.jarambuild.roomDb.AppDatabase;
 import com.jaram.jarambuild.roomDb.User;
+import com.jaram.jarambuild.roomDb.UserListViewModel;
 import com.jaram.jarambuild.utils.NetworkUtils;
 import com.jaram.jarambuild.utils.TinyDB;
 
@@ -33,6 +38,8 @@ import org.json.JSONArray;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
 import static com.basgeekball.awesomevalidation.ValidationStyle.BASIC;
 
@@ -45,24 +52,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText emailField;
     private EditText pWordField;
     private Button loginBtn;
-    private Button goToSignUpBtn;
 
     private String email;
     private String pWord;
     private boolean validInput = false;
+    private boolean userExists = false;
 
     //validation
     AwesomeValidation awesomeValidation;
 
     //logging
-    private String TAG = "MainAct";
+    private String TAG = "MainActDebug";
 
     //shared Prefs
     TinyDB tinydb;
+    Double showQuickstart;
+
+    //db
+    private UserListViewModel userViewModel;
+    private AppDatabase db;
 
     //login status - if !null user is logged in
     private String loggedInAccount;
     private RequestQueue queue;
+
+    //quickstart
+    private static final String SHOWCASE_ID = "main_act_login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -70,9 +85,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //db
+        userViewModel = ViewModelProviders.of(this).get(UserListViewModel.class);
+        db = AppDatabase.getDatabase(getApplicationContext());
+
         //buttons
         loginBtn = findViewById(R.id.loginBtn);
-        goToSignUpBtn = findViewById(R.id.goToSignUpBtn);
 
         //text fields
         emailField = findViewById(R.id.emailField);
@@ -87,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //register listeners
         loginBtn.setOnClickListener(this);
-        goToSignUpBtn.setOnClickListener(this);
 
         //shared prefs
         tinydb = new TinyDB(this);
@@ -112,72 +129,74 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             case R.id.loginBtn:
                 //validate input
-                if (awesomeValidation.validate())
-                {
-                    getUserInput();
-                    login();
-                }
-                break;
-            case R.id.goToSignUpBtn:
-                //Go to signup activity
-                Intent intent = new Intent(this, SignUpActivity.class);
-                startActivity(intent);
+                //if (awesomeValidation.validate())// TODO:put validation back once accounts set up
+                //if (true)
+                //{
+                getUserInput();
+                login();
+                //}
                 break;
         }
     }
 
     private void login()
     {
-        if (checkAccount(email, pWord))
+        if (NetworkUtils.isNetworkConnected(this)) //if internet is available, check use details from cloud
         {
-            if (NetworkUtils.isNetworkConnected(this))
-            {
-                String url = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/user";
+            String url = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/user";
 
-                // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                        new Response.Listener<String>()
+            // Request a string response from the provided URL.
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>()
+                    {
+                        @Override
+                        public void onResponse(String response)
                         {
-                            @Override
-                            public void onResponse(String response)
+                            Log.d(TAG, "Response:" + response);
+                            if (response.contains("admin") || response.contains("user") || response.contains("student")) //if user account passes cloud db check
                             {
-                                Log.d(TAG, "Response:" + response);
-                                if(response.equalsIgnoreCase("Authenticated"))
+                                if (!doesUserExistInDb(email)) //check user is in local database
                                 {
-                                    goHome();
-                                    Log.d(TAG, "server check successful open Home activity");
+                                    Log.d(TAG, "adding user to local db");
+                                    saveAccountToDb(pWord, email, getApplicationContext()); // add user to localDb
                                 }
+                                //set logged in user prefs
+                                tinydb.putString("loggedInAccount", email);
+                                tinydb.putString("loggedInName", pWord);
+                                goHome(); //as user is in local db
+                                Log.d(TAG, "server check successful open Home activity");
                             }
-                        }, new Response.ErrorListener()
+                        }
+                    }, new Response.ErrorListener()
+            {
+                @Override
+                public void onErrorResponse(VolleyError error)
                 {
-                    @Override
-                    public void onErrorResponse(VolleyError error)
-                    {
-                        Log.d(TAG, "Response:" + error);
-                    }
-                })
+                    Log.d(TAG, "Response:" + error);
+                    Log.d(TAG, "failed cloud account check");
+                }
+            })
+            {
+                //custom header for basic auth
+                @Override
+                public Map<String, String> getHeaders()
                 {
-                    //custom header for basic auth
-                    @Override
-                    public Map<String, String> getHeaders()
-                    {
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put(
-                                "Authorization",
-                                String.format("Basic %s", Base64.encodeToString(
-                                        //String.format("%s:%s", email, password).getBytes(), Base64.DEFAULT)));  TODO: set to input credentials once user account set up is complete
-                                        String.format("%s:%s", "marita", "fitz4321").getBytes(), Base64.DEFAULT)));
-                        return params;
-                    }
-                };
-                // Add the request to the RequestQueue.
-                queue.add(stringRequest);
-            }
-        } else
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put(
+                            "Authorization",
+                            String.format("Basic %s", Base64.encodeToString(
+                                    String.format("%s:%s", email, pWord).getBytes(), Base64.DEFAULT)));
+                    return params;
+                }
+            };
+            // Add the request to the RequestQueue.
+            queue.add(stringRequest);
+        } else // check if user is in local db and password is correct as internet is not available
         {
-            Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
+            checkAccount(email, pWord);
         }
     }
+
 
     private void getUserInput()
     {
@@ -188,10 +207,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loggedInCheck()
     {
-        if (tinydb.getString("loggedInAccount") != "")
+        String loginState = tinydb.getString("loggedInAccount");
+        if (loginState == "" || loginState == "loggedOut" || loginState == null)
         {
+            Log.d(TAG, "Not logged in: " + loginState);
+        } else
+        {
+            Log.d(TAG, "logged in: " + loginState + "go to home");
             goHome();
         }
+    }
+
+    //to check if user exists
+    private boolean doesUserExistInDb(String email)
+    {
+        User test = AppDatabase
+                .getDatabase(this)
+                .getUserDao()
+                .getUserbyId(email);
+        if (test != null)
+        {
+            Log.d(TAG, "User exists " + test.toString());
+            return true;
+        } else
+        {
+            Log.d(TAG, "user does not exist");
+            return false;
+        }
+    }
+
+    //get users details from local db
+    private User getOneUserFromDb(String email)
+    {
+        User test = AppDatabase
+                .getDatabase(this)
+                .getUserDao()
+                .getUserbyId(email);
+        return test;
+    }
+
+    private void saveAccountToDb(String pWord, String email, Context context)
+    {
+        //as user creation backend code was not ready in time we are using logins created in the backend.. sigh..
+        userViewModel.addOneUser(new User(email, "Demo", "User", pWord));
+        Log.d(TAG, "User saved to dataBase");
     }
 
     private void goHome()
@@ -201,38 +260,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private boolean checkAccount(String email, String pWord)
+    private void checkAccount(String email, String pWord)
     {
         User userToCheck = getOneUserFromDb(email);
-        boolean checked = false;
-        //Log.d(TAG, "checkAccount - User to check = " + userToCheck.getEmail() + " " + userToCheck.getPWord());
         if (userToCheck != null)
         {
-            //Log.d(TAG, "email from field: " + email + "pword from field" + pWord);
-            if (userToCheck.getEmail().equals(email) && userToCheck.getPWord().equals(pWord))
+            if (userToCheck.getEmail().equals(email) && userToCheck.getPWord().equals(pWord)) // if input user data matches user data from db
             {
-                Log.d(TAG, "here");
-
-                checked = true;
-                Log.d(TAG, "passed account check");
-                //set prefs
-                tinydb.putString("loggedInAccount", userToCheck.getEmail());
-                tinydb.putString("loggedInName", userToCheck.getFirstName());
+                Log.d(TAG, "passed local account check");
+                //set logged in user
+                tinydb.putString("loggedInAccount", email);
+                tinydb.putString("loggedInUserPWord", pWord);
+                goHome(); // progress to home menu
             }
         } else
         {
-            Log.d(TAG, "failed account check");
-            Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "failed local account check");
+            Toast.makeText(this, "Account Login failed", Toast.LENGTH_SHORT).show();
         }
-        return checked;
     }
 
-    private User getOneUserFromDb(String email)
+    @Override
+    public void onBackPressed()
     {
-        User user = AppDatabase
-                .getDatabase(this)
-                .getUserDao()
-                .getUserbyId(email);
-        return user;
+        clearUserInput();
+    }
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        clearUserInput();
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        clearUserInput();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        clearUserInput();
+    }
+
+    public void clearUserInput()
+    {
+        email = "";
+        pWord = "";
     }
 }

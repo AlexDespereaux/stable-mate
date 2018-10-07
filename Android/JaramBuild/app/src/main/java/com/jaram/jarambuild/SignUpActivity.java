@@ -31,8 +31,7 @@ import static com.basgeekball.awesomevalidation.ValidationStyle.BASIC;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener
 {
-    //I leave as local variables until development is basically finished.
-    //Simply as its easier to debug
+    //this class is unused as backend was not ready in time. However I have left it in as it would be useful if developing further..
     private EditText firstNameField;
     private EditText lastNameField;
     private EditText pWordField;

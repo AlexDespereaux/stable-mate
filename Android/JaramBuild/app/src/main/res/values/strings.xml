@@ -51,6 +51,7 @@
     <string name="calculate_scale">Calculate Scale</string>
     <string name="lens_settings">Lens Settings</string>
     <string name="calibration_name">Calibration Name</string>
+    <string name="str_cancel">Cancel</string>
     <string name="calibration_identifier">Calibration identifier</string>
     <string name="last_name">Last Name</string>
     <string name="first_name">First Name</string>
@@ -99,6 +100,19 @@
     <string name="click_image_to_view_re_annotate">Click image to View/Re-annotate</string>
     <string name="text_search">Text Search</string>
     <string name="galleryheader">Gallery</string>
+    <string name="please_select_an_annotation_option">Please select an Annotation option</string>
+    <string name="functxtsymbol">Insert Symbol Mode</string>
+    <string name="functxtundo">Undo Mode</string>
+    <string name="functxttext">Insert Text Mode</string>
+    <string name="funtxtdraw">Erase Drawing Mode</string>
+    <string name="functxtdrawmode">Drawing Mode</string>
+    <string name="image_notes">Image Notes</string>
+    <string name="image_description">Image Description</string>
+    <string name="image_location">Image Location</string>
+    <string name="image_date">Image Date</string>
+    <string name="re_annotate">RE-ANNOTATE</string>
+    <string name="continue2">Continue</string>
+    <string name="select_calibrate_to_generate_a_calibration_preset">Select Calibrate to generate a calibration preset</string>
 
 
 </resources>

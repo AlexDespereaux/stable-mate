@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.jaram.jarambuild">
 
     <uses-feature
@@ -22,12 +23,13 @@
 
     <application
         android:name=".Initializer"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme">
@@ -60,6 +62,7 @@
             android:name=".AddDataActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".GalleryActivity"
@@ -91,12 +94,12 @@
             android:name=".CheckCalibrationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".CropActivity"></activity>
+        <activity android:name=".CropActivity" />
 
         <service
             android:name=".uploadService.UploadIntentService"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".uploadService.GenerateUploadRequestService"
             android:exported="false"
@@ -104,7 +107,13 @@
         <service
             android:name=".uploadService.UploadRawImgService"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".uploadService.UploadEditImgService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity android:name=".ViewActivity"></activity>
     </application>
 
 </manifest>

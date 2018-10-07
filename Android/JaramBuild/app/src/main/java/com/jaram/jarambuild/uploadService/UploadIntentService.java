@@ -76,9 +76,9 @@ public class UploadIntentService extends JobIntentService
         String longitude = intent.getStringExtra("imageLongitude");
         String latitude = intent.getStringExtra("imageLatitude");
         String dFov = intent.getStringExtra("imageDFov");
-        String ppm = intent.getStringExtra("pixelsPerMicron");
+        final String ppm = intent.getStringExtra("pixelsPerMicron");
         final String raw_path = intent.getStringExtra("photoPath_raw");
-        String edit_path = intent.getStringExtra("photoPath_edited");
+        final String edit_path = intent.getStringExtra("photoPath_edited");
         final String username = intent.getStringExtra("loggedInUser");
         final String pword = intent.getStringExtra("loggedInUserPWord");
 
@@ -159,6 +159,7 @@ public class UploadIntentService extends JobIntentService
                                 mServiceIntent.putExtra("serverImageId", serverImageId);
                                 mServiceIntent.putExtra("localImageId", Integer.toString(imageId));
                                 mServiceIntent.putExtra("photoPath_raw", raw_path);
+                                mServiceIntent.putExtra("photoPath_edit", edit_path);
 
                                 // Starts the JobIntentService
                                 UploadRawImgService.enqueueURISWork(getApplicationContext(), mServiceIntent);
@@ -185,6 +186,7 @@ public class UploadIntentService extends JobIntentService
                         "Authorization",
                         String.format("Basic %s", Base64.encodeToString(
                                 String.format("%s:%s", username, pword).getBytes(), Base64.DEFAULT)));
+                                Log.d(TAG, "username & pword " + username + " / " + pword);
                 params.put("Content-Type", "application/json");
                 return params;
             }

@@ -1,9 +1,11 @@
 package com.jaram.jarambuild;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +15,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +23,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.jaram.jarambuild.roomDb.AppDatabase;
+import com.jaram.jarambuild.roomDb.Calibration;
 import com.jaram.jarambuild.uploadService.RequestQueueSingleton;
 import com.jaram.jarambuild.utils.TinyDB;
 import com.karumi.dexter.Dexter;
@@ -38,6 +43,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener
@@ -70,6 +79,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     //volley
     private RequestQueue queue;
     static final String REQ_TAG = "UIS";
+
+    //quickstart
+    private static final String SHOWCASE_ID = "home_act";
+
+    //db
+    List<Calibration> calibrationList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -106,6 +121,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         //only required during development
         queue = RequestQueueSingleton.getInstance(this.getApplicationContext())
                 .getRequestQueue();
+
+        cameraBtn.post(new Runnable() {
+            @Override
+            public void run() {
+                presentQuickstartSequence();
+            }
+        });
+        //get logged inUser
+        loggedInUser = tinydb.getString("loggedInAccount");
+        //get list of calibrations from database (calibrations)
+        calibrationList = getOneUserCaliListFromDb();
     }
 
     /**
@@ -226,9 +252,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (item.getItemId() == R.id.logoutMenuBtn)
         {
-            Log.d(TAG, "Logout Btn Clicked");
+            Log.d("LoginDebug", "Logout Btn Clicked, pre pref state: " + tinydb.getString("loggedInAccount"));
             //set logged in user to null
-            tinydb.putString("loggedInAccount", "");
+            tinydb.putString("loggedInAccount", "loggedOut");
+            Log.d("LoginDebug", "Logout Btn Clicked, post pref state: " + tinydb.getString("loggedInAccount"));
             //return to Login Page
             Intent settingsIntent = new Intent(this, MainActivity.class);
             startActivity(settingsIntent);
@@ -254,8 +281,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             switch (v.getId())
             {
                 case R.id.cameraBtn:
-                    //Open Camera
-                    openCameraIntent("editActivity");
+                    if(calibrationList.size() < 1)
+                    {
+                        caliAlertDialog();
+                    }
+                    else
+                    {
+                        //Open Camera
+                        openCameraIntent("editActivity");
+                    }
                     break;
                 case R.id.calibrateBtn:
                     //Open Camera
@@ -359,6 +393,94 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         File image = File.createTempFile(imageFileName, ".png", storageDir);
         imageFilePath = image.getAbsolutePath();
         return image;
+    }
+
+    private void presentQuickstartSequence() {
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+                //Toast.makeText(itemView.getContext(), "Item #" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(cameraBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Click here to take photo once you have calibrated")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(settingsBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Click here to view Annomate specific settings")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(galleryBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Click here to view your image gallery & to Re-annotate")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(calibrateBtn)
+                        .setDismissText("START HERE")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6E4690A"))
+                        .setContentText("Click here to create your first calibration")
+                        .withRectangleShape()
+                        .build()
+        );
+        sequence.start();
+    }
+
+    protected void caliAlertDialog()
+    {
+        LayoutInflater li = LayoutInflater.from(HomeActivity.this);
+
+        @SuppressLint("InflateParams") final View caliEmptyAlert = li.inflate(R.layout.calibration_empty_dialog, null);
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(HomeActivity.this);
+        alertDialogBuilder.setView(caliEmptyAlert);
+        alertDialogBuilder.setPositiveButton("Continue", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+            }
+        });
+        final android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private List<Calibration> getOneUserCaliListFromDb()
+    {
+        //TODO: add async
+        return AppDatabase
+                .getDatabase(HomeActivity.this)
+                .getCalibrationDao()
+                .getCalibrationListByUser(loggedInUser);
     }
 }
 
