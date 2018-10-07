@@ -31,6 +31,13 @@ max-width: 100%;
 .fa-download{
   background-color: #B12B21;
 }
+
+
+#rateImage{
+  width: 70%;
+  height: 0%;
+}
+
 .badge{
   background-color: #B12B21;
 }

@@ -1,9 +1,7 @@
 <div id="contentToConvert" class="flex-container">
   <div id="image" class="card">
-    <img src="{{imageUrl}}"> Rating: <br>
-    <bar-rating [(rate)]="rate" [readOnly]="true" [max]="6" [theme]="'stars'" [showText]="true" (rateChange)="changeRating($event)"
-      [titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']"></bar-rating>
-  </div>
+    <img id = "rateImage" src="{{imageUrl}}"> Rating: <br>
+</div>
 
   <div id="descriptions"class="col">
     <div class=" description">
@@ -29,3 +27,5 @@
 <button id="btn-Convert-Html2Image" (click)="download()" class="btn btn-primary"><i class="fa fa-download"></i> Download</button>
 
 <canvas id="pdf-canvas" width="400"></canvas>
+<bar-rating [(rate)]="rate" [readOnly]="false" [max]="6" [theme]="'stars'" [showText]="true" (rateChange)="changeRating($event)"
+[titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']"></bar-rating>
