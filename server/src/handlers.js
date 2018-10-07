@@ -141,7 +141,8 @@ exports.createAccount = function (req, res) {
 };
 
 exports.getImageData = function(req, res) {
-  db.getImageData(req.params.imageId)
+  let imageId = req['params']['imageId'];
+  Promise.all([db.getImageData(imageId), db.getLegendData(imageId)])
     .then(result => res.status(200).send(result))
     .catch(error => res.status(400).send(error));
 };

@@ -57,7 +57,6 @@ exports.insertImageData = function(data) {
 exports.insertLegendData = function(legendItems) {
   return new Promise((resolve, reject) => {
     connection().then(connection => {
-      // legendItems = [[[176, 'a', 'apple'], [176, 'b', 'bee'], [176, 'c', 'cow']]];
       let sql = mysql.format('INSERT INTO legend (imageId, name, text) VALUES ?', legendItems);
       connection.query(sql, function(err, result) {
         connection.end();
@@ -158,5 +157,18 @@ exports.getImageData = function(imageId) {
         resolve(results[0]);
       });
     });
+  });
+};
+
+exports.getLegendData = function(imageId) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      let sql = mysql.format('SELECT name, text FROM legend WHERE imageId = ?', imageId);
+      connection.query(sql, function (error, results) {
+        connection.end();
+        if (error) reject(error);
+        resolve(results);
+      });
+    })
   });
 };
