@@ -49,11 +49,11 @@ exports.uploadImageData = function (req, res) {
   if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
     db.getUserId(req)
       .then(userId => {
-        let imageData = _.merge({},_.set(req.body, 'userId', userId), req.body['location']);
+        let imageData = _.merge({}, _.set(req.body, 'userId', userId), req.body['location']);
         return db.insertImageData(imageData);
       })
       .then(insertResult => {
-        let legendArrayItem = function(imageId) {
+        let legendArrayItem = function (imageId) {
           return (obj) => [imageId, obj['name'], obj['text']]
         };
         let legendData = [_.map(req.body['legend'], legendArrayItem(insertResult['imageId']))];
@@ -94,7 +94,7 @@ exports.userType = function (req, res) {
   db.getUserType(req)
     .then(userType => {
       status = 200;
-      result = { 'userType': userType }
+      result = {'userType': userType}
     })
     .catch(error => {
       status = 500;
@@ -133,17 +133,34 @@ let userAdmin = function (userType) {
 };
 
 exports.createAccount = function (req, res) {
-    db.getUserType(req)
-      .then(userType => { console.log(userType); return userAdmin(userType) })
-      .then(userAdmin => { if (userAdmin) { return db.createUser(req.body) } else { throw 'Not an admin' }})
-      .then(userId => {console.log(userId); res.status(200).send(userId)})
-      .catch(error => res.status(401).send(error));
+  db.getUserType(req)
+    .then(userType => {
+      console.log(userType);
+      return userAdmin(userType)
+    })
+    .then(userAdmin => {
+      if (userAdmin) {
+        return db.createUser(req.body)
+      } else {
+        throw 'Not an admin'
+      }
+    })
+    .then(userId => {
+      console.log(userId);
+      res.status(200).send(userId)
+    })
+    .catch(error => res.status(401).send(error));
 };
 
-exports.getImageData = function(req, res) {
+exports.getImageData = function (req, res) {
   let imageId = req['params']['imageId'];
   Promise.all([db.getImageData(imageId), db.getLegendData(imageId)])
-    .then(result => res.status(200).send(result))
+    .then(result => {
+      let simpleData = _.pick(result[0], ['imageId', 'filename', 'description', 'notes', 'datetime', 'dFov', 'ppm']);
+      let location = { 'location': _.pick(result[0], ['latitude', 'longitude']) };
+      let legend = { 'legend': result[1] };
+      let data = _.merge({}, simpleData, location, legend);
+      res.status(200).send(data)
+    })
     .catch(error => res.status(400).send(error));
 };
-
