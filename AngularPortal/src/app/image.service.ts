@@ -7,7 +7,8 @@ import { RequestOptions } from '@angular/http';
 
 @Injectable()
 export class ImageService {
-
+  username;
+  password;
   private endPoint = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api";
 
 
@@ -24,12 +25,37 @@ export class ImageService {
     return this.http.get(`${this.endPoint}/user`, httpOptions);
   }
 
-  getClasses(id) {
+  getImageList() {
     let httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
       })
     };
+
     return this.http.get(`${this.endPoint}/image`, httpOptions);
+  }
+
+  
+  getImage(id) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
+      })
+    };
+    
+    return this.http.get(`${this.endPoint}/image/edit${id}`, httpOptions);
+  }
+
+  getImageData(id) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
+      })
+    };
+    
+    return this.http.get(`${this.endPoint}/image/${id}`, httpOptions);
   }
 }

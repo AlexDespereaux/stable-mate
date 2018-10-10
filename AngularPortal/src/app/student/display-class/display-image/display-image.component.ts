@@ -17,7 +17,7 @@ export class DisplayImageComponent implements OnInit {
   image = new Image();
   imageUrl = 'assets/images/img2.jpg';
   imageName = 'test image';
-  rate = 1;
+  rate = 0;
   getCanvas;
   // dummy obj
   imageDetails = {
@@ -127,8 +127,34 @@ export class DisplayImageComponent implements OnInit {
     const description = document.getElementById("descriptions").textContent;
     var file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
     saveAs(file);
-
-
   }
 
+  downlaodDescription() {
+    const description = document.getElementById("descriptions").textContent;
+    var file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
+    saveAs(file);
+  }
+
+  downloadLegend() {
+    var data = document.getElementById('legend');
+    html2canvas(data).then(canvas => {
+      // Few necessary setting options  
+      var imgWidth = 208;
+      var pageHeight = 295;
+      var imgHeight = canvas.height * imgWidth / canvas.width;
+      var heightLeft = imgHeight;
+
+      const contentDataURL = canvas.toDataURL('image/png');
+      contentDataURL.attr('download', 'legend.png');
+
+
+      let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
+      var position = 0;
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+      canvas.toBlob(function (blob) {
+        saveAs(blob, "legend.png");
+      });
+      // pdf.save('legened.pdf'); // Generated PDF   
+    });
+  }
 }

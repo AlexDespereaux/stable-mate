@@ -20,16 +20,7 @@ export class StudentComponent implements OnInit {
     // will be initialized later
     student = {
         id: '12458764',
-        classes: ['Class 1',
-            'Class 2',
-            'Class 3',
-            'Class 4',
-            'Class 5',
-            'Class 6',
-            'Class 7',
-            'Class 8',
-            'Class 9',
-            'Class 10']
+        classes: ['Class 1', 'Class 2']
     };
     studentClass = "";
     image = 'assets/folder.jpg';
@@ -43,14 +34,11 @@ export class StudentComponent implements OnInit {
     ngOnInit() {
 
         this.route.params.subscribe(
-            id => this.studentId = +(id)
+            
+            id => this.studentId = id
+                
         );
         this.allItems = this.student.classes;
-
-        // need to get students classes
-        // this.imageService.getClasses(this.studentId).subscribe(
-        // (classes) => this.student.classes = classes;
-        // );
 
         // initialize to page 1
         this.setPage(1);
