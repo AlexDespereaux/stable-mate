@@ -205,7 +205,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("confirmedDFOv", Double.parseDouble(dFov));
                 intent.putExtra("confirmedPixelsPerMicron", Double.parseDouble(ppm));
                 intent.putExtra("rawPhotoPath", raw_path);
-                intent.putExtra("scaleBarColourIndex", 1); 
+                intent.putExtra("scaleBarColourIndex", 1);
                 intent.putExtra("imgWidthInCCView", getScreenWidth());
                 startActivity(intent);
 

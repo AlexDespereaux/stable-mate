@@ -109,12 +109,15 @@ public class UploadIntentService extends JobIntentService
             uploadObj.put("location", locationObj);
             uploadObj.put("dFov", Double.parseDouble(dFov));
             uploadObj.put("ppm", Double.parseDouble(ppm));
-            for (Legend legend : listOfLegendsFromDb)
+            if(listOfLegendsFromDb != null)
             {
-                JSONObject singleLegend = new JSONObject();
-                singleLegend.put("name", legend.getSymbol());
-                singleLegend.put("text", legend.getLegendTxt());
-                legendArr.put(singleLegend);
+                for (Legend legend : listOfLegendsFromDb)
+                {
+                    JSONObject singleLegend = new JSONObject();
+                    singleLegend.put("name", legend.getSymbol());
+                    singleLegend.put("text", legend.getLegendTxt());
+                    legendArr.put(singleLegend);
+                }
             }
             uploadObj.put("legend", legendArr);
         } catch (JSONException e)
@@ -202,7 +205,7 @@ public class UploadIntentService extends JobIntentService
     public void onDestroy()
     {
         super.onDestroy();
-        toast("All work complete");
+        toast("Image upload progressing");
     }
 
     final Handler mHandler = new Handler();

@@ -88,7 +88,6 @@
     <string name="search_string">Search String</string>
     <string name="start_date2">Start Date</string>
     <string name="clear2">Clear</string>
-    <string name="apply2">Apply</string>
     <string name="crop">crop</string>
     <string name="select_ratio">Select ratio</string>
     <string name="refObjInstruct"><![CDATA[Please select your reference object & press OK]]></string>
@@ -113,6 +112,9 @@
     <string name="re_annotate">RE-ANNOTATE</string>
     <string name="continue2">Continue</string>
     <string name="select_calibrate_to_generate_a_calibration_preset">Select Calibrate to generate a calibration preset</string>
+    <string name="quickstart_guide">Quickstart Guide</string>
+    <string name="apply2">Apply</string>
+    <string name="repeat_quickstart_guide">Repeat Quickstart Guide</string>
 
 
 </resources>
