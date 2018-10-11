@@ -109,15 +109,12 @@ public class UploadIntentService extends JobIntentService
             uploadObj.put("location", locationObj);
             uploadObj.put("dFov", Double.parseDouble(dFov));
             uploadObj.put("ppm", Double.parseDouble(ppm));
-            if(listOfLegendsFromDb != null)
+            for (Legend legend : listOfLegendsFromDb)
             {
-                for (Legend legend : listOfLegendsFromDb)
-                {
-                    JSONObject singleLegend = new JSONObject();
-                    singleLegend.put("name", legend.getSymbol());
-                    singleLegend.put("text", legend.getLegendTxt());
-                    legendArr.put(singleLegend);
-                }
+                JSONObject singleLegend = new JSONObject();
+                singleLegend.put("name", legend.getSymbol());
+                singleLegend.put("text", legend.getLegendTxt());
+                legendArr.put(singleLegend);
             }
             uploadObj.put("legend", legendArr);
         } catch (JSONException e)
@@ -147,14 +144,16 @@ public class UploadIntentService extends JobIntentService
         String url = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image/";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, uploadObj,
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<JSONObject>()
+                {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONObject response)
+                    {
                         try
                         {
                             serverImageId = response.getString("imageId");
-                            Log.d(TAG, "Server Response: " + response.toString() + ", Local image id :" + imageId +" Server image id: " + serverImageId);
-                            if(Integer.parseInt(serverImageId)> 0)
+                            Log.d(TAG, "Server Response: " + response.toString() + ", Local image id :" + imageId + " Server image id: " + serverImageId);
+                            if (Integer.parseInt(serverImageId) > 0)
                             {
                                 Intent mServiceIntent = new Intent();
                                 mServiceIntent.putExtra("loggedInUser", username);
@@ -174,12 +173,15 @@ public class UploadIntentService extends JobIntentService
                         }
 
                     }
-                }, new Response.ErrorListener() {
+                }, new Response.ErrorListener()
+        {
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onErrorResponse(VolleyError error)
+            {
                 Log.d(TAG, "Response: " + error.toString() + "image id :" + imageId);
             }
-        }){
+        })
+        {
             //add Basic Auth header
             @Override
             public Map<String, String> getHeaders()
@@ -189,7 +191,7 @@ public class UploadIntentService extends JobIntentService
                         "Authorization",
                         String.format("Basic %s", Base64.encodeToString(
                                 String.format("%s:%s", username, pword).getBytes(), Base64.DEFAULT)));
-                                Log.d(TAG, "username & pword " + username + " / " + pword);
+                Log.d(TAG, "username & pword " + username + " / " + pword);
                 params.put("Content-Type", "application/json");
                 return params;
             }

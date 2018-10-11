@@ -90,7 +90,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         dateDisplay.setText("Image Date: " + convertedDate);
         locationDisplay = findViewById(R.id.locationDisplay);
         viewScroller = findViewById(R.id.viewScroller);
-        if(longitude == "181")
+        if(longitude.equals("182") || longitude.equals("181"))
         {
             locationDisplay.setVisibility(View.GONE);
         }
@@ -188,6 +188,11 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         raw_path = intent.getStringExtra("photoPath_raw");
         edit_path = intent.getStringExtra("photoPath_edited");
         convertedDate = intent.getStringExtra("convertedDate");
+        if(longitude  == "181")
+        {
+            longitude = "Location: N/A";
+            latitude = "Location: N/A";
+        }
     }
 
     @Override

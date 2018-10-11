@@ -191,8 +191,13 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         //get edited image dfov & pixels per micron from intent
         dFov = Objects.requireNonNull(getIntent().getExtras()).getDouble("dFov");
         pixelsPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("pixelsPerMicron");
-        //get date
+        //get date from intent
         unixDate = Objects.requireNonNull(getIntent().getExtras()).getString("unixDate");
+        //Get location from intent
+        longitude = Objects.requireNonNull(getIntent().getExtras()).getString("imageLongitude");
+        latitude= Objects.requireNonNull(getIntent().getExtras()).getString("imageLatitude");
+
+        getLocation();
 
         //set image in view
         setImageView();
@@ -258,8 +263,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
-
-        getLocation();
     }
 
     //set focus to bottom of the scroll view
@@ -454,32 +457,40 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
     private void getLocation()
     {
-        //default value = false
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean saveLocation = settings.getBoolean("LocationSwitch", false);
-        Log.d(TAG, "Location preference: " + saveLocation);
-        if (saveLocation)
+        Log.d(TAG, "Longitude prior to gps: " + longitude);
+        if(longitude == "182" || longitude.equals("182")) //182 is the code for a new photo 181 is the code where location unavailable or tuned off by user
         {
-            gps = new GPSTracker(AddDataActivity.this);
-            if(gps.canGetLocation())
-            {
-                latitude = Double.toString(gps.getLatitude());
-                longitude = Double.toString(gps.getLongitude());
 
-                // \n is for new line
-                Log.d(TAG,"Your Location is - \nLat: " + latitude + "\nLong: " + longitude);
-            } else {
-                // Can't get location.
-                // GPS or network is not enabled.
-                // Ask user to enable GPS/network in settings.
-                Log.d(TAG, "Location error, not saved");
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean saveLocation = settings.getBoolean("locationToggleSwitch", false);
+            Log.d(TAG, "Location preference: " + saveLocation);
+            if (saveLocation)
+            {
+                gps = new GPSTracker(AddDataActivity.this);
+                if (gps.canGetLocation())
+                {
+                    latitude = Double.toString(gps.getLatitude());
+                    longitude = Double.toString(gps.getLongitude());
+
+                    // \n is for new line
+                    Log.d(TAG, "Your Location is - \nLat: " + latitude + "\nLong: " + longitude);
+                } else
+                {
+                    // Can't get location.
+                    // GPS or network is not enabled.
+                    // Ask user to enable GPS/network in settings.
+                    Toast.makeText(this, "Unable to save location, please ensure location is on in your phone settings", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Location error, not saved");
+                    longitude = "181";
+                    latitude = "181";
+                }
+                Log.d(TAG, "Location saved");
+            } else
+            {
+                //deliberately invalid valid values are lat +90 to -90 long +180 to -180
+                longitude = "181";
+                latitude = "181";
             }
-            Log.d(TAG, "Location saved");
-        } else
-        {
-            //deliberately invalid valid values are lat +90 to -90 long +180 to -180
-            longitude = "181";
-            latitude = "181";
         }
     }
 

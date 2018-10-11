@@ -38,11 +38,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         locationToggleSwitch = findViewById(R.id.locSwitch);
         qsBtn = findViewById(R.id.qsBtn);
 
+        //set toggle position
+        getQSToggleStatus();
+
         //register listeners
         qsBtn.setOnClickListener(this);
         locationToggleSwitch.setOnClickListener(new ToggleButton.OnClickListener()
         {
-
             public void onClick(View v)
             {
                 SharedPreferences sharedPreferences = PreferenceManager
@@ -101,8 +103,19 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.qsBtn:
                 Log.d(TAG, "QS Btn clicked");
                 resetQuickStart();
+                Toast.makeText(this, "Please restart the application to View Quickstart Guide", Toast.LENGTH_SHORT).show();
+
         }
     }
+
+    public void getQSToggleStatus()
+    {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean saveLocation = settings.getBoolean("locationToggleSwitch", false);
+        locationToggleSwitch.setChecked(saveLocation);
+        Log.d(TAG, "QS toggle set as :" + saveLocation);
+    }
+
 
     public void resetQuickStart()
     {
