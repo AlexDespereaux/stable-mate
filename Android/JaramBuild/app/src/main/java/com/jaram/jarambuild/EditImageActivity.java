@@ -89,6 +89,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private Button imgSticker;
     private Button imgSave;
     private Button imgClose;
+    //image aspect ratio
+    private int aspectSpinnerIndex;
 
     //quickstart
     private static final String SHOWCASE_ID = "edit_img_act";
@@ -147,6 +149,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         Log.d(TAG, "scaleBarColourIndex from intent: " + scaleBarColourIndex);
         //Get Pixels per micron of cropped image from intent
         croppedImgPixelPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("croppedPixelsPerMicron");
+        //Get index of aspect ratio (0 = 1:1, 1 = 4:3)
+        aspectSpinnerIndex = Objects.requireNonNull(getIntent().getExtras()).getInt("aspectSpinnerIndex");
 
         //get bitmap
         Bitmap bitmap = BitmapFactory.decodeFile(croppedFilePath);
@@ -154,12 +158,15 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         //set bitmap to editor view
         mPhotoEditorView.getSource().setImageBitmap(bitmap);
 
-        //hide action bar
-        android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
-        if (myActionBar != null)
+        //hide action bar if aspect is 4:3
+        if(aspectSpinnerIndex == 1)
         {
-            myActionBar.hide();
-            Log.d(TAG, "ActionBar Hidden");
+            android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
+            if (myActionBar != null)
+            {
+                myActionBar.hide();
+                Log.d(TAG, "ActionBar Hidden");
+            }
         }
 
         //function text
