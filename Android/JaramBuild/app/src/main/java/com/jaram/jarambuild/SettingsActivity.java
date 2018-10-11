@@ -14,101 +14,104 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.jaram.jarambuild.utils.TinyDB;
 
-public class SettingsActivity extends AppCompatActivity
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+
+public class SettingsActivity extends AppCompatActivity implements View.OnClickListener
+{
+    private Switch locationToggleSwitch;
+    private String TAG = "SettingsAct";
+    private Button qsBtn;
+    //get logged in user
+    TinyDB tinydb;
+    String loggedInUser; // email address, which is primary key of user db
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
     {
-        private EditText compInputTxt;
-        private Switch locationSwitch;
-        private Button applyCompBtn;
-        private SharedPreferences settings;
-        private String TAG = "SettingsAct";
-        //get logged in user
-        TinyDB tinydb;
-        String loggedInUser; // email address, which is primary key of user db
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState)
+        locationToggleSwitch = findViewById(R.id.locSwitch);
+        qsBtn = findViewById(R.id.qsBtn);
+
+        //register listeners
+        qsBtn.setOnClickListener(this);
+        locationToggleSwitch.setOnClickListener(new ToggleButton.OnClickListener()
         {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_settings);
 
-            compInputTxt = findViewById(R.id.compLvlTxt);
-            locationSwitch = findViewById(R.id.locSwitch);
-            applyCompBtn = findViewById(R.id.applyComp);
-
-            //get logged in user for db
-            tinydb = new TinyDB(this);
-            loggedInUser = tinydb.getString("loggedInAccount");
-            Log.d(TAG, "loggedInUser: " + loggedInUser);
-
-            settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-            locationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                saveLocPref(isChecked);
-                }
-            });
-
-            applyCompBtn.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    if (compInputTxt.getText().toString().length() > 0)
-                    {
-                        saveCompressionPref(Integer.parseInt(compInputTxt.getText().toString()));
-                    }
-                }
-            });
-
-
-        }
-
-        public void saveLocPref(boolean switchState)
-        {
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean("LocationSwitch", switchState);
-            editor.apply();
-            Log.d(TAG, "Location switch set: " + switchState);
-        }
-
-        public void saveCompressionPref(int compressionLvl)
-        {
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putInt("CompressionLvl", compressionLvl);
-            editor.apply();
-            Log.d(TAG, "Compression lvl set: " + compressionLvl);
-        }
-
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu)
-        {
-            getMenuInflater().inflate(R.menu.bar_menu, menu);
-            return true;
-        }
-
-        //custom menu
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item)
-        {
-            if (item.getItemId() == R.id.helpMenuBtn)
+            public void onClick(View v)
             {
-                //TODO Make help activity
-                Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Help Btn Clicked");
-
-            } else if (item.getItemId() == R.id.logoutMenuBtn)
-            {
-                Log.d(TAG, "Logout Btn Clicked");
-                //set logged in user to null
-                tinydb.putString("loggedInAccount", "");
-                //return to Login Page
-                Intent settingsIntent = new Intent(this, MainActivity.class);
-                startActivity(settingsIntent);
-                finish();
-            } else
-            {
-                return super.onOptionsItemSelected(item);
+                SharedPreferences sharedPreferences = PreferenceManager
+                        .getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("locationToggleSwitch", locationToggleSwitch.isChecked());
+                editor.apply();
+                Log.d(TAG, "locationToggleSwitch: " + locationToggleSwitch.isChecked());
             }
-            return true;
+        });
+
+        //get logged in user for db
+        tinydb = new TinyDB(this);
+        loggedInUser = tinydb.getString("loggedInAccount");
+        Log.d(TAG, "loggedInUser: " + loggedInUser);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.bar_menu, menu);
+        return true;
+    }
+
+    //custom menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if (item.getItemId() == R.id.helpMenuBtn)
+        {
+            //TODO Make help activity
+            Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Help Btn Clicked");
+
+        } else if (item.getItemId() == R.id.logoutMenuBtn)
+        {
+            Log.d(TAG, "Logout Btn Clicked");
+            //set logged in user to null
+            tinydb.putString("loggedInAccount", "");
+            //return to Login Page
+            Intent settingsIntent = new Intent(this, MainActivity.class);
+            startActivity(settingsIntent);
+            finish();
+        } else
+        {
+            return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id.qsBtn:
+                Log.d(TAG, "QS Btn clicked");
+                resetQuickStart();
         }
     }
+
+    public void resetQuickStart()
+    {
+        //reset the Quickstart views
+        MaterialShowcaseView.resetAll(this);
+        TinyDB tinydb = new TinyDB(this);
+        //reset the auto scrolls
+        tinydb.putDouble("viewQuickstartShown", 0.0);
+        tinydb.putDouble("addDataQuickstartShown", 0.0);
+        Log.d(TAG, "QS reset");
+    }
+}
