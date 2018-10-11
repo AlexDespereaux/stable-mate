@@ -76,7 +76,7 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
 
         String longitudeIn = imageListForGallery.get(position).getLongitude();
         String latitudeIn = imageListForGallery.get(position).getLatitude();
-        if(Double.parseDouble(longitudeIn)  == (double)181)
+        if(longitudeIn.equals("182") || longitudeIn.equals("181"))
         {
             holder.locationTV.setText("Location: N/A");
         }

@@ -36,7 +36,6 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_medium"
             android:padding="10dp"
-            android:checked="true"
             android:switchTextAppearance="@style/TextAppearance.AppCompat"
             android:text="@string/saved_location_with_image"
             android:textAppearance="@style/TextAppearance.AppCompat" />

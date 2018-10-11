@@ -59,6 +59,10 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
     //date
     private String unixDate;
 
+    //location
+    private String longitude;
+    private String latitude;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -234,6 +238,9 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("aspectSpinnerIndex", aspectSpinnerIndex);
         //add selected int index of colour in scale bar colour array
         intent.putExtra("scaleBarColourIndex", scaleBarColourIndex);
+        //location
+        intent.putExtra("imageLongitude", longitude);
+        intent.putExtra("imageLatitude", latitude);
         //open edit Image Activity
         startActivity(intent);
     }
@@ -261,6 +268,9 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
             unixDate =  getUnixEpochTime();
             Log.d(TAG, "generated date: " + unixDate);
         }
+        //location
+        longitude = Objects.requireNonNull(getIntent().getExtras()).getString("imageLongitude", "182");
+        latitude= Objects.requireNonNull(getIntent().getExtras()).getString("imageLatitude","182");
 
     }
 

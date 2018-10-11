@@ -113,7 +113,10 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name=".ViewActivity"></activity>
+        <activity android:name=".ViewActivity"
+                android:noHistory="true">
+
+        </activity>
     </application>
 
 </manifest>
