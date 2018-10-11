@@ -94,8 +94,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private String notes;
     private String editedImgUri;
     private String rawImgUri;
-    private String fusedLocationLong;
-    private String fusedLocationLat;
     private Double dFov;
     private Double pixelsPerMicron;
     private int uploadId = -1;
@@ -140,6 +138,11 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
     //location
     private GPSTracker gps;
+    private String longitude;
+    private String latitude;
+
+    //date
+    private String unixDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -188,6 +191,8 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         //get edited image dfov & pixels per micron from intent
         dFov = Objects.requireNonNull(getIntent().getExtras()).getDouble("dFov");
         pixelsPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("pixelsPerMicron");
+        //get date
+        unixDate = Objects.requireNonNull(getIntent().getExtras()).getString("unixDate");
 
         //set image in view
         setImageView();
@@ -408,7 +413,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
     private void saveImageToDb()
     {
-        imageViewModel.addOneImage(new Image(imgTitle, description, notes, getUnixEpochTime(), fusedLocationLong, fusedLocationLat, Double.toString(dFov), Double.toString(pixelsPerMicron), uploadId, rawImgUri, editedImgUri, loggedInUser));
+        imageViewModel.addOneImage(new Image(imgTitle, description, notes, unixDate, longitude, latitude, Double.toString(dFov), Double.toString(pixelsPerMicron), uploadId, rawImgUri, editedImgUri, loggedInUser));
         Log.d(TAG, "Image saved to dataBase");
     }
 
@@ -452,16 +457,17 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         //default value = false
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         boolean saveLocation = settings.getBoolean("LocationSwitch", false);
+        Log.d(TAG, "Location preference: " + saveLocation);
         if (saveLocation)
         {
             gps = new GPSTracker(AddDataActivity.this);
             if(gps.canGetLocation())
             {
-                fusedLocationLat = Double.toString(gps.getLatitude());
-                fusedLocationLong = Double.toString(gps.getLongitude());
+                latitude = Double.toString(gps.getLatitude());
+                longitude = Double.toString(gps.getLongitude());
 
                 // \n is for new line
-                Log.d(TAG,"Your Location is - \nLat: " + fusedLocationLong + "\nLong: " + fusedLocationLat);
+                Log.d(TAG,"Your Location is - \nLat: " + latitude + "\nLong: " + longitude);
             } else {
                 // Can't get location.
                 // GPS or network is not enabled.
@@ -472,8 +478,8 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         } else
         {
             //deliberately invalid valid values are lat +90 to -90 long +180 to -180
-            fusedLocationLong = "181";
-            fusedLocationLat = "181";
+            longitude = "181";
+            latitude = "181";
         }
     }
 

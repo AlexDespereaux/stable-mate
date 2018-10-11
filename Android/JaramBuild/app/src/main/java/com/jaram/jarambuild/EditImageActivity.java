@@ -91,6 +91,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private Button imgClose;
     //image aspect ratio
     private int aspectSpinnerIndex;
+    //date
+    private String unixDate;
 
     //quickstart
     private static final String SHOWCASE_ID = "edit_img_act";
@@ -151,6 +153,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         croppedImgPixelPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("croppedPixelsPerMicron");
         //Get index of aspect ratio (0 = 1:1, 1 = 4:3)
         aspectSpinnerIndex = Objects.requireNonNull(getIntent().getExtras()).getInt("aspectSpinnerIndex");
+        //get date
+        unixDate = Objects.requireNonNull(getIntent().getExtras()).getString("unixDate");
 
         //get bitmap
         Bitmap bitmap = BitmapFactory.decodeFile(croppedFilePath);
@@ -389,6 +393,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         intent.putExtra("rawImageUri", imageFilePath);
                         intent.putExtra("dFov", dFov);
                         intent.putExtra("pixelsPerMicron", pixelsPerMicron);
+                        intent.putExtra("unixDate", unixDate);
                         startActivity(intent);
                         finish();
                     }
