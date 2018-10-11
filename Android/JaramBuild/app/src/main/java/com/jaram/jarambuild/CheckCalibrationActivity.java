@@ -80,9 +80,6 @@ public class CheckCalibrationActivity extends AppCompatActivity
     //db
     List<Calibration> calibrationList;
 
-    //data to pass to edit activity
-    int sBcolorPosition;
-
     //quickstart
     private static final String SHOWCASE_ID = "cali_check_act";
 
@@ -222,14 +219,6 @@ public class CheckCalibrationActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int whichButton)
             {
                 Calibration selectedCali;
-                //get scale bar colour
-                try
-                {
-                    sBcolorPosition = ((Spinner) caliCheckView.findViewById(R.id.colourSbSpinner)).getSelectedItemPosition();
-                } catch (NumberFormatException ex)
-                {
-                    Toast.makeText(CheckCalibrationActivity.this, "Please choose scalebar colour", Toast.LENGTH_SHORT).show();
-                }
 
                 //get ocular lens details
                 try
@@ -317,9 +306,6 @@ public class CheckCalibrationActivity extends AppCompatActivity
                     //add scale information to intent
                     intent.putExtra("confirmedPixelsPerMicron", newPPM);
                     intent.putExtra("confirmedDFOv", newDFOV);
-                    //add selected int index of colour in scale bar colour array
-                    intent.putExtra("scaleBarColourIndex", sBcolorPosition);
-                    Log.d(TAG, "scaleBarColourIndex: " + sBcolorPosition);
                     //width in view is used to calc scale
                     intent.putExtra("imgWidthInCCView", finalWidth);
                     Log.d(TAG, "imgWidthInCCView: " + finalWidth);
