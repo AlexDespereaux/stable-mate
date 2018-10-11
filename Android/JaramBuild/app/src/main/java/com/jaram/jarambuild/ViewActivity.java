@@ -199,13 +199,13 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 //go to crop view
                 Intent intent = new Intent(this, CropActivity.class);
                 //Add data to intent
-                intent.putExtra("imageDate", date);
+                intent.putExtra("unixDate", date);
                 intent.putExtra("imageLongitude", longitude);
                 intent.putExtra("imageLatitude", latitude);
                 intent.putExtra("confirmedDFOv", Double.parseDouble(dFov));
                 intent.putExtra("confirmedPixelsPerMicron", Double.parseDouble(ppm));
                 intent.putExtra("rawPhotoPath", raw_path);
-                intent.putExtra("scaleBarColourIndex", 1); //TODO scalebar color popup
+                intent.putExtra("scaleBarColourIndex", 1); 
                 intent.putExtra("imgWidthInCCView", getScreenWidth());
                 startActivity(intent);
 

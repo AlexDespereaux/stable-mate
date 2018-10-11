@@ -56,6 +56,9 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
     //quickstart
     private static final String SHOWCASE_ID = "crop_act";
 
+    //date
+    private String unixDate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -225,6 +228,8 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("scaleBarColourIndex", scaleBarColourIndex);
         //cropped image pix per micron
         intent.putExtra("croppedPixelsPerMicron", croppedImgPixelPerMicron);
+        //date
+        intent.putExtra("unixDate", unixDate);
         //add ratio indoex to intent
         intent.putExtra("aspectSpinnerIndex", aspectSpinnerIndex);
         //add selected int index of colour in scale bar colour array
@@ -248,6 +253,14 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "scaleBarColourIndex from intent: " + scaleBarColourIndex);
         //width of image used to calibrate
         imageWidthInCCView = Objects.requireNonNull(getIntent().getExtras()).getInt("imgWidthInCCView");
+        //get date if it exists, if it does not assign date value of -1 and use get date method
+        unixDate = Objects.requireNonNull(getIntent().getExtras()).getString("unixDate", "-1");
+        Log.d(TAG, "unixDate from intent: " + unixDate);
+        if(unixDate == "-1")
+        {
+            unixDate =  getUnixEpochTime();
+            Log.d(TAG, "generated date: " + unixDate);
+        }
 
     }
 
