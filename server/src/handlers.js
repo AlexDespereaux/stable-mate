@@ -59,7 +59,9 @@ exports.uploadImageData = function (req, res) {
         let legendData = [_.map(req.body['legend'], legendArrayItem(insertResult['imageId']))];
         status = 201;
         result = insertResult;
-        return db.insertLegendData(legendData);
+        if (legendData[0].length > 0) {
+          return db.insertLegendData(legendData);
+        }
       })
       .catch(error => {
         status = 500;
