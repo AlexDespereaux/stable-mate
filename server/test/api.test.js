@@ -1,14 +1,18 @@
 // api.js
 const request = require('supertest');
 const express = require('express');
-const api = require('../src/api');
 const sinon = require('sinon');
+// const assert = require('chai').assert;
+
+const api = require('../src/api');
+const handlers = require('../src/handlers');
 
 describe('api', function() {
   let app = express();
   let server;
 
   before(function(done) {
+    sinon.stub(handlers, 'printRequest').callsFake(() => {});
     app.use(api);
     server = app.listen(function(err) {
       if (err) { return done(err); }
