@@ -154,9 +154,11 @@ exports.createAccount = function (req, res) {
 
 exports.getImageData = function (req, res) {
   let imageId = req['params']['imageId'];
-  Promise.all([db.getImageData(imageId), db.getLegendData(imageId)])
+  let imagePromises = [db.getImageData(imageId), db.getLegendData(imageId)];
+  Promise.all(imagePromises)
     .then(result => {
-      let simpleData = _.pick(result[0], ['imageId', 'filename', 'description', 'notes', 'datetime', 'dFov', 'ppm']);
+      let simpleData = _.pick(result[0], ['imageId', 'filename', 'description', 'notes', 'datetime', 'dFov',
+        'ppm']);
       let location = { 'location': _.pick(result[0], ['latitude', 'longitude']) };
       let legend = { 'legend': result[1] };
       let data = _.merge({}, simpleData, location, legend);
