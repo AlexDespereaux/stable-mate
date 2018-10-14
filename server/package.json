@@ -1,13 +1,14 @@
 {
   "name": "stablemate_plus_api",
-  "version": "1.0.9",
+  "version": "1.0.108",
   "description": "StableMate Plus API",
   "author": "Richard Morton <18967393@students.latrobe.edu.au>",
   "main": "src/server.js",
   "licence": "UNLICENCED",
   "private": true,
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "mocha"
   },
   "dependencies": {
     "aws-sdk": "^2.288.0",
@@ -25,7 +26,7 @@
   "devDependencies": {
     "archiver": "^2.1.1",
     "mocha": "^5.2.0",
-    "supertest": "^3.1.0",
-    "sinon": "^6.1.5"
+    "sinon": "^6.1.5",
+    "supertest": "^3.1.0"
   }
 }
