@@ -97,6 +97,9 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     //location
     private String longitude;
     private String latitude;
+    //unit conversion
+    String unit = "microns";
+    Double outPutInGivenUnits = 0.00;
 
     //quickstart
     private static final String SHOWCASE_ID = "edit_img_act";
@@ -572,30 +575,33 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         int w = (int) Math.round(tempPixels);
 
         //set scale bar text
-        /*
-        String unit = "microns";
-       if( (resultSbSizeinMicrons < 0 ) && (resultSbSizeinMicrons < 0 ) ) //centimeters
-       {
+        //millimeters
+        if ((resultSbSizeinMicrons > 999) && (resultSbSizeinMicrons < 10000))
+        {
+            unit = "mm";
+            outPutInGivenUnits = resultSbSizeinMicrons/1000;
 
-       }
-       else if((resultSbSizeinMicrons > 1000) && (resultSbSizeinMicrons < )) // millimeters
-       {
+        }
+        //centimeters
+        else if ((resultSbSizeinMicrons > 9999) && (resultSbSizeinMicrons < 1000000))
+        {
+            unit = "cm";
+            outPutInGivenUnits = resultSbSizeinMicrons /10000;
+        }
+        //meters
+        else if ((resultSbSizeinMicrons > 999999))
+        {
+            unit = "metre";
+            outPutInGivenUnits = resultSbSizeinMicrons/1000000;
+        }
+        //microns
+        else
+        {
+            unit = "microns";
+            outPutInGivenUnits = resultSbSizeinMicrons;
+        }
 
-       }
-       else if() // microns
-       {
-
-       }
-       else if() //nano
-       {
-
-       }
-       else
-       {
-
-       }*/
-
-        String resultPrintString = "  " + Double.toString(resultSbSizeinMicrons) + " microns  ";
+        String resultPrintString = "  " + outPutInGivenUnits + " " + unit;
         Log.d(TAG, "Scale Bar width = " + w + " Scale bar height = " + h);
 
         Bitmap scaled = Bitmap.createScaledBitmap(bm, w, h, true); // Make sure w and h are in the correct order

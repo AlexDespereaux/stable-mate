@@ -2,9 +2,11 @@ package com.jaram.jarambuild;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,6 +62,20 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         tinydb = new TinyDB(this);
         loggedInUser = tinydb.getString("loggedInAccount");
         Log.d(TAG, "loggedInUser: " + loggedInUser);
+
+        //home button in action bar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
+        if (toolbar != null) {
+            toolbar.setLogo(R.drawable.my_logo_shadow_96px);
+
+            //Listener for item selection change
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goHome();
+                }
+            });
+        }
     }
 
     @Override
@@ -75,9 +91,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     {
         if (item.getItemId() == R.id.helpMenuBtn)
         {
-            //TODO Make help activity
-            Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Help Btn Clicked");
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://docs.google.com/document/d/1CFCF-80XOzv55uB1acoBkKkKK8FgZzDq0q24luXXdzI/edit?usp=sharing"));
+            startActivity(browserIntent);
 
         } else if (item.getItemId() == R.id.logoutMenuBtn)
         {
@@ -88,7 +105,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             Intent settingsIntent = new Intent(this, MainActivity.class);
             startActivity(settingsIntent);
             finish();
-        } else
+        }
+        else if (item.getItemId() == R.id.aboutBtn)
+        {
+            Log.d(TAG, "About Btn Clicked");
+            //Go to settings activity
+            Intent settingsIntent = new Intent(this, AboutUsActivity.class);
+            startActivity(settingsIntent);
+        }
+        else
         {
             return super.onOptionsItemSelected(item);
         }
@@ -126,5 +151,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         tinydb.putDouble("viewQuickstartShown", 0.0);
         tinydb.putDouble("addDataQuickstartShown", 0.0);
         Log.d(TAG, "QS reset");
+    }
+
+    public void goHome()
+    {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 }

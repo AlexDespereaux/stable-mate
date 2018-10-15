@@ -26,7 +26,7 @@ import com.jaram.jarambuild.utils.TinyDB;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GalleryActivity extends AppCompatActivity implements View.OnClickListener
+public class GalleryActivity extends AppCompatActivity
 {
     //db
     private ImageListViewModel imageViewModel;
@@ -70,7 +70,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         tinydb = new TinyDB(this);
         loggedInUser = tinydb.getString("loggedInAccount");
         Log.d(TAG, "loggedInUser: " + loggedInUser);
-
+/*
         //buttons
         clearBtn = findViewById(R.id.clearBtn);
         applyBtn = findViewById(R.id.applyBtn);
@@ -80,7 +80,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
 
         //set listeners
         clearBtn.setOnClickListener(this);
-        applyBtn.setOnClickListener(this);
+        applyBtn.setOnClickListener(this);   */
 
 
         galleryRecyclerView = findViewById(R.id.galleryRecycler);
@@ -109,6 +109,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //listener
+    /*
     @Override
     public void onClick(View v)
     {
@@ -123,7 +124,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
                 galleryListAdapter.notifyDataSetChanged();
                 break;
         }
-    }
+    }  */
 
     private ArrayList<GalleryModel> populateGalleryList()
     {
@@ -198,7 +199,8 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
             Intent settingsIntent = new Intent(this, MainActivity.class);
             startActivity(settingsIntent);
             finish();
-        } else if (item.getItemId() == R.id.aboutBtn)
+        }
+        else if (item.getItemId() == R.id.aboutBtn)
         {
             Log.d(TAG, "About Btn Clicked");
             //Go to settings activity

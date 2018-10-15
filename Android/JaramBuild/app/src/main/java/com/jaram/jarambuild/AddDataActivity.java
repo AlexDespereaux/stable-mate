@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -349,9 +350,10 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(settingsIntent);
         } else if (item.getItemId() == R.id.helpMenuBtn)
         {
-            //TODO Make help activity
-            Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Help Btn Clicked");
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://docs.google.com/document/d/1CFCF-80XOzv55uB1acoBkKkKK8FgZzDq0q24luXXdzI/edit?usp=sharing"));
+            startActivity(browserIntent);
 
         } else if (item.getItemId() == R.id.logoutMenuBtn)
         {
@@ -362,7 +364,15 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             Intent settingsIntent = new Intent(this, MainActivity.class);
             startActivity(settingsIntent);
             finish();
-        } else
+        }
+        else if (item.getItemId() == R.id.aboutBtn)
+        {
+            Log.d(TAG, "About Btn Clicked");
+            //Go to settings activity
+            Intent settingsIntent = new Intent(this, AboutUsActivity.class);
+            startActivity(settingsIntent);
+        }
+        else
         {
             return super.onOptionsItemSelected(item);
         }

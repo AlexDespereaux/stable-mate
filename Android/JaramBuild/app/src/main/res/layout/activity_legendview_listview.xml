@@ -43,6 +43,7 @@
                 android:layout_marginTop="10dp"
                 android:background="?android:attr/colorBackground"
                 android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
                 android:lineSpacingExtra="14sp"
                 android:paddingLeft="10dp"
                 android:text="@string/enter_your_legend_here"
