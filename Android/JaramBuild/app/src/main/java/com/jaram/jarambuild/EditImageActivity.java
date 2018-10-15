@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -160,7 +161,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         unixDate = Objects.requireNonNull(getIntent().getExtras()).getString("unixDate");
         //Get location from intent
         longitude = Objects.requireNonNull(getIntent().getExtras()).getString("imageLongitude");
-        latitude= Objects.requireNonNull(getIntent().getExtras()).getString("imageLatitude");
+        latitude = Objects.requireNonNull(getIntent().getExtras()).getString("imageLatitude");
 
         //get bitmap
         Bitmap bitmap = BitmapFactory.decodeFile(croppedFilePath);
@@ -169,13 +170,31 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mPhotoEditorView.getSource().setImageBitmap(bitmap);
 
         //hide action bar if aspect is 4:3
-        if(aspectSpinnerIndex == 1)
+        if (aspectSpinnerIndex == 1)
         {
             android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
             if (myActionBar != null)
             {
                 myActionBar.hide();
                 Log.d(TAG, "ActionBar Hidden");
+            }
+        } else
+        {
+            //home button in action bar
+            Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
+            if (toolbar != null)
+            {
+                toolbar.setLogo(R.drawable.my_logo_shadow_96px);
+
+                //Listener for item selection change
+                toolbar.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        goHome();
+                    }
+                });
             }
         }
 
@@ -205,9 +224,11 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         });
 
         //start Quickstart
-        imgSave.post(new Runnable() {
+        imgSave.post(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 presentQuickstartSequence();
             }
         });
@@ -666,16 +687,19 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         builder.create().show();
     }
 
-    private void presentQuickstartSequence() {
+    private void presentQuickstartSequence()
+    {
 
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(500); // half second between each showcase view
 
         MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
 
-        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener()
+        {
             @Override
-            public void onShow(MaterialShowcaseView itemView, int position) {
+            public void onShow(MaterialShowcaseView itemView, int position)
+            {
             }
         });
 
@@ -692,6 +716,12 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         .build()
         );
         sequence.start();
+    }
+
+    public void goHome()
+    {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 
 }

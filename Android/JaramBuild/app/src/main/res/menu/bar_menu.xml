@@ -16,5 +16,9 @@
         android:id="@+id/helpMenuBtn"
         android:title="@string/help"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/aboutBtn"
+        android:title="@string/about2"
+        app:showAsAction="never"/>
 
 </menu>

@@ -82,6 +82,11 @@ public class UploadIntentService extends JobIntentService
         final String username = intent.getStringExtra("loggedInUser");
         final String pword = intent.getStringExtra("loggedInUserPWord");
 
+        //had to add as server will not accept empty strings!!
+        description = (description.length() > 0) ? description: "User provided no data";
+        notes = (notes.length() > 0) ? notes: "User provided no data";
+        fileName = (fileName.length() > 0) ? fileName: "User provided no data";
+
         //initialise Android networking for json upload
         AndroidNetworking.initialize(getApplicationContext());
 

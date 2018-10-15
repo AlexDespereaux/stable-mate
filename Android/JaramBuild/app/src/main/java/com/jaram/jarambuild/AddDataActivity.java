@@ -416,6 +416,7 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
     private void saveImageToDb()
     {
+        //save data to database
         imageViewModel.addOneImage(new Image(imgTitle, description, notes, unixDate, longitude, latitude, Double.toString(dFov), Double.toString(pixelsPerMicron), uploadId, rawImgUri, editedImgUri, loggedInUser));
         Log.d(TAG, "Image saved to dataBase");
     }
@@ -427,7 +428,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         String[] stickerListNamesArr = com.jaram.jarambuild.utils.StickerConstants.getStickerListPaths();
         for (int i = 0; i < LegendListAdapter.editModelArrayList.size(); i++)
         {
-
             legendText = LegendListAdapter.editModelArrayList.get(i).getEditTextValue();
             stickerImgName = stickerListNamesArr[LegendListAdapter.editModelArrayList.get(i).getStickerIndex()];
             context = getApplicationContext();
