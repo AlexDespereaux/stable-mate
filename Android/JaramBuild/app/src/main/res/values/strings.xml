@@ -125,6 +125,7 @@
     <string name="team_mem">Our Team:   Anmol Walia (Web Designer)   Alex Nguyen (Research and Design)   Jackson Dobell (Research and Documentation)   Marita Fitzgerald (Android Developer)   Richard Morton (Back End Developer)</string>
     <string name="teammem">Our Team:   Anmol Walia (Web Designer)   Alex Nguyen (Research and Design)   Jackson Dobell (Research and Documentation)   Marita Fitzgerald (Android Developer)   Richard Morton (Back End Developer)</string>
     <string name="annomate_logo">annomate logo</string>
+    <string name="instructMeasure">Please measure between 2 points</string>
 
 
 </resources>

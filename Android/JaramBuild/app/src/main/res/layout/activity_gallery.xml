@@ -42,39 +42,6 @@
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/white" />
 
-        <EditText
-            android:id="@+id/searchEt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ems="10"
-            android:fontFamily="@font/roboto_medium"
-            android:hint="@string/text_search"
-            android:inputType="textPersonName"
-            android:textAppearance="@style/TextAppearance.AppCompat" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/clearBtn"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/clear2" />
-
-            <Button
-                android:id="@+id/applyBtn"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/apply2" />
-        </LinearLayout>
-
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
