@@ -45,8 +45,9 @@ exports.imageUpload = function (req, res) {
 exports.uploadImageData = function (req, res) {
   let status = 400;
   let result = "";
-  const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm', 'legend'];
-  if (_.every(REQUIRED_KEYS, (key) => req.body[key])) {
+  const REQUIRED_KEYS = ['filename', 'description', 'notes', 'datetime', 'location', 'dFov', 'ppm',
+    'legend'];
+  if (_.every(REQUIRED_KEYS, key => _.has(req.body, key))) {
     db.getUserId(req)
       .then(userId => {
         let imageData = _.merge({}, _.set(req.body, 'userId', userId), req.body['location']);
@@ -59,7 +60,9 @@ exports.uploadImageData = function (req, res) {
         let legendData = [_.map(req.body['legend'], legendArrayItem(insertResult['imageId']))];
         status = 201;
         result = insertResult;
-        return db.insertLegendData(legendData);
+        if (legendData[0].length > 0) {
+          return db.insertLegendData(legendData);
+        }
       })
       .catch(error => {
         status = 500;
@@ -67,7 +70,7 @@ exports.uploadImageData = function (req, res) {
       })
       .then(() => {
         res.status(status).send(result);
-      });
+      }).catch(() => {});
   } else {
     res.status(400).send('Missing information or malformed json');
   }
@@ -154,9 +157,11 @@ exports.createAccount = function (req, res) {
 
 exports.getImageData = function (req, res) {
   let imageId = req['params']['imageId'];
-  Promise.all([db.getImageData(imageId), db.getLegendData(imageId)])
+  let imagePromises = [db.getImageData(imageId), db.getLegendData(imageId)];
+  Promise.all(imagePromises)
     .then(result => {
-      let simpleData = _.pick(result[0], ['imageId', 'filename', 'description', 'notes', 'datetime', 'dFov', 'ppm']);
+      let simpleData = _.pick(result[0], ['imageId', 'filename', 'description', 'notes', 'datetime',
+        'dFov', 'ppm']);
       let location = { 'location': _.pick(result[0], ['latitude', 'longitude']) };
       let legend = { 'legend': result[1] };
       let data = _.merge({}, simpleData, location, legend);
