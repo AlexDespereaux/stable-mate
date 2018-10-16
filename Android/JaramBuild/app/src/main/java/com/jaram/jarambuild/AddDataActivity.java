@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -94,8 +95,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
     private String notes;
     private String editedImgUri;
     private String rawImgUri;
-    private String fusedLocationLong;
-    private String fusedLocationLat;
     private Double dFov;
     private Double pixelsPerMicron;
     private int uploadId = -1;
@@ -140,6 +139,11 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
     //location
     private GPSTracker gps;
+    private String longitude;
+    private String latitude;
+
+    //date
+    private String unixDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -188,6 +192,13 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         //get edited image dfov & pixels per micron from intent
         dFov = Objects.requireNonNull(getIntent().getExtras()).getDouble("dFov");
         pixelsPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("pixelsPerMicron");
+        //get date from intent
+        unixDate = Objects.requireNonNull(getIntent().getExtras()).getString("unixDate");
+        //Get location from intent
+        longitude = Objects.requireNonNull(getIntent().getExtras()).getString("imageLongitude");
+        latitude= Objects.requireNonNull(getIntent().getExtras()).getString("imageLatitude");
+
+        getLocation();
 
         //set image in view
         setImageView();
@@ -253,8 +264,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
-
-        getLocation();
     }
 
     //set focus to bottom of the scroll view
@@ -341,9 +350,10 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(settingsIntent);
         } else if (item.getItemId() == R.id.helpMenuBtn)
         {
-            //TODO Make help activity
-            Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Help Btn Clicked");
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://docs.google.com/document/d/1CFCF-80XOzv55uB1acoBkKkKK8FgZzDq0q24luXXdzI/edit?usp=sharing"));
+            startActivity(browserIntent);
 
         } else if (item.getItemId() == R.id.logoutMenuBtn)
         {
@@ -354,7 +364,15 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
             Intent settingsIntent = new Intent(this, MainActivity.class);
             startActivity(settingsIntent);
             finish();
-        } else
+        }
+        else if (item.getItemId() == R.id.aboutBtn)
+        {
+            Log.d(TAG, "About Btn Clicked");
+            //Go to settings activity
+            Intent settingsIntent = new Intent(this, AboutUsActivity.class);
+            startActivity(settingsIntent);
+        }
+        else
         {
             return super.onOptionsItemSelected(item);
         }
@@ -408,7 +426,8 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
     private void saveImageToDb()
     {
-        imageViewModel.addOneImage(new Image(imgTitle, description, notes, getUnixEpochTime(), fusedLocationLong, fusedLocationLat, Double.toString(dFov), Double.toString(pixelsPerMicron), uploadId, rawImgUri, editedImgUri, loggedInUser));
+        //save data to database
+        imageViewModel.addOneImage(new Image(imgTitle, description, notes, unixDate, longitude, latitude, Double.toString(dFov), Double.toString(pixelsPerMicron), uploadId, rawImgUri, editedImgUri, loggedInUser));
         Log.d(TAG, "Image saved to dataBase");
     }
 
@@ -419,7 +438,6 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
         String[] stickerListNamesArr = com.jaram.jarambuild.utils.StickerConstants.getStickerListPaths();
         for (int i = 0; i < LegendListAdapter.editModelArrayList.size(); i++)
         {
-
             legendText = LegendListAdapter.editModelArrayList.get(i).getEditTextValue();
             stickerImgName = stickerListNamesArr[LegendListAdapter.editModelArrayList.get(i).getStickerIndex()];
             context = getApplicationContext();
@@ -449,31 +467,40 @@ public class AddDataActivity extends AppCompatActivity implements View.OnClickLi
 
     private void getLocation()
     {
-        //default value = false
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean saveLocation = settings.getBoolean("LocationSwitch", false);
-        if (saveLocation)
+        Log.d(TAG, "Longitude prior to gps: " + longitude);
+        if(longitude == "182" || longitude.equals("182")) //182 is the code for a new photo 181 is the code where location unavailable or tuned off by user
         {
-            gps = new GPSTracker(AddDataActivity.this);
-            if(gps.canGetLocation())
-            {
-                fusedLocationLat = Double.toString(gps.getLatitude());
-                fusedLocationLong = Double.toString(gps.getLongitude());
 
-                // \n is for new line
-                Log.d(TAG,"Your Location is - \nLat: " + fusedLocationLong + "\nLong: " + fusedLocationLat);
-            } else {
-                // Can't get location.
-                // GPS or network is not enabled.
-                // Ask user to enable GPS/network in settings.
-                Log.d(TAG, "Location error, not saved");
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean saveLocation = settings.getBoolean("locationToggleSwitch", false);
+            Log.d(TAG, "Location preference: " + saveLocation);
+            if (saveLocation)
+            {
+                gps = new GPSTracker(AddDataActivity.this);
+                if (gps.canGetLocation())
+                {
+                    latitude = Double.toString(gps.getLatitude());
+                    longitude = Double.toString(gps.getLongitude());
+
+                    // \n is for new line
+                    Log.d(TAG, "Your Location is - \nLat: " + latitude + "\nLong: " + longitude);
+                } else
+                {
+                    // Can't get location.
+                    // GPS or network is not enabled.
+                    // Ask user to enable GPS/network in settings.
+                    Toast.makeText(this, "Unable to save location, please ensure location is on in your phone settings", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Location error, not saved");
+                    longitude = "181";
+                    latitude = "181";
+                }
+                Log.d(TAG, "Location saved");
+            } else
+            {
+                //deliberately invalid valid values are lat +90 to -90 long +180 to -180
+                longitude = "181";
+                latitude = "181";
             }
-            Log.d(TAG, "Location saved");
-        } else
-        {
-            //deliberately invalid valid values are lat +90 to -90 long +180 to -180
-            fusedLocationLong = "181";
-            fusedLocationLat = "181";
         }
     }
 

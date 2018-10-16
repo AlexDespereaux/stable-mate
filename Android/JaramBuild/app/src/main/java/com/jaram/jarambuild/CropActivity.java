@@ -17,9 +17,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.util.Date;
 import java.util.Objects;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
@@ -39,7 +41,7 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
     private int aspectSpinnerIndex = 1;  //default 3:4
     private int originalImageWidth;
     private int originalImageHeight;
-    double croppedImgPixelPerMicron;
+    private double croppedImgPixelPerMicron;
 
     //buttons
     private Button ratioBtn;
@@ -49,10 +51,17 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
     //scalebar
     double dFov;
     double pixelsPerMicron;
-    int scaleBarColourIndex;
+    private int scaleBarColourIndex;
 
     //quickstart
     private static final String SHOWCASE_ID = "crop_act";
+
+    //date
+    private String unixDate;
+
+    //location
+    private String longitude;
+    private String latitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -173,6 +182,7 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
                 presentQuickstartSequence();
             }
         });
+        scaleBarColourDialog();
     }
 
     @Override
@@ -222,6 +232,15 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("scaleBarColourIndex", scaleBarColourIndex);
         //cropped image pix per micron
         intent.putExtra("croppedPixelsPerMicron", croppedImgPixelPerMicron);
+        //date
+        intent.putExtra("unixDate", unixDate);
+        //add ratio indoex to intent
+        intent.putExtra("aspectSpinnerIndex", aspectSpinnerIndex);
+        //add selected int index of colour in scale bar colour array
+        intent.putExtra("scaleBarColourIndex", scaleBarColourIndex);
+        //location
+        intent.putExtra("imageLongitude", longitude);
+        intent.putExtra("imageLatitude", latitude);
         //open edit Image Activity
         startActivity(intent);
     }
@@ -241,6 +260,17 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "scaleBarColourIndex from intent: " + scaleBarColourIndex);
         //width of image used to calibrate
         imageWidthInCCView = Objects.requireNonNull(getIntent().getExtras()).getInt("imgWidthInCCView");
+        //get date if it exists, if it does not assign date value of -1 and use get date method
+        unixDate = Objects.requireNonNull(getIntent().getExtras()).getString("unixDate", "-1");
+        Log.d(TAG, "unixDate from intent: " + unixDate);
+        if(unixDate == "-1")
+        {
+            unixDate =  getUnixEpochTime();
+            Log.d(TAG, "generated date: " + unixDate);
+        }
+        //location
+        longitude = Objects.requireNonNull(getIntent().getExtras()).getString("imageLongitude", "182");
+        latitude= Objects.requireNonNull(getIntent().getExtras()).getString("imageLatitude","182");
 
     }
 
@@ -370,5 +400,38 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
                         .build()
         );
         sequence.start();
+    }
+
+    protected void scaleBarColourDialog()
+    {
+        LayoutInflater li = LayoutInflater.from(CropActivity.this);
+
+        @SuppressLint("InflateParams") final View sbColourAlertView = li.inflate(R.layout.sb_colour_dialog, null);
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(CropActivity.this);
+        alertDialogBuilder.setView(sbColourAlertView);
+        alertDialogBuilder.setPositiveButton("Continue", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                //get scale bar colour
+                try
+                {
+                    scaleBarColourIndex = ((Spinner) sbColourAlertView.findViewById(R.id.colourSbSpinner)).getSelectedItemPosition();
+                } catch (NumberFormatException ex)
+                {
+                    Toast.makeText(CropActivity.this, "Please choose scalebar colour", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        final android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    public String getUnixEpochTime()
+    {
+        Date dateObj = new Date();
+        Log.d(TAG, "unix epoch date obj: " + Long.toString(dateObj.getTime()));
+
+        return Long.toString(dateObj.getTime());
     }
 }

@@ -123,7 +123,7 @@ public class CalibrateActivity extends AppCompatActivity
         instructTxt = findViewById(R.id.instructTxt);
         //set initial message
         instructTxt.setBackgroundColor(Color.parseColor("#FFE4690A"));
-        instructTxt.setText(R.string.initialinstruct);
+        instructTxt.setText(R.string.instructMeasure);
 
         //db
         caliViewModel = ViewModelProviders.of(this).get(CaliListViewModel.class);
@@ -143,7 +143,7 @@ public class CalibrateActivity extends AppCompatActivity
                 if (drawing.circlePoints.size() > 0 && drawing.circlePoints.size() <= 2)
                 {
                     instructTxt.setBackgroundColor(Color.parseColor("#FFE4690A"));
-                    instructTxt.setText(R.string.initialinstruct);
+                    instructTxt.setText(R.string.instructMeasure);
                 } else if (drawing.circlePoints.size() > 2 && drawing.circlePoints.size() <= 4)
                 {
                     instructTxt.setBackgroundColor(Color.parseColor("#FFB12B21"));

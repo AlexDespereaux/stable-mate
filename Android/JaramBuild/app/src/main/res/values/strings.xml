@@ -88,7 +88,6 @@
     <string name="search_string">Search String</string>
     <string name="start_date2">Start Date</string>
     <string name="clear2">Clear</string>
-    <string name="apply2">Apply</string>
     <string name="crop">crop</string>
     <string name="select_ratio">Select ratio</string>
     <string name="refObjInstruct"><![CDATA[Please select your reference object & press OK]]></string>
@@ -113,6 +112,20 @@
     <string name="re_annotate">RE-ANNOTATE</string>
     <string name="continue2">Continue</string>
     <string name="select_calibrate_to_generate_a_calibration_preset">Select Calibrate to generate a calibration preset</string>
+    <string name="quickstart_guide">Quickstart Guide</string>
+    <string name="apply2">Apply</string>
+    <string name="repeat_quickstart_guide">Repeat Quickstart Guide</string>
+    <string name="about2">About</string>
+    <string name="aboutjaram">Annomate has been created by Team Jaram for our 2018 Industry Project. Annomate is designed as an aid for Scientific image capture and can be used in conjunction with the StableMate Mobile phone adapter for microscopes.</string>
+    <string name="about_us_heading">About Us</string>
+    <string name="about_annomate_app">About Annomate</string>
+    <string name="about_annomate_extended">Annomate provides Users with the ability to capture, annotate and re-annotate images, whilst automatically generating scale bars. Annomate also provides an upload service to the AWS Cloud where image data and the edited and raw images are stored.</string>
+    <string name="team_image">Team image</string>
+    <string name="our_team_n_anmol_walia_web_designer_n_alex_nguyen_research_and_design_n_jackson_dobell_research_and_documentation_n_marita_fitzgerald_android_developer_n_richard_morton_back_end_developer">Our Team:   Anmol Walia (Web Designer)   Alex Nguyen (Research and Design)   Jackson Dobell (Research and Documentation)   Marita Fitzgerald (Android Developer)   Richard Morton (Back End Developer)</string>
+    <string name="team_mem">Our Team:   Anmol Walia (Web Designer)   Alex Nguyen (Research and Design)   Jackson Dobell (Research and Documentation)   Marita Fitzgerald (Android Developer)   Richard Morton (Back End Developer)</string>
+    <string name="teammem">Our Team:   Anmol Walia (Web Designer)   Alex Nguyen (Research and Design)   Jackson Dobell (Research and Documentation)   Marita Fitzgerald (Android Developer)   Richard Morton (Back End Developer)</string>
+    <string name="annomate_logo">annomate logo</string>
+    <string name="instructMeasure">Please measure between 2 points</string>
 
 
 </resources>

@@ -1,5 +1,6 @@
 package com.jaram.jarambuild;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,10 +23,18 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jaram.jarambuild.adapters.ViewActListAdapter;
+import com.jaram.jarambuild.models.ViewListModel;
 import com.jaram.jarambuild.roomDb.AppDatabase;
 import com.jaram.jarambuild.roomDb.ImageListViewModel;
+import com.jaram.jarambuild.roomDb.Legend;
 import com.jaram.jarambuild.roomDb.LegendListViewModel;
+import com.jaram.jarambuild.utils.StickerConstants;
 import com.jaram.jarambuild.utils.TinyDB;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
@@ -39,9 +49,11 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
     private TextView legendHeading;
     private Button cancelBtn;
     private Button editBtn;
-    private Boolean isLegend = false;
     //recycler
     private RecyclerView legendRecyclerDisplay;
+    List<Legend> listOfLegendsFromDb;
+    private ViewActListAdapter viewActListAdapter;
+    public ArrayList<ViewListModel> viewModelArrayList;
     //db
     private LegendListViewModel legendViewModel;
     Context context;
@@ -90,11 +102,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         dateDisplay.setText("Image Date: " + convertedDate);
         locationDisplay = findViewById(R.id.locationDisplay);
         viewScroller = findViewById(R.id.viewScroller);
-        if(longitude == "181")
+        if (longitude.equals("182") || longitude.equals("181"))
         {
             locationDisplay.setVisibility(View.GONE);
-        }
-        else
+        } else
         {
             locationDisplay.setText("Image location: " + longitude + ", " + latitude);
         }
@@ -103,14 +114,24 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         cancelBtn = findViewById(R.id.cancelBtn);
         editBtn = findViewById(R.id.editBtn);
 
+
+        //db
+        legendViewModel = ViewModelProviders.of(this).get(LegendListViewModel.class);
+        db = AppDatabase.getDatabase(getApplicationContext());
+        //get legend data by imageId
+        listOfLegendsFromDb = db.getLegendDao().getAllLegendsByImageId(imageId);
+
         //display legend heading if legend exists
         legendHeading = findViewById(R.id.legendHeading);
         setLegendHeadingVis();
 
         //recycler
-        legendRecyclerDisplay = findViewById(R.id.legendDisplay);
+        legendRecyclerDisplay = findViewById(R.id.legendViewDisplay);
         legendRecyclerDisplay.setNestedScrollingEnabled(false);
-
+        viewModelArrayList = populateViewList();
+        viewActListAdapter = new ViewActListAdapter(this, viewModelArrayList);
+        legendRecyclerDisplay.setAdapter(viewActListAdapter);
+        legendRecyclerDisplay.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
         //register listeners
         editBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
@@ -125,7 +146,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
         //set position for first view
         double viewed = tinydb.getDouble("viewQuickstartShown", 0.0);
-        if(viewed == 0.0)
+        if (viewed == 0.0)
         {
             tinydb.putDouble("viewQuickstartShown", 1.0);
             focusOnView();
@@ -152,11 +173,16 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         startQuickstart();
     }
 
+
+
     //set focus to bottom of the scroll view
-    private void focusOnView(){
-        viewScroller.post(new Runnable() {
+    private void focusOnView()
+    {
+        viewScroller.post(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 viewScroller.fullScroll(View.FOCUS_DOWN);
             }
         });
@@ -165,9 +191,11 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
     private void startQuickstart()
     {
         //start Quickstart
-        editBtn.post(new Runnable() {
+        editBtn.post(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 presentQuickStart();
             }
         });
@@ -188,6 +216,11 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         raw_path = intent.getStringExtra("photoPath_raw");
         edit_path = intent.getStringExtra("photoPath_edited");
         convertedDate = intent.getStringExtra("convertedDate");
+        if (longitude == "181")
+        {
+            longitude = "Location: N/A";
+            latitude = "Location: N/A";
+        }
     }
 
     @Override
@@ -199,13 +232,13 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 //go to crop view
                 Intent intent = new Intent(this, CropActivity.class);
                 //Add data to intent
-                intent.putExtra("imageDate", date);
+                intent.putExtra("unixDate", date);
                 intent.putExtra("imageLongitude", longitude);
                 intent.putExtra("imageLatitude", latitude);
                 intent.putExtra("confirmedDFOv", Double.parseDouble(dFov));
                 intent.putExtra("confirmedPixelsPerMicron", Double.parseDouble(ppm));
                 intent.putExtra("rawPhotoPath", raw_path);
-                intent.putExtra("scaleBarColourIndex", 1); //TODO scalebar color popup
+                intent.putExtra("scaleBarColourIndex", 1);
                 intent.putExtra("imgWidthInCCView", getScreenWidth());
                 startActivity(intent);
 
@@ -258,7 +291,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
     private void setLegendHeadingVis()
     {
         //if there is no legend symbols to collect data for, hide the legend section heading
-        if (!isLegend)
+        if (listOfLegendsFromDb.size() < 1)
         {
             legendHeading.setVisibility(View.GONE);
         }
@@ -305,5 +338,32 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 .singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
                 .withRectangleShape()
                 .show();
+    }
+
+    private ArrayList<ViewListModel> populateViewList()
+    {
+        ArrayList<ViewListModel> list = new ArrayList<>();
+        String[] pathArr = StickerConstants.getStickerListPaths();
+        ArrayList<String> stickerPathListAl = new ArrayList<>();
+        for (String aPathArr : pathArr)
+        {
+            stickerPathListAl.add(aPathArr);
+        }
+        for (Legend l:listOfLegendsFromDb)
+        {
+            int i = stickerPathListAl.indexOf(l.getSymbol());
+            Log.d(TAG, "index int: " + i + " symbol path" + l.getSymbol());
+            ViewListModel viewListModel = new ViewListModel();
+            viewListModel.setLegendTextValue(l.getLegendTxt());
+            viewListModel.setStickerIndex(i);
+            list.add(viewListModel);
+        }
+        //for debug
+        /*
+        for (ViewListModel m : list)
+        {
+            Log.d(TAG, "legend text: " +  m.getLegendTextValue() + " legend image index: " + m.getStickerIndex());
+        }*/
+        return list;
     }
 }

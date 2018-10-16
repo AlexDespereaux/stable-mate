@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -89,6 +90,16 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private Button imgSticker;
     private Button imgSave;
     private Button imgClose;
+    //image aspect ratio
+    private int aspectSpinnerIndex;
+    //date
+    private String unixDate;
+    //location
+    private String longitude;
+    private String latitude;
+    //unit conversion
+    String unit = "microns";
+    Double outPutInGivenUnits = 0.00;
 
     //quickstart
     private static final String SHOWCASE_ID = "edit_img_act";
@@ -147,6 +158,13 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         Log.d(TAG, "scaleBarColourIndex from intent: " + scaleBarColourIndex);
         //Get Pixels per micron of cropped image from intent
         croppedImgPixelPerMicron = Objects.requireNonNull(getIntent().getExtras()).getDouble("croppedPixelsPerMicron");
+        //Get index of aspect ratio (0 = 1:1, 1 = 4:3)
+        aspectSpinnerIndex = Objects.requireNonNull(getIntent().getExtras()).getInt("aspectSpinnerIndex");
+        //Get date from intent
+        unixDate = Objects.requireNonNull(getIntent().getExtras()).getString("unixDate");
+        //Get location from intent
+        longitude = Objects.requireNonNull(getIntent().getExtras()).getString("imageLongitude");
+        latitude = Objects.requireNonNull(getIntent().getExtras()).getString("imageLatitude");
 
         //get bitmap
         Bitmap bitmap = BitmapFactory.decodeFile(croppedFilePath);
@@ -154,12 +172,33 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         //set bitmap to editor view
         mPhotoEditorView.getSource().setImageBitmap(bitmap);
 
-        //hide action bar
-        android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
-        if (myActionBar != null)
+        //hide action bar if aspect is 4:3
+        if (aspectSpinnerIndex == 1)
         {
-            myActionBar.hide();
-            Log.d(TAG, "ActionBar Hidden");
+            android.support.v7.app.ActionBar myActionBar = getSupportActionBar();
+            if (myActionBar != null)
+            {
+                myActionBar.hide();
+                Log.d(TAG, "ActionBar Hidden");
+            }
+        } else
+        {
+            //home button in action bar
+            Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
+            if (toolbar != null)
+            {
+                toolbar.setLogo(R.drawable.my_logo_shadow_96px);
+
+                //Listener for item selection change
+                toolbar.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        goHome();
+                    }
+                });
+            }
         }
 
         //function text
@@ -188,9 +227,11 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         });
 
         //start Quickstart
-        imgSave.post(new Runnable() {
+        imgSave.post(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 presentQuickstartSequence();
             }
         });
@@ -382,6 +423,9 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         intent.putExtra("rawImageUri", imageFilePath);
                         intent.putExtra("dFov", dFov);
                         intent.putExtra("pixelsPerMicron", pixelsPerMicron);
+                        intent.putExtra("unixDate", unixDate);
+                        intent.putExtra("imageLongitude", longitude);
+                        intent.putExtra("imageLatitude", latitude);
                         startActivity(intent);
                         finish();
                     }
@@ -531,30 +575,33 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         int w = (int) Math.round(tempPixels);
 
         //set scale bar text
-        /*
-        String unit = "microns";
-       if( (resultSbSizeinMicrons < 0 ) && (resultSbSizeinMicrons < 0 ) ) //centimeters
-       {
+        //millimeters
+        if ((resultSbSizeinMicrons > 999) && (resultSbSizeinMicrons < 10000))
+        {
+            unit = "mm";
+            outPutInGivenUnits = resultSbSizeinMicrons/1000;
 
-       }
-       else if((resultSbSizeinMicrons > 1000) && (resultSbSizeinMicrons < )) // millimeters
-       {
+        }
+        //centimeters
+        else if ((resultSbSizeinMicrons > 9999) && (resultSbSizeinMicrons < 1000000))
+        {
+            unit = "cm";
+            outPutInGivenUnits = resultSbSizeinMicrons /10000;
+        }
+        //meters
+        else if ((resultSbSizeinMicrons > 999999))
+        {
+            unit = "metre";
+            outPutInGivenUnits = resultSbSizeinMicrons/1000000;
+        }
+        //microns
+        else
+        {
+            unit = "microns";
+            outPutInGivenUnits = resultSbSizeinMicrons;
+        }
 
-       }
-       else if() // microns
-       {
-
-       }
-       else if() //nano
-       {
-
-       }
-       else
-       {
-
-       }*/
-
-        String resultPrintString = "  " + Double.toString(resultSbSizeinMicrons) + " microns  ";
+        String resultPrintString = "  " + outPutInGivenUnits + " " + unit;
         Log.d(TAG, "Scale Bar width = " + w + " Scale bar height = " + h);
 
         Bitmap scaled = Bitmap.createScaledBitmap(bm, w, h, true); // Make sure w and h are in the correct order
@@ -646,16 +693,19 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         builder.create().show();
     }
 
-    private void presentQuickstartSequence() {
+    private void presentQuickstartSequence()
+    {
 
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(500); // half second between each showcase view
 
         MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
 
-        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener()
+        {
             @Override
-            public void onShow(MaterialShowcaseView itemView, int position) {
+            public void onShow(MaterialShowcaseView itemView, int position)
+            {
             }
         });
 
@@ -672,6 +722,12 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         .build()
         );
         sequence.start();
+    }
+
+    public void goHome()
+    {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 
 }

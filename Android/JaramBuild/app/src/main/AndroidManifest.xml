@@ -62,8 +62,8 @@
             android:name=".AddDataActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".GalleryActivity"
             android:label="@string/galleryheader"
@@ -113,7 +113,10 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name=".ViewActivity"></activity>
+        <activity
+            android:name=".ViewActivity"
+            android:noHistory="true"></activity>
+        <activity android:name=".AboutUsActivity"></activity>
     </application>
 
 </manifest>

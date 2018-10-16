@@ -163,7 +163,7 @@
                         tools:text="Image Legend" />
 
                     <android.support.v7.widget.RecyclerView
-                        android:id="@+id/legendDisplay"
+                        android:id="@+id/legendViewDisplay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>

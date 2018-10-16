@@ -84,6 +84,7 @@
                         android:fontFamily="@font/roboto_medium"
                         android:hint="@string/image_title"
                         android:inputType="textPersonName"
+                        android:maxLength="30"
                         android:textAppearance="@style/TextAppearance.AppCompat" />
 
                     <EditText
@@ -96,6 +97,7 @@
                         android:fontFamily="@font/roboto_medium"
                         android:hint="@string/description"
                         android:inputType="textPersonName"
+                        android:maxLength="40"
                         android:textAppearance="@style/TextAppearance.AppCompat" />
 
                     <EditText
@@ -109,6 +111,7 @@
                         android:fontFamily="@font/roboto_medium"
                         android:hint="@string/notes"
                         android:inputType="textMultiLine"
+                        android:maxLength="256"
                         android:textAppearance="@style/TextAppearance.AppCompat"
                         tools:layout_editor_absoluteX="73dp"
                         tools:layout_editor_absoluteY="97dp" />
