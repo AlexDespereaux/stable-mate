@@ -25,7 +25,7 @@
         android:layout_marginTop="4dp"
         android:fontFamily="@font/roboto_medium"
         android:lineSpacingExtra="10sp"
-        android:text="@string/press_continue_return_to_the_home_menu"
+        android:text="@string/select_calibrate_to_generate_a_calibration_preset"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat"
         android:textSize="16sp" />

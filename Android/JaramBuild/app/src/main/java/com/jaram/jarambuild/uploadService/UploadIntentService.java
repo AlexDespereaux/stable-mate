@@ -76,11 +76,16 @@ public class UploadIntentService extends JobIntentService
         String longitude = intent.getStringExtra("imageLongitude");
         String latitude = intent.getStringExtra("imageLatitude");
         String dFov = intent.getStringExtra("imageDFov");
-        String ppm = intent.getStringExtra("pixelsPerMicron");
+        final String ppm = intent.getStringExtra("pixelsPerMicron");
         final String raw_path = intent.getStringExtra("photoPath_raw");
-        String edit_path = intent.getStringExtra("photoPath_edited");
+        final String edit_path = intent.getStringExtra("photoPath_edited");
         final String username = intent.getStringExtra("loggedInUser");
         final String pword = intent.getStringExtra("loggedInUserPWord");
+
+        //had to add as server will not accept empty strings!!
+        description = (description.length() > 0) ? description: "User provided no data";
+        notes = (notes.length() > 0) ? notes: "User provided no data";
+        fileName = (fileName.length() > 0) ? fileName: "User provided no data";
 
         //initialise Android networking for json upload
         AndroidNetworking.initialize(getApplicationContext());
@@ -144,14 +149,16 @@ public class UploadIntentService extends JobIntentService
         String url = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api/image/";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, uploadObj,
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<JSONObject>()
+                {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONObject response)
+                    {
                         try
                         {
                             serverImageId = response.getString("imageId");
-                            Log.d(TAG, "Server Response: " + response.toString() + ", Local image id :" + imageId +" Server image id: " + serverImageId);
-                            if(Integer.parseInt(serverImageId)> 0)
+                            Log.d(TAG, "Server Response: " + response.toString() + ", Local image id :" + imageId + " Server image id: " + serverImageId);
+                            if (Integer.parseInt(serverImageId) > 0)
                             {
                                 Intent mServiceIntent = new Intent();
                                 mServiceIntent.putExtra("loggedInUser", username);
@@ -159,6 +166,7 @@ public class UploadIntentService extends JobIntentService
                                 mServiceIntent.putExtra("serverImageId", serverImageId);
                                 mServiceIntent.putExtra("localImageId", Integer.toString(imageId));
                                 mServiceIntent.putExtra("photoPath_raw", raw_path);
+                                mServiceIntent.putExtra("photoPath_edit", edit_path);
 
                                 // Starts the JobIntentService
                                 UploadRawImgService.enqueueURISWork(getApplicationContext(), mServiceIntent);
@@ -170,12 +178,15 @@ public class UploadIntentService extends JobIntentService
                         }
 
                     }
-                }, new Response.ErrorListener() {
+                }, new Response.ErrorListener()
+        {
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onErrorResponse(VolleyError error)
+            {
                 Log.d(TAG, "Response: " + error.toString() + "image id :" + imageId);
             }
-        }){
+        })
+        {
             //add Basic Auth header
             @Override
             public Map<String, String> getHeaders()
@@ -185,6 +196,7 @@ public class UploadIntentService extends JobIntentService
                         "Authorization",
                         String.format("Basic %s", Base64.encodeToString(
                                 String.format("%s:%s", username, pword).getBytes(), Base64.DEFAULT)));
+                Log.d(TAG, "username & pword " + username + " / " + pword);
                 params.put("Content-Type", "application/json");
                 return params;
             }
@@ -200,7 +212,7 @@ public class UploadIntentService extends JobIntentService
     public void onDestroy()
     {
         super.onDestroy();
-        toast("All work complete");
+        toast("Image upload progressing");
     }
 
     final Handler mHandler = new Handler();

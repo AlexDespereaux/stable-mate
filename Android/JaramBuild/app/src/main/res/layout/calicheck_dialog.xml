@@ -84,26 +84,4 @@
         android:maxLength="5"
         android:textAppearance="@style/TextAppearance.AppCompat" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp"
-        android:background="@color/colorPrimary"
-        android:fontFamily="@font/roboto_medium"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
-        android:text="@string/select_scalebar_colour"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:typeface="normal" />
-
-    <Spinner
-        android:id="@+id/colourSbSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:entries="@array/sbcolour"></Spinner>
-
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -16,10 +17,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.util.Date;
 import java.util.Objects;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 import static com.jaram.jarambuild.utils.FileUtils.saveBitmap;
 
@@ -34,7 +41,7 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
     private int aspectSpinnerIndex = 1;  //default 3:4
     private int originalImageWidth;
     private int originalImageHeight;
-    double croppedImgPixelPerMicron;
+    private double croppedImgPixelPerMicron;
 
     //buttons
     private Button ratioBtn;
@@ -44,8 +51,17 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
     //scalebar
     double dFov;
     double pixelsPerMicron;
-    int scaleBarColourIndex;
+    private int scaleBarColourIndex;
 
+    //quickstart
+    private static final String SHOWCASE_ID = "crop_act";
+
+    //date
+    private String unixDate;
+
+    //location
+    private String longitude;
+    private String latitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -158,6 +174,15 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         cropImageView.setAspectRatio(3, 4);
         cropImageView.setFixedAspectRatio(true);
         cropImageView.setShowProgressBar(true);
+
+        //start Quickstart
+        cancelBtn.post(new Runnable() {
+            @Override
+            public void run() {
+                presentQuickstartSequence();
+            }
+        });
+        scaleBarColourDialog();
     }
 
     @Override
@@ -207,6 +232,15 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("scaleBarColourIndex", scaleBarColourIndex);
         //cropped image pix per micron
         intent.putExtra("croppedPixelsPerMicron", croppedImgPixelPerMicron);
+        //date
+        intent.putExtra("unixDate", unixDate);
+        //add ratio indoex to intent
+        intent.putExtra("aspectSpinnerIndex", aspectSpinnerIndex);
+        //add selected int index of colour in scale bar colour array
+        intent.putExtra("scaleBarColourIndex", scaleBarColourIndex);
+        //location
+        intent.putExtra("imageLongitude", longitude);
+        intent.putExtra("imageLatitude", latitude);
         //open edit Image Activity
         startActivity(intent);
     }
@@ -226,6 +260,17 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "scaleBarColourIndex from intent: " + scaleBarColourIndex);
         //width of image used to calibrate
         imageWidthInCCView = Objects.requireNonNull(getIntent().getExtras()).getInt("imgWidthInCCView");
+        //get date if it exists, if it does not assign date value of -1 and use get date method
+        unixDate = Objects.requireNonNull(getIntent().getExtras()).getString("unixDate", "-1");
+        Log.d(TAG, "unixDate from intent: " + unixDate);
+        if(unixDate == "-1")
+        {
+            unixDate =  getUnixEpochTime();
+            Log.d(TAG, "generated date: " + unixDate);
+        }
+        //location
+        longitude = Objects.requireNonNull(getIntent().getExtras()).getString("imageLongitude", "182");
+        latitude= Objects.requireNonNull(getIntent().getExtras()).getString("imageLatitude","182");
 
     }
 
@@ -305,7 +350,88 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         builder.create().show();
+    }
+    private void presentQuickstartSequence() {
 
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+                //Toast.makeText(itemView.getContext(), "Item #" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(cancelBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Exits image cropping and returns you to home screen")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(cropBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Crops the image and progresses to Annotation screen")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(ratioBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Opens a dialog to let you choose desired image aspect (ie square or rectangle)")
+                        .withRectangleShape()
+                        .build()
+        );
+        sequence.start();
     }
 
+    protected void scaleBarColourDialog()
+    {
+        LayoutInflater li = LayoutInflater.from(CropActivity.this);
+
+        @SuppressLint("InflateParams") final View sbColourAlertView = li.inflate(R.layout.sb_colour_dialog, null);
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(CropActivity.this);
+        alertDialogBuilder.setView(sbColourAlertView);
+        alertDialogBuilder.setPositiveButton("Continue", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                //get scale bar colour
+                try
+                {
+                    scaleBarColourIndex = ((Spinner) sbColourAlertView.findViewById(R.id.colourSbSpinner)).getSelectedItemPosition();
+                } catch (NumberFormatException ex)
+                {
+                    Toast.makeText(CropActivity.this, "Please choose scalebar colour", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        final android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    public String getUnixEpochTime()
+    {
+        Date dateObj = new Date();
+        Log.d(TAG, "unix epoch date obj: " + Long.toString(dateObj.getTime()));
+
+        return Long.toString(dateObj.getTime());
+    }
 }

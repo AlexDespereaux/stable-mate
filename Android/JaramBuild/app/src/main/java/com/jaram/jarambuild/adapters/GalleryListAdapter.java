@@ -1,6 +1,7 @@
 package com.jaram.jarambuild.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jaram.jarambuild.CropActivity;
+import com.jaram.jarambuild.GalleryActivity;
 import com.jaram.jarambuild.R;
+import com.jaram.jarambuild.ViewActivity;
 import com.jaram.jarambuild.models.GalleryModel;
 
 import java.text.ParseException;
@@ -32,7 +36,7 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
     public static List<GalleryModel> imageListForGallery;
     public List<GalleryModel> imageListFiltered;
     CustomGalleryFilter filter;
-
+    String convertedDate;
 
     public GalleryListAdapter(Context ctx, List<GalleryModel> imageListForGallery)
     {
@@ -63,12 +67,24 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
         String epochDateString = imageListForGallery.get(position).getDate();
         Log.d(TAG, "Epoch Date: " + epochDateString);
 
-        String convertedDate = "Unavailable";
+        convertedDate = "Unavailable";
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         convertedDate = sdf.format(new Date(Long.parseLong(epochDateString)));
 
         holder.dateTV.setText("Date: " + convertedDate);
+
+        String longitudeIn = imageListForGallery.get(position).getLongitude();
+        String latitudeIn = imageListForGallery.get(position).getLatitude();
+        if(longitudeIn.equals("182") || longitudeIn.equals("181"))
+        {
+            holder.locationTV.setText("Location: N/A");
+        }
+        else
+        {
+            holder.locationTV.setText("Location: " + longitudeIn +"," + latitudeIn);
+        }
+
         //get img data
         Bitmap bitmap = decodeSampledBitmapFromFilePath(imageListForGallery.get(position).getPhotoPath_edited(), 100, 100);
         holder.imgPreview.setImageBitmap(bitmap);
@@ -107,15 +123,28 @@ public class GalleryListAdapter extends RecyclerView.Adapter<GalleryListAdapter.
             titleTV = itemView.findViewById(R.id.titleTv);
             descTV = itemView.findViewById(R.id.descTv);
             dateTV = itemView.findViewById(R.id.dateTv);
+            locationTV = itemView.findViewById(R.id.locationTv);
             imgPreview = itemView.findViewById(R.id.imgPreview);
 
             imgPreview.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v)
                 {
-                    // Code here executes on main thread after user presses button
-                    Log.d(TAG, "img clicked");
-
+                    Intent intent = new Intent(v.getContext(), ViewActivity.class);
+                    Log.d(TAG, "img clicked" + getAdapterPosition());
+                    intent.putExtra("imageId", imageListForGallery.get(getAdapterPosition()).getImageId());
+                    intent.putExtra("imageLatitude", imageListForGallery.get(getAdapterPosition()).getLatitude());
+                    intent.putExtra("imageLongitude", imageListForGallery.get(getAdapterPosition()).getLongitude());
+                    intent.putExtra("imageDFov", imageListForGallery.get(getAdapterPosition()).getDFov());
+                    intent.putExtra("pixelsPerMicron", imageListForGallery.get(getAdapterPosition()).getPixelsPerMicron());
+                    intent.putExtra("photoPath_edited", imageListForGallery.get(getAdapterPosition()).getPhotoPath_edited());
+                    intent.putExtra("photoPath_raw", imageListForGallery.get(getAdapterPosition()).getPhotoPath_raw());
+                    intent.putExtra("imageDate", imageListForGallery.get(getAdapterPosition()).getDate());
+                    intent.putExtra("imageNotes", imageListForGallery.get(getAdapterPosition()).getNotes());
+                    intent.putExtra("imageDesc", imageListForGallery.get(getAdapterPosition()).getDescription());
+                    intent.putExtra("imageTitle", imageListForGallery.get(getAdapterPosition()).getTitle());
+                    intent.putExtra("convertedDate", convertedDate);
+                    v.getContext().startActivity(intent);
                 }
             });
         }

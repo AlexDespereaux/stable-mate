@@ -2,6 +2,7 @@ package com.jaram.jarambuild.imageUtils;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -71,7 +72,7 @@ public class TextEditorDialogFragment extends DialogFragment
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             dialog.getWindow().setLayout(width, height);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.GRAY));
         }
     }
 

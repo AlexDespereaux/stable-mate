@@ -2,10 +2,7 @@ package com.jaram.jarambuild;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v7.app.ActionBar;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.jaram.jarambuild.adapters.GalleryListAdapter;
@@ -30,7 +26,7 @@ import com.jaram.jarambuild.utils.TinyDB;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GalleryActivity extends AppCompatActivity implements View.OnClickListener
+public class GalleryActivity extends AppCompatActivity
 {
     //db
     private ImageListViewModel imageViewModel;
@@ -74,7 +70,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         tinydb = new TinyDB(this);
         loggedInUser = tinydb.getString("loggedInAccount");
         Log.d(TAG, "loggedInUser: " + loggedInUser);
-
+/*
         //buttons
         clearBtn = findViewById(R.id.clearBtn);
         applyBtn = findViewById(R.id.applyBtn);
@@ -84,9 +80,12 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
 
         //set listeners
         clearBtn.setOnClickListener(this);
-        applyBtn.setOnClickListener(this);
+        applyBtn.setOnClickListener(this);   */
 
+
+        galleryRecyclerView = findViewById(R.id.galleryRecycler);
         initRecycler();
+
         //home button in action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
         if (toolbar != null) {
@@ -102,7 +101,15 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.bar_menu, menu);
+        return true;
+    }
+
     //listener
+    /*
     @Override
     public void onClick(View v)
     {
@@ -117,7 +124,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
                 galleryListAdapter.notifyDataSetChanged();
                 break;
         }
-    }
+    }  */
 
     private ArrayList<GalleryModel> populateGalleryList()
     {
@@ -152,7 +159,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
     public void initRecycler()
     {
         //Recycler View
-        galleryRecyclerView = findViewById(R.id.galleryRecycler);
+        //galleryRecyclerView = findViewById(R.id.galleryRecycler);
         galleryModelArrayList = populateGalleryList();
         galleryListAdapter = new GalleryListAdapter(this, galleryModelArrayList);
         galleryRecyclerView.setAdapter(galleryListAdapter);
@@ -164,13 +171,6 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
     {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        getMenuInflater().inflate(R.menu.bar_menu, menu);
-        return true;
     }
 
     //custom menu
@@ -185,9 +185,10 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(settingsIntent);
         } else if (item.getItemId() == R.id.helpMenuBtn)
         {
-            //TODO Make help activity
-            Toast.makeText(this, "Help Menu TBC", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Help Btn Clicked");
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://docs.google.com/document/d/1CFCF-80XOzv55uB1acoBkKkKK8FgZzDq0q24luXXdzI/edit?usp=sharing"));
+            startActivity(browserIntent);
 
         } else if (item.getItemId() == R.id.logoutMenuBtn)
         {
@@ -198,7 +199,15 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
             Intent settingsIntent = new Intent(this, MainActivity.class);
             startActivity(settingsIntent);
             finish();
-        } else
+        }
+        else if (item.getItemId() == R.id.aboutBtn)
+        {
+            Log.d(TAG, "About Btn Clicked");
+            //Go to settings activity
+            Intent settingsIntent = new Intent(this, AboutUsActivity.class);
+            startActivity(settingsIntent);
+        }
+        else
         {
             return super.onOptionsItemSelected(item);
         }

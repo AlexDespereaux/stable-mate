@@ -22,7 +22,8 @@ let archive = archiver('zip', {
 
 archive.pipe(output);
 
-const filesToArchive = ['package.json', 'package-lock.json', 'src/server.js', 'src/api.js', 'src/database.js'];
+const filesToArchive = ['package.json', 'package-lock.json', 'src/server.js', 'src/api.js', 'src/database.js',
+  'src/handlers.js'];
 
 output.on('close', function() {
   console.log(archive.pointer() + ' total bytes');

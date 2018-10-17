@@ -91,17 +91,6 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/goToSignUpBtn"
-                    style="@style/Widget.AppCompat.Button.Colored"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_create_white_48dp"
-                    android:fontFamily="@font/roboto_medium"
-                    android:text="@string/sign_up"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
             </TableRow>
 
         </TableLayout>

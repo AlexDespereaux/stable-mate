@@ -32,6 +32,10 @@ import com.jaram.jarambuild.utils.TinyDB;
 import java.util.List;
 import java.util.Objects;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
 import static com.basgeekball.awesomevalidation.ValidationStyle.BASIC;
 
 public class CalibrateActivity extends AppCompatActivity
@@ -63,6 +67,9 @@ public class CalibrateActivity extends AppCompatActivity
     //db
     private CaliListViewModel caliViewModel;
     private CaliListByUserViewModel caliByUserViewModel;
+
+    //quickstart
+    private static final String SHOWCASE_ID = "cali_act";
 
 
     @Override
@@ -116,7 +123,7 @@ public class CalibrateActivity extends AppCompatActivity
         instructTxt = findViewById(R.id.instructTxt);
         //set initial message
         instructTxt.setBackgroundColor(Color.parseColor("#FFE4690A"));
-        instructTxt.setText(R.string.initialinstruct);
+        instructTxt.setText(R.string.instructMeasure);
 
         //db
         caliViewModel = ViewModelProviders.of(this).get(CaliListViewModel.class);
@@ -136,7 +143,7 @@ public class CalibrateActivity extends AppCompatActivity
                 if (drawing.circlePoints.size() > 0 && drawing.circlePoints.size() <= 2)
                 {
                     instructTxt.setBackgroundColor(Color.parseColor("#FFE4690A"));
-                    instructTxt.setText(R.string.initialinstruct);
+                    instructTxt.setText(R.string.instructMeasure);
                 } else if (drawing.circlePoints.size() > 2 && drawing.circlePoints.size() <= 4)
                 {
                     instructTxt.setBackgroundColor(Color.parseColor("#FFB12B21"));
@@ -189,6 +196,13 @@ public class CalibrateActivity extends AppCompatActivity
                 showBackPressDialog();
             }
         });
+        //start Quickstart
+        clearBtn.post(new Runnable() {
+            @Override
+            public void run() {
+                presentQuickstartSequence();
+            }
+        });
     }
 
 
@@ -210,7 +224,7 @@ public class CalibrateActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int whichButton)
             {  //validation
                 AwesomeValidation awesomeValidation = new AwesomeValidation(BASIC);
-                awesomeValidation.addValidation(CalibrateActivity.this, R.id.settingName_input, "/[\\'\\/™€¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾Ņ¿Àā~`\\!@#\\$%\\^&\\*\\(\\)_\\-\\+=\\{\\}\\[\\]\\|;:\"\\<\\>,\\.\\?\\\\\\]/", R.string.nameerror);
+                awesomeValidation.addValidation(CalibrateActivity.this, R.id.settingName_input, "/[\\'\\/\\!@#\\$%\\^&\\*\\(\\)_\\-\\+=\\{\\}\\[\\]\\|;:\"\\<\\>,\\.\\?\\\\\\]/", R.string.nameerror);
                 int inputUnit = ((Spinner) promptsView.findViewById(R.id.input_unit_chooser)).getSelectedItemPosition();
 
                 try
@@ -361,5 +375,67 @@ public class CalibrateActivity extends AppCompatActivity
             }
         });
         builder.create().show();
+    }
+
+    private void presentQuickstartSequence() {
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+                //Toast.makeText(itemView.getContext(), "Item #" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(clearBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6E4690A"))
+                        .setContentText("Removes the last calibration point you have created")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(cancelBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6E4690A"))
+                        .setContentText("Cancels calibration setting creation")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(okBtn)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6E4690A"))
+                        .setContentText("Press OK to confirm you are ready to submit your reference measurement and object selections")
+                        .withRectangleShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(instructTxt)
+                        .setDismissText("GOT IT")
+                        .setContentTextColor(Color.parseColor("#FFFFFFFF"))
+                        .setMaskColour(Color.parseColor("#E6000000"))
+                        .setContentText("Instructions to guide you through calibration creation")
+                        .withRectangleShape()
+                        .build()
+        );
+        sequence.start();
     }
 }
