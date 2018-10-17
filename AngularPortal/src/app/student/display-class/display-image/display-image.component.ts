@@ -6,6 +6,7 @@ import * as jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
 import domtoimage from 'dom-to-image';
 import { saveAs } from 'file-saver/FileSaver';
+import { ImageService } from '../../../image.service';
 @Component({
   selector: 'app-display-image',
   templateUrl: './display-image.component.html',
@@ -29,6 +30,7 @@ export class DisplayImageComponent implements OnInit {
       "latitude": -37.719523,
       "longitude": 145.045910
     },
+    "imageId": null,
     "dFov": 1.34456,
     "ppm": 342,
     "legend": [
@@ -36,18 +38,44 @@ export class DisplayImageComponent implements OnInit {
       { "name": "grey_star", "text": "nucleus" },
       { "name": "black_radio", "text": "cell wall" },
       { "name": "grey_star", "text": "nucleus" }
-    ]
+    ],
+    "review": 0
   };
   legendImages = [];
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService) { }
 
   ngOnInit() {
 
     this.route.params.subscribe(
       (params: Params) => {
         this.image.imageId = params.id;
+        console.log(this.image);
       }
+    );
+    this.imageService.getImageData(this.image.imageId).subscribe(
+      res => {
+        console.log(res);
+        
+        this.imageDetails.dFov = res['dFov'];
+        this.imageDetails.datetime = res['datetime'];
+        this.imageDetails.description = res['description'];
+        this.imageDetails.filename = res['filename'];
+        this.imageDetails.imageId = res['imageId'];      
+        if (res['legend'] && res['legend'].length > 0) {
+          console.log('legend is defined ');
+          res['legend'].forEach(
+            item => this.imageDetails.legend.push(item)
+          );
+        }
+        this.imageDetails.location.latitude = res['location'].latitude;
+        this.imageDetails.location.longitude = res['location'].longitude;
+        this.imageDetails.ppm = res['ppm'];
+        this.imageDetails.review = res['review'];
+      },
+      err => console.log(err)
+
+
     );
 
     // call will be done after getting data from server
@@ -74,6 +102,7 @@ export class DisplayImageComponent implements OnInit {
       }
     );
   }
+
   changeRating(rating) {
     this.rate = rating;
   }
@@ -156,5 +185,9 @@ export class DisplayImageComponent implements OnInit {
       });
       // pdf.save('legened.pdf'); // Generated PDF   
     });
+  }
+
+  onSave(){
+   // this.imageService.saveImage(this.imageDetails.review).subscribe();
   }
 }

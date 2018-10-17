@@ -21,7 +21,6 @@ export class ImageService {
         'Authorization': 'Basic ' + btoa(`${username}:${password}`)
       })
     };
-    console.log(btoa(`${username}:${password}`));
     return this.http.get(`${this.endPoint}/user`, httpOptions);
   }
 
@@ -57,5 +56,16 @@ export class ImageService {
     };
     
     return this.http.get(`${this.endPoint}/image/${id}`, httpOptions);
+  }
+
+  saveImage(review){
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
+      })
+    };
+    
+    return this.http.put(`${this.endPoint}/image/review`,review);
   }
 }
