@@ -22,17 +22,17 @@ export class DisplayImageComponent implements OnInit {
   getCanvas;
   // dummy obj
   imageDetails = {
-    "filename": "picture.png",
-    "description": "apple cell with dye",
-    "notes": "taken under low light",
-    "datetime": 1533731244,
+    "filename": "",
+    "description": "",
+    "notes": "",
+    "datetime": null,
     "location": {
-      "latitude": -37.719523,
-      "longitude": 145.045910
+      "latitude": null,
+      "longitude": null
     },
     "imageId": null,
-    "dFov": 1.34456,
-    "ppm": 342,
+    "dFov": null,
+    "ppm": null,
     "legend": [
       { "name": "black_radio", "text": "cell wall" },
       { "name": "grey_star", "text": "nucleus" },
@@ -72,6 +72,7 @@ export class DisplayImageComponent implements OnInit {
         this.imageDetails.location.longitude = res['location'].longitude;
         this.imageDetails.ppm = res['ppm'];
         this.imageDetails.review = res['review'];
+        this.imageDetails.notes = res['notes'];
       },
       err => console.log(err)
 
