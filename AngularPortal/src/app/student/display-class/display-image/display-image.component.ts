@@ -132,18 +132,14 @@ export class DisplayImageComponent implements OnInit {
 
 
 
-    var data = document.getElementById('legend');
+    var data = document.getElementById('legend1');
     html2canvas(data).then(canvas => {
       // Few necessary setting options  
       var imgWidth = 208;
       var pageHeight = 295;
       var imgHeight = canvas.height * imgWidth / canvas.width;
       var heightLeft = imgHeight;
-
       const contentDataURL = canvas.toDataURL('image/png');
-      contentDataURL.attr('download', 'legend.png');
-
-
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
       var position = 0;
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
@@ -164,25 +160,20 @@ export class DisplayImageComponent implements OnInit {
   }
 
   downloadLegend() {
-    var data = document.getElementById('legend');
+    var data = document.getElementById('legend1');
     html2canvas(data).then(canvas => {
       // Few necessary setting options  
       var imgWidth = 208;
       var pageHeight = 295;
       var imgHeight = canvas.height * imgWidth / canvas.width;
       var heightLeft = imgHeight;
-
       const contentDataURL = canvas.toDataURL('image/png');
-      contentDataURL.attr('download', 'legend.png');
-
-
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
       var position = 0;
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
       canvas.toBlob(function (blob) {
         saveAs(blob, "legend.png");
       });
-      // pdf.save('legened.pdf'); // Generated PDF   
     });
   }
 
