@@ -56,12 +56,12 @@ export class DisplayImageComponent implements OnInit {
     this.imageService.getImageData(this.image.imageId).subscribe(
       res => {
         console.log(res);
-        
+
         this.imageDetails.dFov = res['dFov'];
         this.imageDetails.datetime = res['datetime'];
         this.imageDetails.description = res['description'];
         this.imageDetails.filename = res['filename'];
-        this.imageDetails.imageId = res['imageId'];      
+        this.imageDetails.imageId = res['imageId'];
         if (res['legend'] && res['legend'].length > 0) {
           console.log('legend is defined ');
           res['legend'].forEach(
@@ -112,22 +112,21 @@ export class DisplayImageComponent implements OnInit {
 
     // var button = document.getElementById("btn-Convert-Html2Image");
 
-    var data = document.getElementById('image');
-    html2canvas(data).then(canvas => {
-      // Few necessary setting options  
-      var imgWidth = 208;
-      var pageHeight = 295;
-      var imgHeight = canvas.height * imgWidth / canvas.width;
-      var heightLeft = imgHeight;
-      const contentDataURL = canvas.toDataURL('image/png');
-      canvas.toBlob(function (blob) {
-        saveAs(blob, "image.png");
-      });
-      let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
-      var position = 0;
-      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
-      // pdf.save('image.pdf'); // Generated PDF   
-    });
+    // var data = document.getElementById('image');
+    // html2canvas(data).then(canvas => {
+    //   // Few necessary setting options  
+    //   var imgWidth = 208;
+    //   var pageHeight = 295;
+    //   var imgHeight = canvas.height * imgWidth / canvas.width;
+    //   var heightLeft = imgHeight;
+    //   const contentDataURL = canvas.toDataURL('image/png');
+    //   canvas.toBlob(function (blob) {
+    //     saveAs(blob, "image.png");
+    //   });
+    //   let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
+    //   var position = 0;
+    //   pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+    // });
 
 
 
@@ -150,12 +149,11 @@ export class DisplayImageComponent implements OnInit {
       canvas.toBlob(function (blob) {
         saveAs(blob, "legend.png");
       });
-      // pdf.save('legened.pdf'); // Generated PDF   
     });
 
-    const description = document.getElementById("descriptions").textContent;
-    var file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
-    saveAs(file);
+    // const description = document.getElementById("descriptions").textContent;
+    // var file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
+    // saveAs(file);
   }
 
   downlaodDescription() {
@@ -187,7 +185,26 @@ export class DisplayImageComponent implements OnInit {
     });
   }
 
-  onSave(){
-   // this.imageService.saveImage(this.imageDetails.review).subscribe();
+  downloadImage() {
+    var data = document.getElementById('rateImage');
+    html2canvas(data).then(canvas => {
+      // Few necessary setting options  
+      var imgWidth = 208;
+      var pageHeight = 295;
+      var imgHeight = canvas.height * imgWidth / canvas.width;
+      var heightLeft = imgHeight;
+      const contentDataURL = canvas.toDataURL('image/png');
+      canvas.toBlob(function (blob) {
+        saveAs(blob, "image.png");
+      });
+      let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
+      var position = 0;
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+    });
+
+   }
+
+  onSave() {
+    // this.imageService.saveImage(this.imageDetails.review).subscribe();
   }
 }
