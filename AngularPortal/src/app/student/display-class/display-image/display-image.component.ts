@@ -6,6 +6,7 @@ import * as jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
 import domtoimage from 'dom-to-image';
 import { saveAs } from 'file-saver/FileSaver';
+import { ImageService } from '../../../image.service';
 @Component({
   selector: 'app-display-image',
   templateUrl: './display-image.component.html',
@@ -21,33 +22,61 @@ export class DisplayImageComponent implements OnInit {
   getCanvas;
   // dummy obj
   imageDetails = {
-    "filename": "picture.png",
-    "description": "apple cell with dye",
-    "notes": "taken under low light",
-    "datetime": 1533731244,
+    "filename": "",
+    "description": "",
+    "notes": "",
+    "datetime": null,
     "location": {
-      "latitude": -37.719523,
-      "longitude": 145.045910
+      "latitude": null,
+      "longitude": null
     },
-    "dFov": 1.34456,
-    "ppm": 342,
+    "imageId": null,
+    "dFov": null,
+    "ppm": null,
     "legend": [
       { "name": "black_radio", "text": "cell wall" },
       { "name": "grey_star", "text": "nucleus" },
       { "name": "black_radio", "text": "cell wall" },
       { "name": "grey_star", "text": "nucleus" }
-    ]
+    ],
+    "review": 0
   };
   legendImages = [];
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService) { }
 
   ngOnInit() {
 
     this.route.params.subscribe(
       (params: Params) => {
         this.image.imageId = params.id;
+        console.log(this.image);
       }
+    );
+    this.imageService.getImageData(this.image.imageId).subscribe(
+      res => {
+        console.log(res);
+
+        this.imageDetails.dFov = res['dFov'];
+        this.imageDetails.datetime = res['datetime'];
+        this.imageDetails.description = res['description'];
+        this.imageDetails.filename = res['filename'];
+        this.imageDetails.imageId = res['imageId'];
+        if (res['legend'] && res['legend'].length > 0) {
+          console.log('legend is defined ');
+          res['legend'].forEach(
+            item => this.imageDetails.legend.push(item)
+          );
+        }
+        this.imageDetails.location.latitude = res['location'].latitude;
+        this.imageDetails.location.longitude = res['location'].longitude;
+        this.imageDetails.ppm = res['ppm'];
+        this.imageDetails.review = res['review'];
+        this.imageDetails.notes = res['notes'];
+      },
+      err => console.log(err)
+
+
     );
 
     // call will be done after getting data from server
@@ -74,6 +103,7 @@ export class DisplayImageComponent implements OnInit {
       }
     );
   }
+
   changeRating(rating) {
     this.rate = rating;
   }
@@ -97,31 +127,25 @@ export class DisplayImageComponent implements OnInit {
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
       var position = 0;
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
-      // pdf.save('image.pdf'); // Generated PDF   
     });
 
 
 
 
-    var data = document.getElementById('legend');
+    var data = document.getElementById('legend1');
     html2canvas(data).then(canvas => {
       // Few necessary setting options  
       var imgWidth = 208;
       var pageHeight = 295;
       var imgHeight = canvas.height * imgWidth / canvas.width;
       var heightLeft = imgHeight;
-
       const contentDataURL = canvas.toDataURL('image/png');
-      contentDataURL.attr('download', 'legend.png');
-
-
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
       var position = 0;
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
       canvas.toBlob(function (blob) {
         saveAs(blob, "legend.png");
       });
-      // pdf.save('legened.pdf'); // Generated PDF   
     });
 
     const description = document.getElementById("descriptions").textContent;
@@ -136,25 +160,43 @@ export class DisplayImageComponent implements OnInit {
   }
 
   downloadLegend() {
-    var data = document.getElementById('legend');
+    var data = document.getElementById('legend1');
     html2canvas(data).then(canvas => {
       // Few necessary setting options  
       var imgWidth = 208;
       var pageHeight = 295;
       var imgHeight = canvas.height * imgWidth / canvas.width;
       var heightLeft = imgHeight;
-
       const contentDataURL = canvas.toDataURL('image/png');
-      contentDataURL.attr('download', 'legend.png');
-
-
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
       var position = 0;
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
       canvas.toBlob(function (blob) {
         saveAs(blob, "legend.png");
       });
-      // pdf.save('legened.pdf'); // Generated PDF   
     });
+  }
+
+  downloadImage() {
+    var data = document.getElementById('rateImage');
+    html2canvas(data).then(canvas => {
+      // Few necessary setting options  
+      var imgWidth = 208;
+      var pageHeight = 295;
+      var imgHeight = canvas.height * imgWidth / canvas.width;
+      var heightLeft = imgHeight;
+      const contentDataURL = canvas.toDataURL('image/png');
+      canvas.toBlob(function (blob) {
+        saveAs(blob, "image.png");
+      });
+      let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
+      var position = 0;
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+    });
+
+   }
+
+  onSave() {
+    // this.imageService.saveImage(this.imageDetails.review).subscribe();
   }
 }
