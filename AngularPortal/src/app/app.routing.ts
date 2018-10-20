@@ -15,8 +15,8 @@ import { StudentImageComponent } from './admin/student-image/student-image.compo
 
 const appRoutes: Routes = [
   { path: 'student/:id', component: StudentComponent },
-  { path: 'student/:id/displayClass/:id', component: DisplayClassComponent },
-  { path: 'student/:id/displayClass/:id/image/:id', component: DisplayImageComponent },
+  { path: 'student/:id/displayClass', component: DisplayClassComponent },
+  { path: 'student/:id/displayClass/image/:id', component: DisplayImageComponent },
   // { path: 'admin-dashboard/:id', component: AdminComponent },
   // { path: 'admin-dashboard/:id/class/:id', component: AdminDashboardComponent },
   // { path: 'admin-dashboard/:id/class/:id/student/:id', component: StaffClassComponent },

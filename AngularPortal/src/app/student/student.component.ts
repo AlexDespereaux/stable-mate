@@ -38,6 +38,8 @@ export class StudentComponent implements OnInit {
             id => this.studentId = id
                 
         );
+        this.router.navigate(['displayClass'], { relativeTo: this.route });
+
         this.allItems = this.student.classes;
 
         // initialize to page 1

@@ -68,6 +68,7 @@ export class DisplayImageComponent implements OnInit {
             item => this.imageDetails.legend.push(item)
           );
         }
+        this.rate = res['rating']
         this.imageDetails.location.latitude = res['location'].latitude;
         this.imageDetails.location.longitude = res['location'].longitude;
         this.imageDetails.ppm = res['ppm'];

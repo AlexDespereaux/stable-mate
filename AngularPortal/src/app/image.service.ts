@@ -43,8 +43,10 @@ export class ImageService {
         'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
       })
     };
+    console.log(id);
     
-    return this.http.get(`${this.endPoint}/image/edit${id}`, httpOptions);
+    
+    return this.http.get(`${this.endPoint}/image/edit/${id}`, httpOptions);
   }
 
   getImageData(id) {

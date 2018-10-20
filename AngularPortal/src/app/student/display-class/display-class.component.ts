@@ -21,13 +21,6 @@ export class DisplayClassComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService) { }
 
   ngOnInit() {
-    this.route.params.subscribe(
-      params => {
-        this.class = params.id;
-      },
-      (err) => { 
-        console.log('Something went wrong');
-      });
 
     console.log('getting images');
     this.imageService.getImageList().subscribe(
@@ -38,7 +31,10 @@ export class DisplayClassComponent implements OnInit {
           this.images[i].id = res[i];
           this.imageService.getImage(res[i]).subscribe(
             (res) => {
-              console.log(res);
+              console.log(res['url']); 
+            },
+            (err) => {
+              console.log(err)
             }
           );
         }
