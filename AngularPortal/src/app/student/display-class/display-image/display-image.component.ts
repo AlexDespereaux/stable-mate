@@ -15,7 +15,7 @@ import { ImageService } from '../../../image.service';
 export class DisplayImageComponent implements OnInit {
 
   // has to be initialized when getting all for one image.
-  image = new Image();
+  image = { id: String, image: String };
   imageUrl = 'assets/images/img2.jpg';
   imageName = 'test image';
   rate = 0;
@@ -49,11 +49,18 @@ export class DisplayImageComponent implements OnInit {
 
     this.route.params.subscribe(
       (params: Params) => {
-        this.image.imageId = params.id;
+        this.image.id = params.id;
         console.log(this.image);
       }
     );
-    this.imageService.getImageData(this.image.imageId).subscribe(
+    this.imageService.getImage(this.image.id).subscribe(
+      (res) => { },
+      (err) => {
+        console.log(err.url)
+        this.image.image = err.url;
+      }
+    );
+    this.imageService.getImageData(this.image.id).subscribe(
       res => {
         console.log(res);
 
@@ -195,7 +202,7 @@ export class DisplayImageComponent implements OnInit {
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
     });
 
-   }
+  }
 
   onSave() {
     // this.imageService.saveImage(this.imageDetails.review).subscribe();

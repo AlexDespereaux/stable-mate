@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-
-import { Observable } from 'rxjs/Observable';
-import { Subscriber } from 'rxjs/Subscriber';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { RequestOptions } from '@angular/http';
-
+import { HttpClient, HttpHeaders, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import { ResponseContentType } from '@angular/http';
 @Injectable()
 export class ImageService {
   username;
@@ -36,15 +35,14 @@ export class ImageService {
   }
 
   
-  getImage(id) {
+  getImage(id){
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
+        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`),
+         'responseType': 'blob' 
       })
-    };
-    console.log(id);
-    
+    }; 
     
     return this.http.get(`${this.endPoint}/image/edit/${id}`, httpOptions);
   }
