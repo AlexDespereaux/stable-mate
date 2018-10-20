@@ -38,13 +38,13 @@ export class ImageService {
   getImage(id){
     let httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`),
-         'responseType': 'blob' 
+        'Content-Type': 'image/png',
+        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
       })
     }; 
     
-    return this.http.get(`${this.endPoint}/image/edit/${id}`, httpOptions);
+    return this.http.get(`${this.endPoint}/image/edit/${id}`, httpOptions)
+    .map((res: Response) => res.blob());;
   }
 
   getImageData(id) {
@@ -58,7 +58,7 @@ export class ImageService {
     return this.http.get(`${this.endPoint}/image/${id}`, httpOptions);
   }
 
-  saveImage(review){
+  saveImage(id, rating){
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -66,6 +66,6 @@ export class ImageService {
       })
     };
     
-    return this.http.put(`${this.endPoint}/image/review`,review);
+    return this.http.put(`${this.endPoint}/image/${id}/rating/${rating}`,httpOptions);
   }
 }

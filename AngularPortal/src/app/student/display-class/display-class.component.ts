@@ -9,7 +9,7 @@ import { ImageService } from '../../image.service';
 })
 export class DisplayClassComponent implements OnInit {
   // this will be replaced by a service call to get images of a ceratin class 
-  images = [{id: String , image: String}];
+  images = [{ id: '', image: '' }];
   class;
   searchImage = '';
   imageToShow;
@@ -17,23 +17,19 @@ export class DisplayClassComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService) { }
 
   ngOnInit() {
-
-    console.log('getting images');
     this.imageService.getImageList().subscribe(
-      (res) => {
-        console.log(res);
+      (res: any) => {
+        res.forEach((re, i) => {
+          this.images[i].id = re;
 
-        for (let i = 0; i < 1; i++) {
-          this.images[i].id = res[i];
-          this.imageService.getImage(res[i]).subscribe(
-            (res) => {            },
+          this.imageService.getImage(re).subscribe(
+            (res) => { },
             (err) => {
-              console.log(err.url)
               this.images[i].image = err.url;
             }
           );
-        }
-      } 
+        });
+      }
     );
   }
 

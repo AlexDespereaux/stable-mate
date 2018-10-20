@@ -50,27 +50,25 @@ export class DisplayImageComponent implements OnInit {
     this.route.params.subscribe(
       (params: Params) => {
         this.image.id = params.id;
-        console.log(this.image);
       }
     );
     this.imageService.getImage(this.image.id).subscribe(
-      (res) => { },
+      (res) => { 
+        console.log(res)
+      },
       (err) => {
-        console.log(err.url)
+        console.log(err);
         this.image.image = err.url;
       }
     );
     this.imageService.getImageData(this.image.id).subscribe(
       res => {
-        console.log(res);
-
         this.imageDetails.dFov = res['dFov'];
         this.imageDetails.datetime = res['datetime'];
         this.imageDetails.description = res['description'];
         this.imageDetails.filename = res['filename'];
         this.imageDetails.imageId = res['imageId'];
         if (res['legend'] && res['legend'].length > 0) {
-          console.log('legend is defined ');
           res['legend'].forEach(
             item => this.imageDetails.legend.push(item)
           );
@@ -118,10 +116,7 @@ export class DisplayImageComponent implements OnInit {
 
   download() {
 
-
-    // var button = document.getElementById("btn-Convert-Html2Image");
-
-    var data = document.getElementById('image');
+    var data = document.getElementById('rateImage');
     html2canvas(data).then(canvas => {
       // Few necessary setting options  
       var imgWidth = 208;
@@ -186,8 +181,11 @@ export class DisplayImageComponent implements OnInit {
   }
 
   downloadImage() {
+
+
     var data = document.getElementById('rateImage');
-    html2canvas(data).then(canvas => {
+    const image = "data:image/jpg;base64," + this.image.image;
+    html2canvas(image).then(canvas => {
       // Few necessary setting options  
       var imgWidth = 208;
       var pageHeight = 295;
@@ -205,6 +203,9 @@ export class DisplayImageComponent implements OnInit {
   }
 
   onSave() {
-    // this.imageService.saveImage(this.imageDetails.review).subscribe();
+    this.imageService.saveImage(this.image.id, this.rate).subscribe(
+      res => console.log(res),
+      err => console.log(err)
+    );
   }
 }
