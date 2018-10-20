@@ -33,12 +33,7 @@ export class DisplayImageComponent implements OnInit {
     "imageId": null,
     "dFov": null,
     "ppm": null,
-    "legend": [
-      { "name": "black_radio", "text": "cell wall" },
-      { "name": "grey_star", "text": "nucleus" },
-      { "name": "black_radio", "text": "cell wall" },
-      { "name": "grey_star", "text": "nucleus" }
-    ],
+    "legend": [],
     "review": 0
   };
   legendImages = [];
@@ -53,7 +48,7 @@ export class DisplayImageComponent implements OnInit {
       }
     );
     this.imageService.getImage(this.image.id).subscribe(
-      (res) => { 
+      (res) => {
         console.log(res)
       },
       (err) => {
@@ -63,6 +58,8 @@ export class DisplayImageComponent implements OnInit {
     );
     this.imageService.getImageData(this.image.id).subscribe(
       res => {
+        console.log(res);
+
         this.imageDetails.dFov = res['dFov'];
         this.imageDetails.datetime = res['datetime'];
         this.imageDetails.description = res['description'];
@@ -70,14 +67,22 @@ export class DisplayImageComponent implements OnInit {
         this.imageDetails.imageId = res['imageId'];
         if (res['legend'] && res['legend'].length > 0) {
           res['legend'].forEach(
-            item => this.imageDetails.legend.push(item)
+            item => {
+              console.log(item)
+              if(item.name !== ' '){
+                console.log('pushing')
+                this.imageDetails.legend.push(item)
+              }
+            }
           );
+          this.filterLegend();
+
         }
         this.rate = res['rating']
         this.imageDetails.location.latitude = res['location'].latitude;
         this.imageDetails.location.longitude = res['location'].longitude;
         this.imageDetails.ppm = res['ppm'];
-        this.imageDetails.review = res['review'];
+        this.imageDetails.review  = res['review'];
         this.imageDetails.notes = res['notes'];
       },
       err => console.log(err)
@@ -86,28 +91,30 @@ export class DisplayImageComponent implements OnInit {
     );
 
     // call will be done after getting data from server
-    this.filterLegend();
   }
 
   filterLegend() {
     this.imageDetails.legend.forEach(
       (attr) => {
+        console.log(attr.name)
         switch (attr.name.toLowerCase()) {
-          case 'black_arrow': this.legendImages.push('assets/legend/black_arrow.png'); break;
-          case 'black_radio': this.legendImages.push('assets/legend/black_radio.png'); break;
-          case 'black_solid_arrow': this.legendImages.push('assets/legend/black_solid_arrow.png'); break;
-          case 'black_star': this.legendImages.push('assets/legend/black_star.png'); break;
-          case 'grey_arrow': this.legendImages.push('assets/legend/grey_arrow.png'); break;
-          case 'grey_radio': this.legendImages.push('assets/legend/grey_radio.png'); break;
-          case 'grey_solid_arrow': this.legendImages.push('assets/legend/grey_solid_arrow.png'); break;
-          case 'grey_star': this.legendImages.push('assets/legend/grey_star.png'); break;
-          case 'white_arrow': this.legendImages.push('assets/legend/white_arrow.png'); break;
-          case 'white_radio': this.legendImages.push('assets/legend/white_radio.png'); break;
-          case 'white_solid_arrow': this.legendImages.push('assets/legend/white_solid_arrow.png'); break;
-          case 'white_star': this.legendImages.push('assets/legend/white_star.png'); break;
+          case 'black_arrow.png': this.legendImages.push('assets/legend/black_arrow.png'); break;
+          case 'black_radio.png': this.legendImages.push('assets/legend/black_radio.png'); break;
+          case 'black_solid_arrow.png': this.legendImages.push('assets/legend/black_solid_arrow.png'); break;
+          case 'black_star.png': this.legendImages.push('assets/legend/black_star.png'); break;
+          case 'grey_arrow.png': this.legendImages.push('assets/legend/grey_arrow.png'); break;
+          case 'grey_radio.png': this.legendImages.push('assets/legend/grey_radio.png'); break;
+          case 'grey_solid_arrow.png': this.legendImages.push('assets/legend/grey_solid_arrow.png'); break;
+          case 'grey_star.png': this.legendImages.push('assets/legend/grey_star.png'); break;
+          case 'white_arrow.png': this.legendImages.push('assets/legend/white_arrow.png'); break;
+          case 'white_radio.png': this.legendImages.push('assets/legend/white_radio.png'); break;
+          case 'white_solid_arrow.png': this.legendImages.push('assets/legend/white_solid_arrow.png'); break;
+          case 'white_star.png': this.legendImages.push('assets/legend/white_star.png'); break;
         }
       }
     );
+
+    console.log(this.legendImages)
   }
 
   changeRating(rating) {
