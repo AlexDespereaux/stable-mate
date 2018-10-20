@@ -161,11 +161,19 @@ exports.getImageData = function (req, res) {
   Promise.all(imagePromises)
     .then(result => {
       let simpleData = _.pick(result[0], ['imageId', 'filename', 'description', 'notes', 'datetime',
-        'dFov', 'ppm']);
+        'dFov', 'ppm', 'rating']);
       let location = { 'location': _.pick(result[0], ['latitude', 'longitude']) };
       let legend = { 'legend': result[1] };
       let data = _.merge({}, simpleData, location, legend);
       res.status(200).send(data)
     })
     .catch(error => res.status(400).send(error));
+};
+
+exports.setImageRating = function(req, res) {
+  let imageId = req['params']['imageId'];
+  let imageRating = req['params']['rating'];
+  db.setImageRating(imageId, imageRating)
+    .then(res.status(200).send('rating set'))
+    .catch(error => res.status(500).send(error));
 };

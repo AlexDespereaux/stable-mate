@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS images (
   dFov          DECIMAL(10, 5),
   ppm           DECIMAL(10, 5),
   userId        INT UNSIGNED NOT NULL,
+  rating        INT UNSIGNED,
   PRIMARY KEY(imageId),
   FOREIGN KEY(userId) REFERENCES users(userId)
 );
