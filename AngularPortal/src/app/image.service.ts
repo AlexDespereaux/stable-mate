@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-
-import { Observable } from 'rxjs/Observable';
-import { Subscriber } from 'rxjs/Subscriber';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { RequestOptions } from '@angular/http';
-
+import { HttpClient, HttpHeaders, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import { ResponseContentType } from '@angular/http';
 @Injectable()
 export class ImageService {
   username;
@@ -36,15 +35,16 @@ export class ImageService {
   }
 
   
-  getImage(id) {
+  getImage(id){
     let httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json',
+        'Content-Type': 'image/png',
         'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
       })
-    };
+    }; 
     
-    return this.http.get(`${this.endPoint}/image/edit${id}`, httpOptions);
+    return this.http.get(`${this.endPoint}/image/edit/${id}`, httpOptions)
+    .map((res: Response) => res.blob());;
   }
 
   getImageData(id) {
@@ -58,7 +58,7 @@ export class ImageService {
     return this.http.get(`${this.endPoint}/image/${id}`, httpOptions);
   }
 
-  saveImage(review){
+  saveImage(id, rating){
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -66,6 +66,6 @@ export class ImageService {
       })
     };
     
-    return this.http.put(`${this.endPoint}/image/review`,review);
+    return this.http.put(`${this.endPoint}/image/${id}/rating/${rating}`,httpOptions);
   }
 }

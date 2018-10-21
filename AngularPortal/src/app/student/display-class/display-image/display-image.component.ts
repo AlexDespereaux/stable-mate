@@ -15,7 +15,7 @@ import { ImageService } from '../../../image.service';
 export class DisplayImageComponent implements OnInit {
 
   // has to be initialized when getting all for one image.
-  image = new Image();
+  image = { id: String, image: String };
   imageUrl = 'assets/images/img2.jpg';
   imageName = 'test image';
   rate = 0;
@@ -33,12 +33,7 @@ export class DisplayImageComponent implements OnInit {
     "imageId": null,
     "dFov": null,
     "ppm": null,
-    "legend": [
-      { "name": "black_radio", "text": "cell wall" },
-      { "name": "grey_star", "text": "nucleus" },
-      { "name": "black_radio", "text": "cell wall" },
-      { "name": "grey_star", "text": "nucleus" }
-    ],
+    "legend": [],
     "review": 0
   };
   legendImages = [];
@@ -49,11 +44,19 @@ export class DisplayImageComponent implements OnInit {
 
     this.route.params.subscribe(
       (params: Params) => {
-        this.image.imageId = params.id;
-        console.log(this.image);
+        this.image.id = params.id;
       }
     );
-    this.imageService.getImageData(this.image.imageId).subscribe(
+    this.imageService.getImage(this.image.id).subscribe(
+      (res) => {
+        console.log(res)
+      },
+      (err) => {
+        console.log(err);
+        this.image.image = err.url;
+      }
+    );
+    this.imageService.getImageData(this.image.id).subscribe(
       res => {
         console.log(res);
 
@@ -63,15 +66,23 @@ export class DisplayImageComponent implements OnInit {
         this.imageDetails.filename = res['filename'];
         this.imageDetails.imageId = res['imageId'];
         if (res['legend'] && res['legend'].length > 0) {
-          console.log('legend is defined ');
           res['legend'].forEach(
-            item => this.imageDetails.legend.push(item)
+            item => {
+              console.log(item)
+              if(item.name !== ' '){
+                console.log('pushing')
+                this.imageDetails.legend.push(item)
+              }
+            }
           );
+          this.filterLegend();
+
         }
+        this.rate = res['rating']
         this.imageDetails.location.latitude = res['location'].latitude;
         this.imageDetails.location.longitude = res['location'].longitude;
         this.imageDetails.ppm = res['ppm'];
-        this.imageDetails.review = res['review'];
+        this.imageDetails.review  = res['review'];
         this.imageDetails.notes = res['notes'];
       },
       err => console.log(err)
@@ -80,28 +91,30 @@ export class DisplayImageComponent implements OnInit {
     );
 
     // call will be done after getting data from server
-    this.filterLegend();
   }
 
   filterLegend() {
     this.imageDetails.legend.forEach(
       (attr) => {
+        console.log(attr.name)
         switch (attr.name.toLowerCase()) {
-          case 'black_arrow': this.legendImages.push('assets/legend/black_arrow.png'); break;
-          case 'black_radio': this.legendImages.push('assets/legend/black_radio.png'); break;
-          case 'black_solid_arrow': this.legendImages.push('assets/legend/black_solid_arrow.png'); break;
-          case 'black_star': this.legendImages.push('assets/legend/black_star.png'); break;
-          case 'grey_arrow': this.legendImages.push('assets/legend/grey_arrow.png'); break;
-          case 'grey_radio': this.legendImages.push('assets/legend/grey_radio.png'); break;
-          case 'grey_solid_arrow': this.legendImages.push('assets/legend/grey_solid_arrow.png'); break;
-          case 'grey_star': this.legendImages.push('assets/legend/grey_star.png'); break;
-          case 'white_arrow': this.legendImages.push('assets/legend/white_arrow.png'); break;
-          case 'white_radio': this.legendImages.push('assets/legend/white_radio.png'); break;
-          case 'white_solid_arrow': this.legendImages.push('assets/legend/white_solid_arrow.png'); break;
-          case 'white_star': this.legendImages.push('assets/legend/white_star.png'); break;
+          case 'black_arrow.png': this.legendImages.push('assets/legend/black_arrow.png'); break;
+          case 'black_radio.png': this.legendImages.push('assets/legend/black_radio.png'); break;
+          case 'black_solid_arrow.png': this.legendImages.push('assets/legend/black_solid_arrow.png'); break;
+          case 'black_star.png': this.legendImages.push('assets/legend/black_star.png'); break;
+          case 'grey_arrow.png': this.legendImages.push('assets/legend/grey_arrow.png'); break;
+          case 'grey_radio.png': this.legendImages.push('assets/legend/grey_radio.png'); break;
+          case 'grey_solid_arrow.png': this.legendImages.push('assets/legend/grey_solid_arrow.png'); break;
+          case 'grey_star.png': this.legendImages.push('assets/legend/grey_star.png'); break;
+          case 'white_arrow.png': this.legendImages.push('assets/legend/white_arrow.png'); break;
+          case 'white_radio.png': this.legendImages.push('assets/legend/white_radio.png'); break;
+          case 'white_solid_arrow.png': this.legendImages.push('assets/legend/white_solid_arrow.png'); break;
+          case 'white_star.png': this.legendImages.push('assets/legend/white_star.png'); break;
         }
       }
     );
+
+    console.log(this.legendImages)
   }
 
   changeRating(rating) {
@@ -110,10 +123,7 @@ export class DisplayImageComponent implements OnInit {
 
   download() {
 
-
-    // var button = document.getElementById("btn-Convert-Html2Image");
-
-    var data = document.getElementById('image');
+    var data = document.getElementById('rateImage');
     html2canvas(data).then(canvas => {
       // Few necessary setting options  
       var imgWidth = 208;
@@ -178,8 +188,11 @@ export class DisplayImageComponent implements OnInit {
   }
 
   downloadImage() {
+
+
     var data = document.getElementById('rateImage');
-    html2canvas(data).then(canvas => {
+    const image = "data:image/jpg;base64," + this.image.image;
+    html2canvas(image).then(canvas => {
       // Few necessary setting options  
       var imgWidth = 208;
       var pageHeight = 295;
@@ -194,9 +207,12 @@ export class DisplayImageComponent implements OnInit {
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
     });
 
-   }
+  }
 
   onSave() {
-    // this.imageService.saveImage(this.imageDetails.review).subscribe();
+    this.imageService.saveImage(this.image.id, this.rate).subscribe(
+      res => console.log(res),
+      err => console.log(err)
+    );
   }
 }

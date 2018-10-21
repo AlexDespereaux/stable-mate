@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
                 id = user;
                 user = res['userType'];
 
-                (user == 'user') ? this.redirect('student', id) :
+                (user == 'user') ? this.redirect('admin', id) :
                     (user == 'admin') ? this.redirect('admin', id) : this.redirect('', id);
             },
             err => alert('Invalid username or password')
