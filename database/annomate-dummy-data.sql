@@ -88,7 +88,7 @@ INSERT INTO `legend` VALUES
   (10,1,'star','cell wall'),
   (11,1,'triangle','nucleus'),
   (12,1,'star','cell wall'),
-  (13,1,'triangle','nucleus')
+  (13,1,'triangle','nucleus');
 /*!40000 ALTER TABLE `legend` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,8 +129,7 @@ INSERT INTO `users` VALUES
   (11,'$2b$12$xfWpw9/2DdDEFbopp72OfO8fDXf3hzE87i9rPdxJVAe8GgdOtbLH2','thomas@test.com',0),
   (12,'$2b$12$xCu.6/8R9C61FYWcmKXRluuZIxQl5U9gqdcqt6x9pzosxQ8rcNciG','ethan@test.com',0),
   (13,'$2b$12$844vDM.cv929y0HRVTyMrux8xHwkZ8HRTSsnThZd4LNI23W/N70qK','lucas@test.com',0),
-  (14,'$2b$12$BG/605CWu/qDRYWj90B/UuH5.UCpahelxUAyhL4uWYUtHoMyzh29u','jackson@test.com',0),
-  (15,'$2b$12$DbKSIz0cbOm.gUlIgM6bj.7faHagGRbcFzEs11ioKn49Kk0LU9a6O','lachlan@test.com',0);
+  (14,'$2b$12$DbKSIz0cbOm.gUlIgM6bj.7faHagGRbcFzEs11ioKn49Kk0LU9a6O','lachlan@test.com',0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

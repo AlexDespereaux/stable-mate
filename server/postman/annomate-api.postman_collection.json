@@ -186,12 +186,12 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "18c8c495-e676-44c2-ba69-9931d44c8910",
+						"id": "a03ec27f-2254-4f45-a03c-0338f5ee1b97",
 						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Your test name\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.imageId).to.eql(193);",
+							"    pm.expect(jsonData.imageId).to.eql(2);",
 							"});"
 						]
 					}
@@ -202,14 +202,14 @@
 				"header": [],
 				"body": {},
 				"url": {
-					"raw": "{{baseUrl}}/api/image/193",
+					"raw": "{{baseUrl}}/api/image/2",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
 						"image",
-						"193"
+						"2"
 					]
 				}
 			},
@@ -354,14 +354,14 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/image/193/rating/5",
+					"raw": "{{baseUrl}}/api/image/2/rating/5",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
 						"image",
-						"193",
+						"2",
 						"rating",
 						"5"
 					]
@@ -409,33 +409,33 @@
 	],
 	"variable": [
 		{
-			"id": "340265fb-d8ef-4572-ab99-cd28af1931b4",
+			"id": "05f45e20-6b39-47bb-933d-88df2a1cf6d3",
 			"key": "adminName",
 			"value": "anmol",
 			"type": "string"
 		},
 		{
-			"id": "e3a2a6d8-0301-4a2d-a3e1-a1769e7f6cf7",
+			"id": "108f3b91-fd33-445f-be8f-7bfb88867a21",
 			"key": "adminPass",
 			"value": "walia1457",
 			"type": "string"
 		},
 		{
-			"id": "6882235b-98f2-4178-af26-c26940f08f41",
+			"id": "61bc28eb-84f6-4fbc-9ab6-dfca13b04ac9",
 			"key": "baseUrl",
 			"value": "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com",
 			"type": "string"
 		},
 		{
-			"id": "c5b2d8cc-d5c6-4d72-b0f2-b08b1664b61d",
+			"id": "029da838-4748-4c4f-9f0f-7511e4527611",
 			"key": "userName",
-			"value": "richard@test.com",
+			"value": "oliver@test.com",
 			"type": "string"
 		},
 		{
-			"id": "b5a9f952-e20e-459e-bd12-37aceea4b8dc",
+			"id": "45924184-78ea-4e9e-a749-761520b938b1",
 			"key": "userPass",
-			"value": "TestPass23",
+			"value": "Mason473",
 			"type": "string"
 		}
 	]
