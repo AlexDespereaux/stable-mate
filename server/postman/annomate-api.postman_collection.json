@@ -1,0 +1,442 @@
+{
+	"info": {
+		"_postman_id": "b962d9c9-5599-46bf-bb71-dace5acc3f6d",
+		"name": "annomate-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth normal user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a77adbf2-b1fa-4284-bae3-352eba283c0b",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData['userType']).to.eql('user');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseUrl}}/api/user",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth admin user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4652ac32-a1a0-4912-a9de-aa571bd72ab2",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData['userType']).to.eql('admin');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{adminPass}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{adminName}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseUrl}}/api/user",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "send image json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "56145772-e752-46a0-82a4-bc4ef54092ef",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"filename\": \"picture.png\",\n  \"description\": \"apple cell with dye\",\n  \"notes\": \"taken under low light\",\n  \"datetime\": 1533731244,\n  \"location\": {\n    \"latitude\": -37.719523,\n    \"longitude\": 145.045910\n  },\n  \"dFov\": 1.34456,\n  \"ppm\": 342,\n  \"legend\": [\n    { \"name\": \"star\", \"text\": \"cell wall\" },\n    { \"name\": \"triangle\", \"text\": \"nucleus\" },\n    { \"name\": \"cool\", \"text\": \"cool guy\"}\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/image",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "send image json no legend",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "56145772-e752-46a0-82a4-bc4ef54092ef",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"filename\": \"picture.png\",\n  \"description\": \"apple cell with dye\",\n  \"notes\": \"taken under low light\",\n  \"datetime\": 1533731244,\n  \"location\": {\n    \"latitude\": -37.719523,\n    \"longitude\": 145.045910\n  },\n  \"dFov\": 1.34456,\n  \"ppm\": 342,\n  \"legend\": []\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/image",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get image json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a03ec27f-2254-4f45-a03c-0338f5ee1b97",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Your test name\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.imageId).to.eql(2);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseUrl}}/api/image/2",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin getImages",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c79c0296-6f1a-4c9d-bc12-be44c2919154",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Size of returned array\", function () {",
+							"    pm.response.to.be.json; ",
+							"    console.log(pm.response.json())",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{adminPass}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{adminName}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseUrl}}/api/image",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user getImages",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c79c0296-6f1a-4c9d-bc12-be44c2919154",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Size of returned array\", function () {",
+							"    pm.response.to.be.json; ",
+							"    console.log(pm.response.json())",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseUrl}}/api/image",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload image",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ef45dbd3-84fa-4329-83a4-3ce3eaca7ce1",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/image/edit/178",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"edit",
+						"178"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "set rating",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/image/2/rating/5",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"2",
+						"rating",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{userPass}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{userName}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "3f29e255-a3fb-4ab4-8eab-3723d4ed7143",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "647be9f2-230b-4a49-b39a-a086cba5c515",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "05f45e20-6b39-47bb-933d-88df2a1cf6d3",
+			"key": "adminName",
+			"value": "anmol",
+			"type": "string"
+		},
+		{
+			"id": "108f3b91-fd33-445f-be8f-7bfb88867a21",
+			"key": "adminPass",
+			"value": "walia1457",
+			"type": "string"
+		},
+		{
+			"id": "61bc28eb-84f6-4fbc-9ab6-dfca13b04ac9",
+			"key": "baseUrl",
+			"value": "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com",
+			"type": "string"
+		},
+		{
+			"id": "029da838-4748-4c4f-9f0f-7511e4527611",
+			"key": "userName",
+			"value": "oliver@test.com",
+			"type": "string"
+		},
+		{
+			"id": "45924184-78ea-4e9e-a749-761520b938b1",
+			"key": "userPass",
+			"value": "Mason473",
+			"type": "string"
+		}
+	]
+}
