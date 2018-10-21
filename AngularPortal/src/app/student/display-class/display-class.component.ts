@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageService } from '../../image.service';
 
+class Image {
+  id: string;
+  image: string;
+}
+
 @Component({
   selector: 'app-display-class',
   templateUrl: './display-class.component.html',
@@ -9,17 +14,22 @@ import { ImageService } from '../../image.service';
 })
 export class DisplayClassComponent implements OnInit {
   // this will be replaced by a service call to get images of a ceratin class 
-  images = [{ id: '', image: '' }];
+  images: Array<Image>;
   class;
   searchImage = '';
   imageToShow;
 
-  constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService)
+   {
+    this.images = new Array<Image>();
+   }
 
   ngOnInit() {
     this.imageService.getImageList().subscribe(
       (res: any) => {
+        console.log(res)
         res.forEach((re, i) => {
+          this.images[i] = new Image();
           this.images[i].id = re;
 
           this.imageService.getImage(re).subscribe(
