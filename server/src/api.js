@@ -22,4 +22,6 @@ router.get('/image', handlers.imageList);
 
 router.post('/image', express.json(), handlers.uploadImageData);
 
+router.post('/image/:imageId/rating/:rating', handlers.setImageRating);
+
 module.exports = router;

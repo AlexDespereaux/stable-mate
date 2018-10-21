@@ -172,3 +172,16 @@ exports.getLegendData = function(imageId) {
     })
   });
 };
+
+exports.setImageRating = function(imageId, imageRating) {
+  return new Promise((resolve, reject) => {
+    connection().then(connection => {
+      let sql = mysql.format('UPDATE images SET rating = ? WHERE imageId = ?', [imageRating, imageId]);
+      connection.query(sql, function (error, results) {
+        connection.end();
+        if (error) reject(error);
+        resolve(results);
+      });
+    }).catch(error => {console.log(error); reject(error)});
+  });
+};
