@@ -43,8 +43,7 @@ export class ImageService {
       })
     }; 
     
-    return this.http.get(`${this.endPoint}/image/edit/${id}`, httpOptions)
-    .map((res: Response) => res.blob());;
+    return this.http.get(`${this.endPoint}/image/edit/${id}`, httpOptions);
   }
 
   getImageData(id) {
