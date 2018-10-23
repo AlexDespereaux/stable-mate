@@ -1,1 +1,99 @@
 /* You can add global styles to this file, and also import other style files */
+@import "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import '~ngx-bar-rating/themes/br-stars-theme.css';
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', 'Helvetica', sans-serif;
+}
+body{
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+
+.text-red{
+  color: #B12B21;
+}
+
+.font-14{
+  font-size: 14px;
+}
+
+.jaram-nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+.jaram-nav li {
+  float: left;
+}
+
+.jaram-nav li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.jaram-nav li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #B12B21;
+}
+
+/*Clean layout gallery grid */
+.gallery-container h1 {
+  text-align: center;
+  margin-top: 70px;
+  font-family: 'Droid Sans', sans-serif;
+  font-weight: bold;
+  color: #58595a;
+}
+
+.gallery-container p.page-description {
+  text-align: center;
+  margin: 30px auto;
+  font-size: 18px;
+  color: #85878c;
+}
+
+/* Styles for the gallery */
+
+.tz-gallery {
+  padding: 40px;
+}
+
+.tz-gallery .thumbnail {
+  padding: 0;
+  margin-bottom: 30px;
+  border: none;
+}
+
+.tz-gallery img {
+  border-radius: 2px;
+}
+
+.tz-gallery .caption{
+  padding: 26px 30px;
+  text-align: center;
+}
+
+.tz-gallery .caption h3 {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 0;
+}
+
+.tz-gallery .caption p {
+  font-size: 12px;
+  color: #7b7d7d;
+  margin: 0;
+}
+
+.baguetteBox-button {
+  background-color: transparent !important;
+}
