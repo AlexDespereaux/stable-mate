@@ -32,17 +32,21 @@ export class DisplayClassComponent implements OnInit {
           this.images[i] = new Image();
           this.images[i].id = re;
 
-          this.imageService.getImage(re).subscribe(
-            (res) => { },
+          this.imageService.getImage(re)
+          .subscribe(
+            (res) => { 
+              console.log(res)
+            },
             (err) => {
+              console.log(err)
               this.images[i].image = err.url;
             }
           );
         });
       }
-    );
+    ); 
   }
-
+ 
 
   createImageFromBlob(image) {
     let reader = new FileReader();

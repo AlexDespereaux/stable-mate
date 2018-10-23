@@ -49,10 +49,9 @@ export class LoginComponent implements OnInit {
         let password: string = this.loginForm.get('password').value;
         this.imageService.username = user;
         this.imageService.password = password;
-        this.imageService.authenticate(user, password).subscribe();
-
         this.imageService.authenticate(user, password).subscribe(
             res => {
+                console.log(res)
                 id = user;
                 user = res['userType'];
 

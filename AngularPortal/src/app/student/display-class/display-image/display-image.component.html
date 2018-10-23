@@ -3,12 +3,10 @@
     <img id="rateImage" src="{{image.image}}">
   </div>
   <div>
-    <h1>Rating:
-    <bar-rating [(rate)]="rate" [readOnly]="false" [max]="6" [theme]="'stars'" [showText]="true" (rateChange)="changeRating($event)"
+
+      <h1>Rating:</h1><bar-rating [(rate)]="rate" [readOnly]="false" [max]="6" [theme]="'stars'" [showText]="true" (rateChange)="changeRating($event)"
       [titles]="['Very Bad', 'Bad' , 'Fair', 'Good', 'Very Good', 'Excellent']">
     </bar-rating>
-  </h1>
-  <button class="btn btn-primary"(click)="downloadImage()">Download Image</button>
   </div>
   <div id="descriptions" class="col">
     <div class=" description">
@@ -16,12 +14,12 @@
       <pre>Name: {{imageDetails.filename}}</pre>
       <pre>Description: {{imageDetails.description}}</pre>
       <pre>Notes: {{imageDetails.notes}}</pre>
-      <pre>Date & Time: {{imageDetails.datetime}}</pre>
+      <pre>Date & Time: {{imageDetails.datetime | date: 'dd/MM/yyyy'}}</pre>
       <pre>Latitude: {{imageDetails.location.latitude}}</pre>
       <pre>Longitude: {{imageDetails.location.longitude}}</pre>
       <pre>dFov: {{imageDetails.dFov}}</pre>
       <pre>PPM: {{imageDetails.ppm}}</pre>
-      <button (click)="downlaodDescription()" class="btn btn-primary"> Download Description</button>
+      <!-- <button (click)="downlaodDescription()" class="btn btn-primary"> Download Description</button> -->
     </div>
   </div>
   <br>
@@ -31,10 +29,21 @@
       <img src="{{legendImages[i]}}" alt="attr.text"> 
       <p class="badge badge-info">{{attr.text}}</p>
     </pre>
-    <button (click)="downloadLegend()" class="btn btn-primary"> Download Legend</button>
+    <!-- <button (click)="downloadLegend()" class="btn btn-primary"> Download Legend</button> -->
   </div>
 </div>
-<button id="btn-Convert-Html2Image" (click)="download()" class="btn btn-primary"><i class="fa fa-download"></i>
-  Download All </button>
-<button class="btn btn-primary">Save</button>
-<canvas id="pdf-canvas" width="400"></canvas>
+<!-- <button id="btn-Convert-Html2Image" (click)="download()" class="btn btn-primary"><i class="fa fa-download"></i> -->
+<!-- Download All </button> -->
+<!-- <canvas id="pdf-canvas" width="400"></canvas> -->
+<div class="downloadMenu">
+
+  <button class="btn btn-primary" mat-button [matMenuTriggerFor]="menu">Download Options...</button>
+  <mat-menu #menu="matMenu">
+    <button class="btn btn-primary" (click)="download()" mat-menu-item>Download All</button>
+    <button class="btn btn-primary" (click)="downloadLegend()" mat-menu-item>Download Legend</button>
+    <button class="btn btn-primary" (click)="downlaodDescription()" mat-menu-item>Download Description</button>
+    <button class="btn btn-primary" (click)="downloadImage()" mat-menu-item>Download Image</button>
+  </mat-menu>
+  <!-- <button class="btn btn-primary">Save</button> -->
+
+</div>

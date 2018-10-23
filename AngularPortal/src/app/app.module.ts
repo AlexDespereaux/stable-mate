@@ -26,6 +26,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { StaffClassComponent } from './admin/staff-class/staff-class.component';
 import { StudentClassComponent } from './admin/student-class/student-class.component';
 import { StudentImageComponent } from './admin/student-image/student-image.component';
+import {MatButtonModule, MatCheckboxModule, MatMenuModule} from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,8 +52,11 @@ import { StudentImageComponent } from './admin/student-image/student-image.compo
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    HttpModule ,
     ReactiveFormsModule,
-    BarRatingModule],
+    BarRatingModule,
+    BrowserAnimationsModule,
+    MatButtonModule, MatCheckboxModule,MatMenuModule],
   providers: [ImageService, PagerService],
   bootstrap: [AppComponent]
 })
