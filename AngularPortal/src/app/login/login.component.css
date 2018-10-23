@@ -8,10 +8,23 @@ html{
 
 
   .btn{
-    background-color: #B12B21;
+    /*background-color: #B12B21;*/
   }
 
   .form-control {
     display: block;
-    width: 52%;
+    /*width: 52%;*/
   }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+.main-btn{
+  background: #B12B21;
+  border-radius: 8px;
+  width: 175px;
+  height: 63px;
+}
+

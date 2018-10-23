@@ -1,27 +1,37 @@
+<div class="jaram-nav" id="gallery">
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#gallery" class="active">Gallery</a></li>
+    <li><a href="#contact" class="disabled">Class</a></li>
+    <li style="float:right"><a href="#sign-out">Sign out</a></li>
+  </ul>
+</div>
+
+
 <div class="card spaces">
-    <img class="card-img-top" src="assets/studentIcon.jpg" alt="Card image" style="width:40%">
-    <div class="card-body">
-        <h4 class="card-title"></h4>
-        <p class="card-text">Student ID: {{studentId.id}}</p>
-        <a class="btn btn-primary">Classes Enrolled: {{student.classes.length}}</a>
-    </div>
+  <img class="card-img-top" src="../../src/assets/studentIcon.jpg" alt="Card image" style="width:100%">
+  <div class="card-body">
+    <h4 class="card-title">John Doe</h4>
+    <p class="card-text">Student ID: {{student.id}}</p>
+    <a class="btn btn-primary">Classes Enrolled: {{student.classes.length}}</a>
+  </div>
 </div>
 
 
 
 
 <div class="flex-container">
-        <form class="form-inline spaces md-form form-sm active-pink active-pink-2">
-                <i class="fa fa-search" aria-hidden="true"></i>
-                <input name="searchClass" class="form-control form-control-sm ml-3 w-50" type="text" placeholder="Search Class" aria-label="Search"
-                    [(ngModel)]="studentClass">
-            </form>
-    <div class="row">
-        <div class="card" (click)="redirect(class)" *ngFor="let class of student.classes| filterStudentClasses:studentClass">
-            <img src="{{image}}" alt="Card image cap">
-            <p class="badge">{{class}}</p>
-        </div>
+  <form class="form-inline spaces md-form form-sm active-pink active-pink-2">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    <input name="searchClass" class="form-control form-control-sm ml-3 w-50" type="text" placeholder="Search Class" aria-label="Search"
+           [(ngModel)]="studentClass">
+  </form>
+  <div class="row">
+    <div class="card" (click)="redirect(class)" *ngFor="let class of student.classes| filterStudentClasses:studentClass">
+      <img src="{{image}}" alt="Card image cap">
+      <p class="badge">{{class}}</p>
     </div>
+  </div>
 </div>
 
 

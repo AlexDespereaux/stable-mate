@@ -22,8 +22,8 @@
 
 
 .card:hover{
-    opacity: 0.4;
-    transition: background-color 2s ease-out;
+    /*opacity: 0.4;*/
+    /*transition: background-color 2s ease-out;*/
 }
 
 .flex-container{
