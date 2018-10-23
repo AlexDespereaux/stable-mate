@@ -1,20 +1,20 @@
 .card {
-  background-color: #B12B21;
-    border-radius: 4px;
-    box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);
-    box-sizing: border-box;
-    transition: box-shadow .5s;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
-    cursor: pointer;
-    width: 15%;
-    /* min-width: 350px; */
-    height: auto;
-    margin: 40px;
-    padding: 4px;
-    box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);
+  /*background-color: #B12B21;*/
+    /*border-radius: 4px;*/
+    /*box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12);*/
+    /*box-sizing: border-box;*/
+    /*transition: box-shadow .5s;*/
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*align-items: center;*/
+    /*position: relative;*/
+    /*cursor: pointer;*/
+    /*width: 15%;*/
+     /*min-width: 350px;*/
+    /*height: auto;*/
+    /*!*margin: 40px;*!*/
+    /*!*padding: 4px;*!*/
+    /*box-shadow: 0 6px 6px rgba(10,16,20,.15),0 0 52px rgba(10,16,20,.12);*/
 }
 
 .btn{
@@ -23,28 +23,21 @@
 
 
 .card:hover{
-    opacity: 0.4;
-    transition: background-color 2s ease-out;
-}
-
-
-
-img{
-  width: 100%;
-  height: auto;
+    /*opacity: 0.4;*/
+    /*transition: background-color 2s ease-out;*/
 }
 
 #title{
-    padding:1em;
-    text-align: center;
-    text-decoration: none !important;
-    margin:0 auto;
+    /*padding:1em;*/
+    /*text-align: center;*/
+    /*text-decoration: none !important;*/
+    /*margin:0 auto;*/
 
-    -webkit-transition: all 0.2s ease-in-out;
-    -moz-transition: all 0.2s ease-in-out;
-    -ms-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out;
+    /*-webkit-transition: all 0.2s ease-in-out;*/
+    /*-moz-transition: all 0.2s ease-in-out;*/
+    /*-ms-transition: all 0.2s ease-in-out;*/
+    /*-o-transition: all 0.2s ease-in-out;*/
+    /*transition: all 0.2s ease-in-out;*/
 }
 
 
@@ -55,41 +48,41 @@ img{
   }
   
   .container{
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    height: 100px;
-    width: calc(100% - 40px); /* 100% - (2 * ScrollButtonWidth) */
-    background-color: #eee;
-    box-sizing: border-box;
+    /*display: inline-block;*/
+    /*white-space: nowrap;*/
+    /*!*overflow: hidden;*!*/
+    /*height: 100px;*/
+    /*width: calc(100% - 40px); !* 100% - (2 * ScrollButtonWidth) *!*/
+    /*background-color: #eee;*/
+    /*box-sizing: border-box;*/
   }
   
   .scrollbar{
-    display: inline-block;
-    box-sizing: border-box;
+    /*display: inline-block;*/
+    /*box-sizing: border-box;*/
   }
   
   .contentbox{
-    display: inline-block;
-    width: 100px;
-    height: 100px;
-    color: #f00;
-    border: 1px solid #f00;
-    line-height: 100px;
-    text-align: center;
-    box-sizing: border-box;
+    /*display: inline-block;*/
+    /*width: 100px;*/
+    /*height: 100px;*/
+    /*color: #f00;*/
+    /*border: 1px solid #f00;*/
+    /*line-height: 100px;*/
+    /*text-align: center;*/
+    /*box-sizing: border-box;*/
   }
 
   .scrollleft, .scrollright{
-    display: inline-block;
-    cursor: pointer;
-    width: 20px;
-    height: 100px;
-    color: #fff;
-    background-color: #555;
-    line-height: 100px;
-    text-align: center;
-    box-sizing: border-box;
+    /*display: inline-block;*/
+    /*cursor: pointer;*/
+    /*width: 20px;*/
+    /*height: 100px;*/
+    /*color: #fff;*/
+    /*background-color: #555;*/
+    /*line-height: 100px;*/
+    /*text-align: center;*/
+    /*box-sizing: border-box;*/
   }
 
 
@@ -99,5 +92,5 @@ img{
   }
   
   .row{
-    margin-left: 0px;
+    /*margin-left: 0px;*/
   }
