@@ -29,58 +29,17 @@
 <div class="container gallery-container">
   <div class="tz-gallery">
     <div class="row">
-
       <div class="col-sm-6 col-md-4" (click)="redirect(image)" *ngFor="let image of images | sortImages:searchImage">
         <div >
           <div class="thumbnail">
-            <a class="lightbox" href="../../src/assets/images/park.jpg">
-              <img src="{{image.image}}" alt="Park" class="img-fluid">
+            <a class="lightbox">
+              <img src="{{image.image}}" class="img-fluid">
             </a>
             <div class="caption">
-              <h3>Thumbnail label</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
             </div>
           </div>
         </div>
       </div>
-
-
-
-      <div class="col-sm-6 col-md-4">
-        <div class="thumbnail">
-          <a class="lightbox" href="../../src/assets/images/bridge.jpg">
-            <img src="../../src/assets/images/bridge.jpg" alt="Bridge" class="img-fluid">
-          </a>
-          <div class="caption">
-            <h3>Thumbnail label</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6 col-md-4">
-        <div class="thumbnail">
-          <a class="lightbox" href="../../src/assets/images/traffic.jpg">
-            <img src="https://via.placeholder.com/800x600" alt="Traffic" class="img-fluid">
-          </a>
-          <div class="caption">
-            <h3>Thumbnail label</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-sm-6 col-md-4">
-        <div class="thumbnail">
-          <a class="lightbox" href="../../src/assets/images/rails.jpg">
-            <img src="../../src/assets/images/rails.jpg" alt="Rails" class="img-fluid">
-          </a>
-          <div class="caption">
-            <h3>Thumbnail label</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 </div>

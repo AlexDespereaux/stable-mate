@@ -34,7 +34,7 @@ export class ImageService {
   }
 
   responseType: ResponseContentType.Blob
-  getImage(id) {
+  getImage(imageId) {
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':'image/png',
@@ -42,10 +42,10 @@ export class ImageService {
         'responseType': 'ResponseContentType.Blob'
       })
     };
-    return this.http.get(`${this.endPoint}/image/edit/${id}`, httpOptions);
+    return this.http.get(`${this.endPoint}/image/edit/${imageId}`, httpOptions);
   }
 
-  getImageData(id) {
+  getImageData(imageId) {
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export class ImageService {
       })
     };
 
-    return this.http.get(`${this.endPoint}/image/${id}`, httpOptions);
+    return this.http.get(`${this.endPoint}/image/${imageId}`, httpOptions);
   }
 
   saveImage(id, rating) {
