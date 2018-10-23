@@ -9,6 +9,5 @@ local.properties
 /build
 /captures
 .externalNativeBuild
-*.zip
 config.json
 bcrypt.info
