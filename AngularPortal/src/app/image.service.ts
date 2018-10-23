@@ -10,7 +10,6 @@ export class ImageService {
   password;
   private endPoint = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api";
 
-
   constructor(private http: HttpClient) { }
 
   authenticate(username: string, password: string) {
@@ -34,15 +33,15 @@ export class ImageService {
     return this.http.get(`${this.endPoint}/image`, httpOptions);
   }
 
-  
-  getImage(id){
+  responseType: ResponseContentType.Blob
+  getImage(id) {
     let httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'image/png',
-        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
+        'Content-Type':'image/png',
+        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`),
+        'responseType': 'ResponseContentType.Blob'
       })
-    }; 
-    
+    };
     return this.http.get(`${this.endPoint}/image/edit/${id}`, httpOptions);
   }
 
@@ -53,18 +52,18 @@ export class ImageService {
         'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
       })
     };
-    
+
     return this.http.get(`${this.endPoint}/image/${id}`, httpOptions);
   }
 
-  saveImage(id, rating){
+  saveImage(id, rating) {
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
       })
     };
-    
-    return this.http.put(`${this.endPoint}/image/${id}/rating/${rating}`,httpOptions);
+
+    return this.http.put(`${this.endPoint}/image/${id}/rating/${rating}`, httpOptions);
   }
 }
