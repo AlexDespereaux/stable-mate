@@ -33,16 +33,12 @@ export class ImageService {
     return this.http.get(`${this.endPoint}/image`, httpOptions);
   }
 
-  responseType: ResponseContentType.Blob
-  getImage(imageId) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type':'image/png',
-        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`),
-        'responseType': 'ResponseContentType.Blob'
-      })
-    };
-    return this.http.get(`${this.endPoint}/image/edit/${imageId}`, httpOptions);
+  getImage(imageId): Observable<Blob> {
+
+     let headers= new HttpHeaders({
+        'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
+      });
+    return this.http.get(`${this.endPoint}/image/edit/${imageId}`, {headers, responseType:'blob'});
   }
 
   getImageData(imageId) {

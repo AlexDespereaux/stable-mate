@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageService } from '../../image.service';
+import {HttpResponse} from "@angular/common/http";
+import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 
 class Image {
   id: string;
-  image: string;
+  image: SafeUrl;
 }
 
 @Component({
@@ -19,7 +21,8 @@ export class DisplayClassComponent implements OnInit {
   searchImage = '';
   imageToShow;
 
-  constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService)
+  constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService,
+  private sanitiser: DomSanitizer)
    {
     this.images = new Array<Image>();
    }
@@ -27,19 +30,21 @@ export class DisplayClassComponent implements OnInit {
   ngOnInit() {
     this.imageService.getImageList().subscribe(
       (res: any) => {
-        console.log(res)
+        console.log(res);
         res.forEach((re, i) => {
           this.images[i] = new Image();
           this.images[i].id = re;
 
           this.imageService.getImage(re)
           .subscribe(
-            (res) => { 
-              console.log(res)
+            blob => {
+              let urlCreator = window.URL;
+              this.images[i].image = this.sanitiser.bypassSecurityTrustUrl(urlCreator.createObjectURL(blob));
+              console.log(this.images[i].image)
             },
             (err) => {
               console.log(err)
-              this.images[i].image = err.url;
+              // this.images[i].image = err.url;
             }
           );
         });
