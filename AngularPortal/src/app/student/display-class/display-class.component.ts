@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageService } from '../../image.service';
-import {HttpResponse} from "@angular/common/http";
-import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 
 class Image {
   id: string;
-  image: SafeUrl;
+  image: Image;
 }
 
 @Component({
@@ -29,17 +27,20 @@ export class DisplayClassComponent implements OnInit {
   ngOnInit() {
     this.imageService.getImageList().subscribe(
       (res: any) => {
-        // console.log(res);
+        console.log(res)
         res.forEach((re, i) => {
           this.images[i] = new Image();
           this.images[i].id = re;
 
           this.imageService.getImage(re)
           .subscribe(
-            url => {
-              this.images[i].image = url;
+            (res) => { 
+              console.log(res)
             },
-            () => {}
+            (err) => {
+              console.log(err)
+              this.images[i].image = err.url;
+            }
           );
         });
       }

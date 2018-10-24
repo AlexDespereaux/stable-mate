@@ -5,16 +5,19 @@ import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver/FileSaver';
 import { ImageService } from '../../../image.service';
 import {SafeUrl} from "@angular/platform-browser";
-@Component({
-  selector: 'app-display-image',
-  templateUrl: './display-image.component.html',
-  styleUrls: ['./display-image.component.css']
-})
+
 
 class Image {
   id: string;
   image: SafeUrl;
 }
+
+
+@Component({
+  selector: 'app-display-image',
+  templateUrl: './display-image.component.html',
+  styleUrls: ['./display-image.component.css']
+})
 
 export class DisplayImageComponent implements OnInit {
 
