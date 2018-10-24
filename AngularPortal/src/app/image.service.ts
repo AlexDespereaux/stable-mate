@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { ResponseContentType } from '@angular/http';
+import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 @Injectable()
 export class ImageService {
   username;
   password;
   private endPoint = "http://stablemateplus-env.rjhpu9majw.ap-southeast-2.elasticbeanstalk.com/api";
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private sanitiser: DomSanitizer) { }
 
   authenticate(username: string, password: string) {
     let httpOptions = {
@@ -33,12 +33,17 @@ export class ImageService {
     return this.http.get(`${this.endPoint}/image`, httpOptions);
   }
 
-  getImage(imageId): Observable<Blob> {
+  getImage(imageId): Observable<SafeUrl> {
 
      let headers= new HttpHeaders({
         'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
       });
-    return this.http.get(`${this.endPoint}/image/edit/${imageId}`, {headers, responseType:'blob'});
+    return this.http
+      .get(`${this.endPoint}/image/edit/${imageId}`, {headers, responseType:'blob'})
+      .map((value, index) => {
+        let urlCreator = window.URL;
+        return this.sanitiser.bypassSecurityTrustUrl(urlCreator.createObjectURL(value))
+      });
   }
 
   getImageData(imageId) {
