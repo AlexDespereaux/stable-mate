@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageService } from '../../image.service';
+import { SafeUrl} from "@angular/platform-browser";
 
 class Image {
   id: string;
-  image: Image;
+  image: SafeUrl;
 }
 
 @Component({
@@ -27,37 +28,22 @@ export class DisplayClassComponent implements OnInit {
   ngOnInit() {
     this.imageService.getImageList().subscribe(
       (res: any) => {
-        console.log(res)
         res.forEach((re, i) => {
           this.images[i] = new Image();
           this.images[i].id = re;
 
           this.imageService.getImage(re)
           .subscribe(
-            (res) => { 
-              console.log(res)
+            url => {
+              this.images[i].image = url;
             },
-            (err) => {
-              console.log(err)
-              this.images[i].image = err.url;
-            }
+            () => {}
           );
         });
       }
     ); 
   }
- 
 
-  createImageFromBlob(image) {
-    let reader = new FileReader();
-    reader.addEventListener("load", () => {
-      this.imageToShow = reader.result;
-    }, false);
-
-    if (image) {
-      reader.readAsDataURL(image);
-    }
-  }
   redirect(image) {
     this.router.navigate(['image', image.id], { relativeTo: this.route });
   }

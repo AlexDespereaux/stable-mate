@@ -6,12 +6,10 @@ import { saveAs } from 'file-saver/FileSaver';
 import { ImageService } from '../../../image.service';
 import {SafeUrl} from "@angular/platform-browser";
 
-
 class Image {
   id: string;
   image: SafeUrl;
 }
-
 
 @Component({
   selector: 'app-display-image',
@@ -156,7 +154,7 @@ export class DisplayImageComponent implements OnInit {
     saveAs(file);
   }
 
-  downlaodDescription() {
+  downloadDescription() {
     const description = document.getElementById("descriptions").textContent;
     let file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
     saveAs(file);
