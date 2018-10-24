@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageService } from '../../image.service';
-import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
+import { SafeUrl} from "@angular/platform-browser";
 
 class Image {
   id: string;
@@ -28,7 +28,6 @@ export class DisplayClassComponent implements OnInit {
   ngOnInit() {
     this.imageService.getImageList().subscribe(
       (res: any) => {
-        // console.log(res);
         res.forEach((re, i) => {
           this.images[i] = new Image();
           this.images[i].id = re;
@@ -44,18 +43,7 @@ export class DisplayClassComponent implements OnInit {
       }
     ); 
   }
- 
 
-  createImageFromBlob(image) {
-    let reader = new FileReader();
-    reader.addEventListener("load", () => {
-      this.imageToShow = reader.result;
-    }, false);
-
-    if (image) {
-      reader.readAsDataURL(image);
-    }
-  }
   redirect(image) {
     this.router.navigate(['image', image.id], { relativeTo: this.route });
   }
