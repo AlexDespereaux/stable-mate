@@ -1,26 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
-import { Image } from '../../../_models/image';
-import * as $ from 'jquery';
 import * as jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
-import domtoimage from 'dom-to-image';
 import { saveAs } from 'file-saver/FileSaver';
 import { ImageService } from '../../../image.service';
+import {SafeUrl} from "@angular/platform-browser";
 @Component({
   selector: 'app-display-image',
   templateUrl: './display-image.component.html',
   styleUrls: ['./display-image.component.css']
 })
+
+class Image {
+  id: string;
+  image: SafeUrl;
+}
+
 export class DisplayImageComponent implements OnInit {
 
   // has to be initialized when getting all for one image.
-  image = { id: String, image: String };
+  image = new Image();
   imageUrl = 'assets/images/img2.jpg';
   imageName = 'test image';
   rate = 0;
-  getCanvas;
-  // dummy obj
+
   imageDetails = {
     "filename": "",
     "description": "",
@@ -48,14 +51,8 @@ export class DisplayImageComponent implements OnInit {
       }
     );
     this.imageService.getImage(this.image.id).subscribe(
-      (res) => {
-        console.log(res)
-      },
-      (err) => {
-        console.log(err);
-        this.image.image = err.url;
-      }
-    );
+      url => { this.image.image = url },() => {} );
+
     this.imageService.getImageData(this.image.id).subscribe(
       res => {
         console.log(res);
@@ -68,9 +65,7 @@ export class DisplayImageComponent implements OnInit {
         if (res['legend'] && res['legend'].length > 0) {
           res['legend'].forEach(
             item => {
-              console.log(item)
               if(item.name !== ' '){
-                console.log('pushing')
                 this.imageDetails.legend.push(item)
               }
             }
@@ -78,7 +73,7 @@ export class DisplayImageComponent implements OnInit {
           this.filterLegend();
 
         }
-        this.rate = res['rating']
+        this.rate = res['rating'];
         this.imageDetails.location.latitude = res['location'].latitude;
         this.imageDetails.location.longitude = res['location'].longitude;
         this.imageDetails.ppm = res['ppm'];
@@ -96,7 +91,6 @@ export class DisplayImageComponent implements OnInit {
   filterLegend() {
     this.imageDetails.legend.forEach(
       (attr) => {
-        console.log(attr.name)
         switch (attr.name.toLowerCase()) {
           case 'black_arrow.png': this.legendImages.push('assets/legend/black_arrow.png'); break;
           case 'black_radio.png': this.legendImages.push('assets/legend/black_radio.png'); break;
@@ -123,35 +117,31 @@ export class DisplayImageComponent implements OnInit {
 
   download() {
 
-    var data = document.getElementById('rateImage');
+    let data = document.getElementById('rateImage');
     html2canvas(data).then(canvas => {
       // Few necessary setting options  
-      var imgWidth = 208;
-      var pageHeight = 295;
-      var imgHeight = canvas.height * imgWidth / canvas.width;
-      var heightLeft = imgHeight;
+      let imgWidth = 208;
+      let imgHeight = canvas.height * imgWidth / canvas.width;
       const contentDataURL = canvas.toDataURL('image/png');
       canvas.toBlob(function (blob) {
         saveAs(blob, "image.png");
       });
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
-      var position = 0;
+      let position = 0;
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
     });
 
 
 
 
-    var data = document.getElementById('legend1');
+    data = document.getElementById('legend1');
     html2canvas(data).then(canvas => {
       // Few necessary setting options  
-      var imgWidth = 208;
-      var pageHeight = 295;
-      var imgHeight = canvas.height * imgWidth / canvas.width;
-      var heightLeft = imgHeight;
+      let imgWidth = 208;
+      let imgHeight = canvas.height * imgWidth / canvas.width;
       const contentDataURL = canvas.toDataURL('image/png');
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
-      var position = 0;
+      let position = 0;
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
       canvas.toBlob(function (blob) {
         saveAs(blob, "legend.png");
@@ -159,27 +149,25 @@ export class DisplayImageComponent implements OnInit {
     });
 
     const description = document.getElementById("descriptions").textContent;
-    var file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
+    let file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
     saveAs(file);
   }
 
   downlaodDescription() {
     const description = document.getElementById("descriptions").textContent;
-    var file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
+    let file = new File([description], "description.txt", { type: "text/plain;charset=utf-8" });
     saveAs(file);
   }
 
   downloadLegend() {
-    var data = document.getElementById('legend1');
+    let data = document.getElementById('legend1');
     html2canvas(data).then(canvas => {
       // Few necessary setting options  
-      var imgWidth = 208;
-      var pageHeight = 295;
-      var imgHeight = canvas.height * imgWidth / canvas.width;
-      var heightLeft = imgHeight;
+      let imgWidth = 208;
+      let imgHeight = canvas.height * imgWidth / canvas.width;
       const contentDataURL = canvas.toDataURL('image/png');
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
-      var position = 0;
+      let position = 0;
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
       canvas.toBlob(function (blob) {
         saveAs(blob, "legend.png");
@@ -190,20 +178,18 @@ export class DisplayImageComponent implements OnInit {
   downloadImage() {
 
 
-    var data = document.getElementById('rateImage');
+    let data = document.getElementById('rateImage');
     const image = "data:image/jpg;base64," + this.image.image;
     html2canvas(image).then(canvas => {
       // Few necessary setting options  
-      var imgWidth = 208;
-      var pageHeight = 295;
-      var imgHeight = canvas.height * imgWidth / canvas.width;
-      var heightLeft = imgHeight;
+      let imgWidth = 208;
+      let imgHeight = canvas.height * imgWidth / canvas.width;
       const contentDataURL = canvas.toDataURL('image/png');
       canvas.toBlob(function (blob) {
         saveAs(blob, "image.png");
       });
       let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
-      var position = 0;
+      let position = 0;
       pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
     });
 

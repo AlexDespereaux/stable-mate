@@ -21,8 +21,7 @@ export class DisplayClassComponent implements OnInit {
   searchImage = '';
   imageToShow;
 
-  constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService,
-  private sanitiser: DomSanitizer)
+  constructor(private route: ActivatedRoute, private router: Router, private imageService: ImageService)
    {
     this.images = new Array<Image>();
    }
@@ -30,22 +29,17 @@ export class DisplayClassComponent implements OnInit {
   ngOnInit() {
     this.imageService.getImageList().subscribe(
       (res: any) => {
-        console.log(res);
+        // console.log(res);
         res.forEach((re, i) => {
           this.images[i] = new Image();
           this.images[i].id = re;
 
           this.imageService.getImage(re)
           .subscribe(
-            blob => {
-              let urlCreator = window.URL;
-              this.images[i].image = this.sanitiser.bypassSecurityTrustUrl(urlCreator.createObjectURL(blob));
-              console.log(this.images[i].image)
+            url => {
+              this.images[i].image = url;
             },
-            (err) => {
-              console.log(err)
-              // this.images[i].image = err.url;
-            }
+            () => {}
           );
         });
       }
